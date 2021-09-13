@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% comment %}
+    context = {
+        "mentored_issues": mentored_issues,
+        "assigned_issues": assigned_issues,
+        "submitted_prs": submitted_prs
+    }
+{% endcomment %}
+
+{% block title %}
+    User Profile
+{% endblock %}
+
+{% block content %}
+    <button><a href="{% url 'home' %}">Home</a></button>
+    {% if user.is_authenticated %}
+        <button><a href="{% url 'logout' %}">Logout</a></button>
+        <h2>Personal Information</h2>
+        <b>Username:</b> {{ user.username }}
+        <br>
+        <b>Name:</b> {{ user.first_name }} {{ user.last_name }}
+        <br>
+        <b>Role:</b> {{ user.userprofile.get_role_display }}
+        <br>
+        <b>Registration Number:</b> {{ user.userprofile.registration_no }}
+        <br>
+        <b>Course:</b> {{ user.userprofile.get_course_display }}
+        <br>
+        <b>Current Year:</b> {{ user.userprofile.get_current_year_display }}
+        {% comment %}
+            In Django templates you can use the "get_FOO_display()" method, that will return the readable alias
+            for the field, where 'FOO' is the name of the field.
+        {% endcomment %}
+
+        <br>
+
+        {% if user.userprofile.role == user.userprofile.ADMIN %}
+            <h2>Available Options - </h2>
+            <button><a href="{% url 'populate_projects' %}">Populate Projects</a></button>
+            <button><a href="{% url 'populate_issues' %}">Populate Issues</a></button>
+        {% elif user.userprofile.role == user.userprofile.STUDENT %}
+            <h1>Assigned Issues: </h1>
+            <table border="2" cellpadding="10" cellspacing="5">
+                <tr>
+                    <th>Title</th>
+                    <th>Number</th>
+                    <th>Mentor</th>
+                    <th>State</th>
+                </tr>
+                {% for issue in assigned_issues %}
+                    <tr>
+                        <td>{{ issue.title }}</td>
+                        <td>{{ issue.number }}</td>
+                        <td>{{ issue.mentor }}</td>
+                        <td>{{ issue.get_state_display }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h1>PRs Submitted: </h1>
+            <table border="2" cellpadding="10" cellspacing="5">
+                <tr>
+                    <th>Related Issue</th>
+                    <th>Issue Number</th>
+                    <th>State</th>
+                </tr>
+                {% for pr in pr_submitted %}
+                    <tr>
+                        <td>{{ pr.issue.title }}</td>
+                        <td>{{ pr.issue.number }}</td>
+                        <td>{{ pr.get_state_display }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        {% elif user.userprofile.role == user.userprofile.MENTOR %}
+            <h1>Mentored Issues: </h1>
+            <table border="2" cellpadding="10" cellspacing="5">
+                <tr>
+                    <th>Title</th>
+                    <th>Mentor</th>
+                    <th>State</th>
+                    <th>Assignee</th>
+                </tr>
+                {% for issue in mentored_issues %}
+                    <tr>
+                        <td>{{ issue.title }}</td>
+                        <td>{{ issue.mentor }}</td>
+                        <td>{{ issue.get_state_display }}</td>
+                        <td>
+                            {% if issue.state == issue.ASSIGNED %}
+                                {{ issue.assignee }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% else %}
+        Hello, Anon. You need to Authorize with Github First.
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

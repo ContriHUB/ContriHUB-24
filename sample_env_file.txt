@@ -1,0 +1,25 @@
+# Name of your environment file should be ".env"
+# You can create this file by running "touch .env" command.
+# In Windows, run this command using Git Bash.
+# CAUTION: Never push environment file to remote repository (In this project its already put in .gitignore)
+
+# -------- SAMPLE ENV CONTENT FOR THIS PROJECT STARTS FROM BELOW -------
+
+SECRET_KEY = '<enter_secret_key_here>'
+DEBUG = True
+
+SOCIAL_AUTH_GITHUB_KEY = '<enter_client_id>'
+SOCIAL_AUTH_GITHUB_SECRET = '<enter_secret_id'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = '<enter_email>'
+EMAIL_HOST_PASSWORD = '<enter_password>'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+AVAILABLE_PROJECTS = 'ContriHUB-21;piratetube;Connect-Four-Game'
+LABEL_MENTOR = 'mentor'
+LABEL_LEVEL = 'level'
+LABEL_POINTS = 'points'
+DEPENDABOT_LOGIN = 'dependabot[bot]'

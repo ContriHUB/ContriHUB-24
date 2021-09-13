@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% comment %}
+    context = {
+        'projects': project_qs,
+        'issues': issues_qs
+    }
+{% endcomment %}
+
+{% block title %}
+    Homepage
+{% endblock %}
+
+
+{% block content %}
+    {% if not user.is_authenticated %}
+        <h1>Welcome to ContriHUB 21</h1>
+        <h2>Click Here to Login Using Github</h2>
+        <button><a href="{% url 'authorize' %}">Authorize</a></button>
+    {% else %}
+        <button><a href="{% url 'user_profile' user.username %}">User Profile</a></button>
+        <button><a href="{% url 'logout' %}">Logout</a></button>
+        <h1>Welcome to ContriHUB 21</h1>
+        Hey {{ user.username }}, You are Authorized
+    {% endif %}
+
+    <h1>All Projects: </h1>
+    {% for project in projects %}
+        <h3><a href="{{ project.html_url }}" target="_blank">{{ project.name }}</a> (<a href="{{ project.api_url }}" target="_blank">API URL</a>)</h3>
+    {% endfor %}
+
+    <h1>All Issues: </h1>
+    <table border="2" cellpadding="10" cellspacing="5">
+        <tr>
+            <th>Project</th>
+            <th>#</th>
+            <th>Title</th>
+            <th>Mentor</th>
+            <th>Level</th>
+            <th>State</th>
+            <th>Assignee</th>
+        </tr>
+        {% for issue in issues %}
+            <tr>
+                <td><a href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a></td>
+                <td>#{{ issue.number }}</td>
+                <td><a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a></td>
+                <td>{{ issue.mentor }}</td>
+                <td>{{ issue.get_level_display }}</td>
+                <td>{{ issue.get_state_display }}</td>
+                <td>{{ issue.assignee }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}
