@@ -1,5 +1,6 @@
 from django.shortcuts import HttpResponseRedirect, reverse
-from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN
+from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
+    LABEL_RESTRICTED
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
@@ -11,12 +12,11 @@ User = get_user_model()
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
 @complete_profile_required
 def populate_projects(request):
-    available_projects = str(AVAILABLE_PROJECTS).split(";")
 
     api_uri = "https://api.github.com/repos/ContriHUB/"
     html_uri = "https://github.com/ContriHUB/"
-
-    for project_name in available_projects:
+    print(AVAILABLE_PROJECTS)
+    for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
         if not project_qs:
             api_url = f"{api_uri}{project_name}"
@@ -50,11 +50,12 @@ def populate_issues(request):
             issues = response['data']
             for issue in issues:
 
+                # TODO: Can be given as ISSUE
                 if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
                     continue
 
                 title, number = issue['title'], issue['number']
-                mentor_name, level, points = parse_labels(labels=issue['labels'])
+                mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
                 api_url, html_url = issue['url'], issue['html_url']
                 issue_qs = Issue.objects.filter(number=number)
 
@@ -63,6 +64,7 @@ def populate_issues(request):
                     db_issue.title = title
                     db_issue.level = level
                     db_issue.points = points
+                    db_issue.is_restricted = is_restricted
                 else:  # Else Create New
                     db_issue = Issue(
                         number=number,
@@ -72,6 +74,7 @@ def populate_issues(request):
                         project=project,
                         level=level,
                         points=points,
+                        is_restricted=is_restricted
                     )
 
                 print(db_issue)
@@ -87,7 +90,7 @@ def populate_issues(request):
 
 
 def parse_labels(labels):
-    mentor, level, points = None, Issue.EASY, 0
+    mentor, level, points, is_restricted = None, Issue.EASY, 0, False
     for label in labels:
 
         if str(label["description"]).lower() == LABEL_MENTOR:  # Parsing Mentor
@@ -99,7 +102,10 @@ def parse_labels(labels):
         if str(label["description"]).lower() == LABEL_POINTS:  # Parsing Points
             points = parse_points(label["name"])
 
-    return mentor, level, points
+        if str(label["name"]).lower() == LABEL_RESTRICTED:  # Parsing Is Restricted
+            is_restricted = True
+
+    return mentor, level, points, is_restricted
 
 
 def parse_level(level):

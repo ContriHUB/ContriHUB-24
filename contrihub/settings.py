@@ -152,7 +152,7 @@ SOCIAL_AUTH_GITHUB_SCOPE = [
 
 LOGIN_URL = 'authorize'
 LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'complete_profile'
+LOGIN_REDIRECT_URL = 'home'
 
 # Email Setup
 # EMAIL_HOST = config('EMAIL_HOST', default="")
@@ -162,8 +162,11 @@ LOGIN_REDIRECT_URL = 'complete_profile'
 # EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 # EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
-AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-21")
+AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-21",
+                            cast=lambda v: [s.strip() for s in v.split(',')])
 LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")
+LABEL_RESTRICTED = config('LABEL_RESTRICTED', default="restricted")
 DEPENDABOT_LOGIN = config('DEPENDABOT_LOGIN', default="dependabot[bot]")
+MAX_SIMULTANEOUS_ISSUE = config('MAX_SIMULTANEOUS_ISSUE', default=2, cast=int)

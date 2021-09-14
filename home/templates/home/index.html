@@ -36,9 +36,11 @@
             <th>Title</th>
             <th>Mentor</th>
             <th>Level</th>
+            <th>Restricted</th>
             <th>State</th>
-            <th>Assignee</th>
+            <th>Action</th>
         </tr>
+        {# TODO: Display who is currently working on this issue ISSUE #}
         {% for issue in issues %}
             <tr>
                 <td><a href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a></td>
@@ -46,8 +48,13 @@
                 <td><a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a></td>
                 <td>{{ issue.mentor }}</td>
                 <td>{{ issue.get_level_display }}</td>
+                <td>{{ issue.is_restricted }}</td>
                 <td>{{ issue.get_state_display }}</td>
-                <td>{{ issue.assignee }}</td>
+                <td>
+                    {% if issue.state == issue.OPEN %}
+                        <button><a href="{% url 'request_issue_assignment' issue.pk %}">Request Assignment</a></button>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -57,3 +64,5 @@
 {% block javascript %}
 
 {% endblock %}
+
+{# TODO: Disable Request for Assignment Button of Assigned/Closed Issue from Frontend ISSUE #}

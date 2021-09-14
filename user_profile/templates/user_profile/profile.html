@@ -3,8 +3,11 @@
 {% comment %}
     context = {
         "mentored_issues": mentored_issues,
-        "assigned_issues": assigned_issues,
-        "submitted_prs": submitted_prs
+        "pr_requests_by_student": pr_requests_by_student,
+        "pr_requests_for_mentor": pr_requests_for_mentor,
+        "assignment_requests_by_student": assignment_requests_by_student,
+        "assignment_requests_for_mentor": assignment_requests_for_mentor,
+        'pr_form': pr_form,
     }
 {% endcomment %}
 
@@ -35,37 +38,67 @@
 
         <br>
 
-        {% if user.userprofile.role == user.userprofile.ADMIN %}
-            <h2>Available Options - </h2>
-            <button><a href="{% url 'populate_projects' %}">Populate Projects</a></button>
-            <button><a href="{% url 'populate_issues' %}">Populate Issues</a></button>
-        {% elif user.userprofile.role == user.userprofile.STUDENT %}
-            <h1>Assigned Issues: </h1>
+        {% if user.userprofile.role == user.userprofile.STUDENT %}
+            <h2>Currently Active Issues: </h2>
             <table border="2" cellpadding="10" cellspacing="5">
                 <tr>
+                    <th>Project</th>
+                    <th>Issue #</th>
                     <th>Title</th>
-                    <th>Number</th>
                     <th>Mentor</th>
                     <th>State</th>
+                    <th>Action</th>
+                    <th>Remaining Time</th>
                 </tr>
-                {% for issue in assigned_issues %}
+                {% for active_issue in active_issues %}
                     <tr>
-                        <td>{{ issue.title }}</td>
-                        <td>{{ issue.number }}</td>
-                        <td>{{ issue.mentor }}</td>
-                        <td>{{ issue.get_state_display }}</td>
+                        <td><a href="{{ active_issue.issue.project.html_url }}">{{ active_issue.issue.project.name }}</a></td>
+                        <td>{{ active_issue.issue.number }}</td>
+                        <td><a href="{{ active_issue.issue.html_url }}">{{ active_issue.issue.title }}</a></td>
+                        <td>{{ active_issue.issue.mentor }}</td>
+                        <td>{{ active_issue.issue.get_state_display }}</td>
+                        <td>
+                            {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
+                            <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
+                                {{ pr_form.as_p }}
+                                <button type="submit">Submit</button>
+                            </form>
+                        </td>
+                        <td>-- some time --</td>
+                        {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
+                        {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining.  #}
                     </tr>
                 {% endfor %}
             </table>
 
-            <h1>PRs Submitted: </h1>
+            <h2>Current Assignment Requests: </h2>
+            <table border="2" cellpadding="10" cellspacing="5">
+                <tr>
+                    <th>Project</th>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>State</th>
+                    <th>Mentor</th>
+                </tr>
+                {% for request in assignment_requests_by_student %}
+                    <tr>
+                        <td><a href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a></td>
+                        <td>{{ request.issue.number }}</td>
+                        <td><a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a></td>
+                        <td>{{ request.get_state_display }}</td>
+                        <td>{{ request.issue.mentor.username }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h2>PRs Submitted: </h2>
             <table border="2" cellpadding="10" cellspacing="5">
                 <tr>
                     <th>Related Issue</th>
                     <th>Issue Number</th>
                     <th>State</th>
                 </tr>
-                {% for pr in pr_submitted %}
+                {% for pr in pr_requests_by_student %}
                     <tr>
                         <td>{{ pr.issue.title }}</td>
                         <td>{{ pr.issue.number }}</td>
@@ -74,27 +107,78 @@
                 {% endfor %}
             </table>
 
-        {% elif user.userprofile.role == user.userprofile.MENTOR %}
-            <h1>Mentored Issues: </h1>
+        {% else %}
+            {% if user.userprofile.role == user.userprofile.ADMIN %}
+                <h2>Available Options - </h2>
+                <button><a href="{% url 'populate_projects' %}">Populate Projects</a></button>
+                <button><a href="{% url 'populate_issues' %}">Populate Issues</a></button>
+            {% endif %}
+            <h2>PR Verification Requests: </h2>
             <table border="2" cellpadding="10" cellspacing="5">
                 <tr>
+                    <th>Project</th>
+                    <th>#</th>
                     <th>Title</th>
-                    <th>Mentor</th>
                     <th>State</th>
-                    <th>Assignee</th>
+                    <th>Contributor</th>
+                    <th>Action</th>
+                </tr>
+                {% for pr in pr_requests_for_mentor %}
+                    <tr>
+                        <td><a href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a></td>
+                        <td>{{ pr.issue.number }}</td>
+                        <td><a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a></td>
+                        <td>{{ pr.get_state_display }}</td>
+                        <td>{{ pr.contributor }}</td>
+                        <td>
+                        {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected #}
+                            <button><a>Accept</a></button>
+                            <button><a>Reject</a></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h2>Issue Assignment Requests: </h2>
+            <table border="2" cellpadding="10" cellspacing="5">
+                <tr>
+                    <th>Project</th>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>State</th>
+                    <th>Requester</th>
+                    <th>Action</th>
+                </tr>
+                {% for request in assignment_requests_for_mentor %}
+                    <tr>
+                        <td><a href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a></td>
+                        <td>{{ request.issue.number }}</td>
+                        <td><a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a></td>
+                        <td>{{ request.get_state_display }}</td>
+                        <td>{{ request.requester }}</td>
+                        <td>
+                        {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected #}
+                            <button><a href="{% url 'accept_issue_request' request.pk %}">Accept</a></button>
+                            <button><a>Reject</a></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h2>All Issues Under Me: </h2>
+            <table border="2" cellpadding="10" cellspacing="5">
+                <tr>
+                    <th>Project</th>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>State</th>
                 </tr>
                 {% for issue in mentored_issues %}
                     <tr>
-                        <td>{{ issue.title }}</td>
-                        <td>{{ issue.mentor }}</td>
+                        <td><a href="{{ issue.project.html_url }}">{{ issue.project.name }}</a></td>
+                        <td>{{ issue.number }}</td>
+                        <td><a href="{{ issue.html_url }}">{{ issue.title }}</a></td>
                         <td>{{ issue.get_state_display }}</td>
-                        <td>
-                            {% if issue.state == issue.ASSIGNED %}
-                                {{ issue.assignee }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
                     </tr>
                 {% endfor %}
             </table>
