@@ -36,6 +36,7 @@
             <th>Title</th>
             <th>Mentor</th>
             <th>Level</th>
+            <th>Points</th>
             <th>Restricted</th>
             <th>State</th>
             <th>Action</th>
@@ -48,12 +49,12 @@
                 <td><a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a></td>
                 <td>{{ issue.mentor }}</td>
                 <td>{{ issue.get_level_display }}</td>
+                <td>{{ issue.points }}</td>
                 <td>{{ issue.is_restricted }}</td>
                 <td>{{ issue.get_state_display }}</td>
                 <td>
-                    {% if issue.state == issue.OPEN %}
-                        <button><a href="{% url 'request_issue_assignment' issue.pk %}">Request Assignment</a></button>
-                    {% endif %}
+                    {# Disable the Button is Issue is Closed or Assigned #}
+                    <button><a href="{% url 'request_issue_assignment' issue.pk %}">Request Assignment</a></button>
                 </td>
             </tr>
         {% endfor %}
@@ -65,4 +66,4 @@
 
 {% endblock %}
 
-{# TODO: Disable Request for Assignment Button of Assigned/Closed Issue from Frontend ISSUE #}
+{# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}

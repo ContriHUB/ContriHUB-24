@@ -3,7 +3,15 @@ from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required
-from .forms import PRSubmissionForm
+from project.forms import PRSubmissionForm
+from django.utils import timezone
+
+
+# TODO:ISSUE: Replace each HttpResponse with a HTML page
+# TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
+# TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
+# TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
+# TODO:ISSUE: Make a Custom Http404 Page
 
 
 @complete_profile_required
@@ -37,22 +45,15 @@ def request_issue_assignment(request, issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
 
-    is_already_requested = IssueAssignmentRequest.objects.filter(issue=issue, requester=requester)
-
-    if is_already_requested:
-        message = f"{requester.userprofile} Hold your horses! You have already requested for assignment of Issue " \
-                  f"<a href={issue.html_url}>#{issue.number}</a> of <a href={issue.project.html_url}>{issue.project.name}</a>"
-        raise Http404(message)
-
     if issue.is_assignable(requester=requester):
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
         return HttpResponse(message)
 
-    message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of <a href={issue.project.html_url}>" \
-              f"{issue.project.name}</a> cannot be assigned to you."
-    raise Http404(message)
+    message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
+              f"{issue.project.name}</a> cannot be made by you currently."
+    return HttpResponse(message)
 
 
 @login_required
@@ -70,8 +71,8 @@ def accept_issue_request(request, issue_req_pk):
                   f"{issue.project.name}</a> successfully assigned to {requester}"
         return HttpResponse(message)
     else:
-        message = f"This Issue Cannot be accepted by you!"
-        raise Http404(message)
+        message = f"This Issue Cannot be accepted by you! Probably it's already Accepted/Rejected."
+        return HttpResponse(message)
 
 
 def reject_issue_request():
@@ -85,12 +86,22 @@ def submit_pr_request(request, active_issue_pk):
         contributor = request.user
         active_issue_qs = ActiveIssue.objects.filter(pk=active_issue_pk, contributor=contributor)
         if active_issue_qs:
-            form = PRSubmissionForm(request.GET)
             active_issue = active_issue_qs[0]
             issue = active_issue.issue
+            pr_qs = PullRequest.objects.filter(issue_id=issue.pk, contributor=contributor)
+            if pr_qs:
+                # If resubmitting PR request for Active Issue
+                form = PRSubmissionForm(request.GET, instance=pr_qs.first())
+            else:
+                form = PRSubmissionForm(request.GET)
+
             if active_issue.can_raise_pr(contributor=contributor) and form.is_valid():
-                pr_html_url = form.cleaned_data.get('pr_html_url')
-                PullRequest.objects.create(html_url=pr_html_url, issue=issue, contributor=request.user)
+                pr = form.save(commit=False)
+                pr.issue = issue
+                pr.contributor = request.user
+                pr.state = PullRequest.PENDING_VERIFICATION
+                pr.submitted_at = timezone.now()
+                pr.save()
                 # TODO:ISSUE Create Check on URL in backend so that it is a Valid Github PR URL.
 
                 # TODO: Send Email to Mentor
@@ -98,6 +109,70 @@ def submit_pr_request(request, active_issue_pk):
                 message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
                 return HttpResponse(message)
+            else:
+                message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
+                          f"for <a href={issue.html_url}>Issue #{issue.number}</a> of Project <a href=" \
+                          f"{issue.project.html_url}>{issue.project.name}</a>"
+            return HttpResponse(message)
 
-    message = f"This request cannot be full-filled."
-    raise Http404(message)
+    message = "This request cannot be full-filled."
+    return HttpResponse(message)
+
+
+# TODO:ISSUE: Implement Functionality for mentor to assign bonus/peanlty points while accepting/rejecting the issue.A form will be needed.
+
+# TODO:ISSUE: Send an Email to Contributor Notifying that their PR is accepted/rejected.
+
+# TODO:ISSUE: Implement a feature such that mentor is able to leave remarks about PR before Accepting/Rejecting (Some fields in Model need to be added/updated).
+
+
+@login_required
+@complete_profile_required
+def accept_pr(request, pk):
+    mentor = request.user
+    pr_qs = PullRequest.objects.filter(pk=pk)
+    if pr_qs:
+        pr = pr_qs.first()
+        issue = pr.issue
+
+        if mentor.username == issue.mentor.username:
+            contributor = pr.contributor
+            pr = PullRequest.objects.get(issue=issue, contributor=contributor)
+            if pr.state == PullRequest.PENDING_VERIFICATION:
+                pr.accept()
+                message = f"Successfully accepted <a href={pr.html_url}>PR</a> of Issue <a href={issue.html_url}>" \
+                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+            else:
+                message = f"This PR Verification Request is already Accepted/Rejected."
+        else:
+            message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
+                      f"{issue.project.html_url}>{issue.project.name}</a>"
+    else:
+        message = f"This PR is probably already Accepted/Rejected."
+    return HttpResponse(message)
+
+
+@login_required
+@complete_profile_required
+def reject_pr(request, pk):
+    mentor = request.user
+    pr_qs = PullRequest.objects.filter(pk=pk)
+    if pr_qs:
+        pr = pr_qs.first()
+        issue = pr.issue
+
+        if mentor.username == issue.mentor.username:
+            contributor = pr.contributor
+            pr = PullRequest.objects.get(issue=issue, contributor=contributor)
+            if pr.state == PullRequest.PENDING_VERIFICATION:
+                pr.reject()
+                message = f"Successfully rejected <a href={pr.html_url}>PR</a> of Issue <a href={issue.html_url}>" \
+                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+            else:
+                message = f"This PR Verification Request is already Accepted/Rejected."
+        else:
+            message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
+                      f"{issue.project.html_url}>{issue.project.name}</a>"
+    else:
+        message = f"This PR is probably already Accepted/Rejected."
+    return HttpResponse(message)

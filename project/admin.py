@@ -7,11 +7,11 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('number', 'title', 'project', 'mentor', 'level', 'points', 'state')
+    list_display = ('title', 'number', 'project', 'mentor', 'level', 'points', 'state')
 
 
 class PullRequestAdmin(admin.ModelAdmin):
-    list_display = ('contributor', 'html_url', 'state', 'bonus', 'penalty')
+    list_display = ('contributor', 'html_url', 'state', 'bonus', 'penalty', 'submitted_at')
 
 
 class IssueAssignmentRequestAdmin(admin.ModelAdmin):

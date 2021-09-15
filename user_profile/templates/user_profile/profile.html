@@ -19,18 +19,23 @@
     <button><a href="{% url 'home' %}">Home</a></button>
     {% if user.is_authenticated %}
         <button><a href="{% url 'logout' %}">Logout</a></button>
-        <h2>Personal Information</h2>
+        <h2>Personal Information - </h2>
         <b>Username:</b> {{ user.username }}
-        <br>
+{#        <br>#} |
         <b>Name:</b> {{ user.first_name }} {{ user.last_name }}
-        <br>
+{#        <br>#} |
         <b>Role:</b> {{ user.userprofile.get_role_display }}
-        <br>
+{#        <br>#} |
         <b>Registration Number:</b> {{ user.userprofile.registration_no }}
-        <br>
+{#        <br>#} |
         <b>Course:</b> {{ user.userprofile.get_course_display }}
-        <br>
+{#        <br>#} |
         <b>Current Year:</b> {{ user.userprofile.get_current_year_display }}
+        |
+        <b>Total Points: </b> {{ user.userprofile.total_points }}
+
+
+
         {% comment %}
             In Django templates you can use the "get_FOO_display()" method, that will return the readable alias
             for the field, where 'FOO' is the name of the field.
@@ -61,10 +66,10 @@
                             {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
                             <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
                                 {{ pr_form.as_p }}
-                                <button type="submit">Submit</button>
+                                <button type="submit">Submit PR Link</button>
                             </form>
                         </td>
-                        <td>-- some time --</td>
+                        <td>{{ active_issue.get_remaining_time | timeuntil }}</td>
                         {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
                         {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining.  #}
                     </tr>
@@ -121,6 +126,7 @@
                     <th>Title</th>
                     <th>State</th>
                     <th>Contributor</th>
+                    <th>Submitted</th>
                     <th>Action</th>
                 </tr>
                 {% for pr in pr_requests_for_mentor %}
@@ -130,10 +136,12 @@
                         <td><a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a></td>
                         <td>{{ pr.get_state_display }}</td>
                         <td>{{ pr.contributor }}</td>
+                        <td>{{ pr.submitted_at | timesince }} ago</td>
                         <td>
+                            <button><a href="{{ pr.html_url }}" target="_blank">View PR</a></button>
                         {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected #}
-                            <button><a>Accept</a></button>
-                            <button><a>Reject</a></button>
+                            <button><a href="{% url 'accept_pr' pr.pk %}">Accept</a></button>
+                            <button><a href="{% url 'reject_pr' pr.pk %}">Reject</a></button>
                         </td>
                     </tr>
                 {% endfor %}

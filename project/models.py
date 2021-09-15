@@ -1,13 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from contrihub.settings import MAX_SIMULTANEOUS_ISSUE
+from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE
 from django.utils import timezone
 
 User = get_user_model()
 
 
 class Project(models.Model):
-
     name = models.CharField(verbose_name="Name", max_length=200)
 
     api_url = models.URLField(verbose_name="API URL")
@@ -19,7 +18,6 @@ class Project(models.Model):
 
 
 class Issue(models.Model):
-
     FREE, EASY, MEDIUM, DIFFICULT = 0, 1, 2, 3
     FREE_READ, EASY_READ, MEDIUM_READ, DIFFICULT_READ = "Free", "Easy", "Medium", "Difficult"  # Human Readable Names
     LEVELS = (
@@ -71,6 +69,11 @@ class Issue(models.Model):
         if is_active:  # If this issue is already assigned to someone currently
             return False
 
+        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, requester=requester)
+
+        if is_already_requested:
+            return False
+
         profile = requester.userprofile
 
         if profile.role != profile.STUDENT:
@@ -99,7 +102,6 @@ class Issue(models.Model):
 
 
 class PullRequest(models.Model):
-
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
     STATES = (
         (ACCEPTED, "Accepted"),
@@ -119,12 +121,61 @@ class PullRequest(models.Model):
 
     penalty = models.IntegerField(verbose_name="Penalty", default=0)
 
+    submitted_at = models.DateTimeField(verbose_name="Submitted At", default=timezone.now)
+
     def __str__(self):
         return f"{self.contributor}_{self.issue}"
 
+    def accept(self, bonus=0, penalty=0):
+        """
+        Method to accept (verify) PR.
+        :param bonus:
+        :param penalty:
+        :return:
+        """
+
+        # Updating this PR
+        self.state = self.ACCEPTED
+        self.bonus = int(bonus)
+        self.penalty = int(penalty)
+        self.save()
+
+        # Updating related Issue
+        self.issue.state = self.issue.CLOSED
+        self.issue.save()
+
+        # Updating Contributor's Profile
+        contributor_profile = self.contributor.userprofile
+        contributor_profile.total_points += int(self.issue.points)
+        contributor_profile.bonus_points += int(bonus)
+        contributor_profile.deducted_points += int(penalty)
+        contributor_profile.save()
+
+        # Deleting Active Issue related to this PR
+        self.issue.activeissue_set.first().delete()
+
+    def reject(self, bonus=0, penalty=0):
+        """
+        Method to reject (verify) PR.
+        :param bonus:
+        :param penalty:
+        :return:
+        """
+
+        # Updating this PR
+        self.state = self.REJECTED
+        self.bonus = int(bonus)
+        self.penalty = int(penalty)
+        self.save()
+
+        # Updating Contributor's Profile
+        contributor_profile = self.contributor.userprofile
+        contributor_profile.bonus_points += int(bonus)
+        contributor_profile.deducted_points += int(penalty)
+        contributor_profile.save()
+
 
 class IssueAssignmentRequest(models.Model):
-
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
     STATES = (
         (ACCEPTED, "Accepted"),
@@ -180,10 +231,15 @@ class ActiveIssue(models.Model):
         if self.issue.state == self.issue.CLOSED:  # If this Issue has been closed
             return False
 
-        all_prs = PullRequest.objects.filter(contributor=contributor, issue=self.issue,
-                                             state=PullRequest.PENDING_VERIFICATION)
+        is_pending = PullRequest.objects.filter(contributor=contributor, issue=self.issue,
+                                                state=PullRequest.PENDING_VERIFICATION)
+        is_accepted = PullRequest.objects.filter(contributor=contributor, issue=self.issue,
+                                                 state=PullRequest.ACCEPTED)
 
-        if all_prs:  # If there is already a pending PR for this user and issue
+        if is_pending or is_accepted:  # If there is already a pending PR for this user and issue
             return False
 
         return True
+
+    def get_remaining_time(self):
+        return self.assigned_at + timezone.timedelta(days=DAYS_PER_ISSUE)
