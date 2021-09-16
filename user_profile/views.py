@@ -63,3 +63,13 @@ def complete(request):
 
 
     # TODO: Edit Profile Functionality ISSUE
+
+
+@login_required
+def rankings(request):
+    contributors = UserProfile.objects.filter(role=UserProfile.STUDENT).order_by('-total_points')
+    context = {
+        'contributors': contributors,
+    }
+    # TODO:ISSUE: Display number of Issues solved as well in the Rankings
+    return render(request, 'user_profile/rankings.html', context=context)

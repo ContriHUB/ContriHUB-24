@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% comment %}
+    context = {
+        'contributors': contributors,
+    }
+{% endcomment %}
+
+{% block title %}
+    Rankings
+{% endblock %}
+
+{% block content %}
+    <button><a href="{% url 'home' %}">Home</a></button>
+    <button><a href="{% url 'user_profile' user.username %}">User Profile</a></button>
+    <button><a href="{% url 'logout' %}">Logout</a></button>
+    <h1>Rankings</h1>
+    <table border="2" cellpadding="10" cellspacing="5">
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Total Points</th>
+            <th>Bonus Points</th>
+            <th>Deducted Points</th>
+        </tr>
+        {% for contributor in contributors %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ contributor.user.username }}</td>
+                <td>{{ contributor.total_points }}</td>
+                <td>{{ contributor.bonus_points }}</td>
+                <td>{{ contributor.deducted_points }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

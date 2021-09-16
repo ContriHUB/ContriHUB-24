@@ -12,7 +12,7 @@ from django.utils import timezone
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
 # TODO:ISSUE: Make a Custom Http404 Page
-
+# TODO:ISSUE: Up-vote Down-vote Issue Feature
 
 @complete_profile_required
 def home(request):
@@ -34,6 +34,7 @@ def authorize(request):
     return render(request, 'home/authorize.html', {})
 
 
+@login_required
 def logout_(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))

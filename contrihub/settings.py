@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 from decouple import config
 from pathlib import Path
+import dj_database_url
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +49,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # Middleware used for deployment on Heroku (Put it at the top)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,6 +137,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -147,7 +154,7 @@ SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY', default="")
 SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET', default="")
 SOCIAL_AUTH_GITHUB_SCOPE = [
     'user:email',  # For Reading user's email
-    'read:org',  # For Reading Organizations authenticated user is part of
+    # 'read:org',  # For Reading Organizations authenticated user is part of
 ]
 
 LOGIN_URL = 'authorize'
@@ -171,3 +178,6 @@ LABEL_RESTRICTED = config('LABEL_RESTRICTED', default="restricted")
 DEPENDABOT_LOGIN = config('DEPENDABOT_LOGIN', default="dependabot[bot]")
 MAX_SIMULTANEOUS_ISSUE = config('MAX_SIMULTANEOUS_ISSUE', default=2, cast=int)
 DAYS_PER_ISSUE = config('DAYS_PER_ISSUE', default=2, cast=int)
+
+
+django_heroku.settings(locals())  # For deployment to Heroku

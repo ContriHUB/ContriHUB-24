@@ -17,6 +17,7 @@
         <h2>Click Here to Login Using Github</h2>
         <button><a href="{% url 'authorize' %}">Authorize</a></button>
     {% else %}
+        <button><a href="{% url 'rankings' %}">Rankings</a></button>
         <button><a href="{% url 'user_profile' user.username %}">User Profile</a></button>
         <button><a href="{% url 'logout' %}">Logout</a></button>
         <h1>Welcome to ContriHUB 21</h1>

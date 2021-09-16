@@ -17,8 +17,10 @@
 
 {% block content %}
     <button><a href="{% url 'home' %}">Home</a></button>
+    <button><a href="{% url 'rankings' %}">Rankings</a></button>
+    <button><a href="{% url 'logout' %}">Logout</a></button>
+
     {% if user.is_authenticated %}
-        <button><a href="{% url 'logout' %}">Logout</a></button>
         <h2>Personal Information - </h2>
         <b>Username:</b> {{ user.username }}
 {#        <br>#} |
