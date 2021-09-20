@@ -9,7 +9,8 @@
 {% endblock %}
 
 {% block content %}
-    Welcome {{ user }}!
+    {#  TODO: ISSUE: Implement Front-end for this Form #}
+    Wake up, {{ user }}!
     <h1>Enter Following Information - </h1>
     <form method="post" action="{% url 'complete_profile' %}">
         {% csrf_token %}

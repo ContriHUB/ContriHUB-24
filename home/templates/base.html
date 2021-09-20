@@ -1,23 +1,64 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/png" href="{% static "images/logo/logo.png" %}"/>
+
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Material Design for Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.16/css/mdb.min.css" rel="stylesheet">
+
+    <!-- MDB -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css"
+      rel="stylesheet"
+    />
+
+    {% include 'css.html' %}
+    <style>
+        html {
+            height:100%;
+        }
+        body {
+            height:100%;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            background: url('{% static "images/body/background.jpg" %}');
+            background-size: cover;
+        }
+        {% block style %}
+        {% endblock %}
+    </style>
     <title>
         {% block title %}
-
         {% endblock %}
     </title>
 </head>
 <body>
-    <h1 style="text-align: center">CAUTION: Website is Under Development!</h1>
-    <hr>
     {% block content %}
-
     {% endblock %}
+
+    {% include "footer.html" %}
+    {% include "scripts.html" %}
 
     {% block javascript %}
-
     {% endblock %}
-{# TODO: Add Footer with MNNIT Map ISSUE #}
 </body>
 </html>

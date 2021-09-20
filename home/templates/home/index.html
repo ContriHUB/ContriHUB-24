@@ -1,4 +1,80 @@
+{#{% extends 'base.html' %}#}
+{#{% load static %}#}
+{#{% comment %}#}
+{#    context = {#}
+{#        'projects': project_qs,#}
+{#        'issues': issues_qs#}
+{#    }#}
+{#{% endcomment %}#}
+{##}
+{#{% block title %}#}
+{#    Homepage#}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{##}
+{#    {% include "home/navbar.html"%}#}
+{##}
+{#    <div style="text-align: center"><h1 class="display-6"><b>All Issues</b></h1></div>#}
+{#    <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">#}
+{#        <tr>#}
+{#            <th>Project</th>#}
+{#            <th>#</th>#}
+{#            <th>Title</th>#}
+{#            <th>Mentor</th>#}
+{#            <th>Level</th>#}
+{#            <th>Points</th>#}
+{#            <th>Restricted</th>#}
+{#            <th>State</th>#}
+{#            <th>Action</th>#}
+{#        </tr>#}
+        {# TODO: Display who is currently working on this issue ISSUE #}
+{#        {% for issue in issues %}#}
+{#            <tr>#}
+{#                <td>#}
+{#                    <button type="button" class="btn btn-secondary mt-0 p-1" >#}
+{#                        <a style="color: white" href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>#}
+{#                    </button>#}
+{#                </td>#}
+{#                <td><b>#{{ issue.number }}</b></td>#}
+{#                <td>#}
+{#                    <button type="button" class="btn btn-info mt-0 p-1">#}
+{#                        <a style="color: white" href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>#}
+{#                    </button>#}
+{#                </td>#}
+{#                <td><b>@{{ issue.mentor }}</b></td>#}
+{##}
+{#                {% if issue.get_level_display == "Easy" %}#}
+{#                    <td><button type="button" class="btn btn-success mt-0 p-2">Easy</button></td>#}
+{#                {% elif issue.get_level_display == "Medium" %}#}
+{#                    <td><button type="button" class="btn btn-warning mt-0 p-2">Medium</button></td>#}
+{#                {% elif issue.get_level_display == "Hard" %}#}
+{#                    <td><button type="button" class="btn btn-danger mt-0 p-2">Hard</button></td>#}
+{#                {% endif %}#}
+{##}
+{#                <td><b>{{ issue.points }}</b></td>#}
+{#                <td><b>{{ issue.is_restricted }}</b></td>#}
+{#                <td><b>{{ issue.get_state_display }}</b></td>#}
+{#                <td>#}
+                    {# Disable the Button is Issue is Closed or Assigned #}
+{#                    <button type="button" class="btn btn-primary mt-0"><a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">Request Assignment</a></button>#}
+{#                </td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#    </table>#}
+{##}
+{#{% endblock %}#}
+{##}
+{#{% block javascript %}#}
+{##}
+{#{% endblock %}#}
+{##}
+{# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
+
+
+{# TRIAL #}
 {% extends 'base.html' %}
+{% load static %}
 {% comment %}
     context = {
         'projects': project_qs,
@@ -10,56 +86,65 @@
     Homepage
 {% endblock %}
 
-
 {% block content %}
-    {% if not user.is_authenticated %}
-        <h1>Welcome to ContriHUB 21</h1>
-        <h2>Click Here to Login Using Github</h2>
-        <button><a href="{% url 'authorize' %}">Authorize</a></button>
-    {% else %}
-        <button><a href="{% url 'rankings' %}">Rankings</a></button>
-        <button><a href="{% url 'user_profile' user.username %}">User Profile</a></button>
-        <button><a href="{% url 'logout' %}">Logout</a></button>
-        <h1>Welcome to ContriHUB 21</h1>
-        Hey {{ user.username }}, You are Authorized
-    {% endif %}
 
-    <h1>All Projects: </h1>
-    {% for project in projects %}
-        <h3><a href="{{ project.html_url }}" target="_blank">{{ project.name }}</a> (<a href="{{ project.api_url }}" target="_blank">API URL</a>)</h3>
-    {% endfor %}
+    {% include "home/navbar.html"%}
 
-    <h1>All Issues: </h1>
-    <table border="2" cellpadding="10" cellspacing="5">
-        <tr>
-            <th>Project</th>
-            <th>#</th>
-            <th>Title</th>
-            <th>Mentor</th>
-            <th>Level</th>
-            <th>Points</th>
-            <th>Restricted</th>
-            <th>State</th>
-            <th>Action</th>
-        </tr>
-        {# TODO: Display who is currently working on this issue ISSUE #}
+    <div style="text-align: center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>
+    <div class="container-flow p-3" >
+        <div class="row d-flex justify-content-between align-items-stretch" >
         {% for issue in issues %}
-            <tr>
-                <td><a href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a></td>
-                <td>#{{ issue.number }}</td>
-                <td><a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a></td>
-                <td>{{ issue.mentor }}</td>
-                <td>{{ issue.get_level_display }}</td>
-                <td>{{ issue.points }}</td>
-                <td>{{ issue.is_restricted }}</td>
-                <td>{{ issue.get_state_display }}</td>
-                <td>
-                    {# Disable the Button is Issue is Closed or Assigned #}
-                    <button><a href="{% url 'request_issue_assignment' issue.pk %}">Request Assignment</a></button>
-                </td>
-            </tr>
+            <div class="col card m-3" style="border-radius: 15px;">
+              <div class="card-body p-4">
+                <h3 class="mb-3">
+                    <span class="text-muted small">
+                        <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Issue Url" type="button" class="btn btn-info mt-0 p-2">
+                            <a style="color: white" href="{{ issue.html_url }}" target="_blank"><i class="fas fa-link me-1"></i>{{ issue.title }}</a>
+                        </button>
+                    </span>
+                </h3>
+                  <p class="small mb-0"> <b data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Issue #">#{{ issue.number }}</b> <span class="mx-2">|</span> <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Mentor of this Issue">@{{ issue.mentor }}</b>
+                    <span class="mx-2">|</span>
+                    <strong>
+                        {% if issue.get_level_display == "Easy" %}
+                            <td><button style="margin-bottom: -4px" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Level" type="button" class="btn btn-success mt-0 p-2">Easy</button></td>
+                        {% elif issue.get_level_display == "Medium" %}
+                            <td><button style="margin-bottom: -4px" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Level" type="button" class="btn btn-warning mt-0 p-2">Medium</button></td>
+                        {% elif issue.get_level_display == "Hard" %}
+                            <td><button style="margin-bottom: -4px" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Level" type="button" class="btn btn-danger mt-0 p-2">Hard</button></td>
+                        {% endif %}
+                    </strong>
+                    <span class="mx-2">|</span>
+                    <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Points">{{ issue.points }}</b>
+                    <span class="mx-2">|</span>
+                    <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Is Issue Restricted?">{{ issue.is_restricted }}</b>
+                    <span class="mx-2">|</span>
+                    <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Status">{{ issue.get_state_display }}</b>
+                    <span class="mx-2">|</span>
+                </p>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-between ">
+                        <h3 class="mb-3">
+                            <button type="button" class="btn btn-secondary mt-0 p-1" data-mdb-toggle="tooltip" data-mdb-placement="right" title="Project Name">
+                                <a style="color: white" href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
+                            </button>
+                        </h3>
+
+                  <p class="mb-0 text-uppercase">
+                      <span class="text-muted small">
+                          {# TODO: ISSUE: Disable the Button is Issue is Closed or Assigned #}
+                          <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0"><a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">Request Assignment</a></button>
+                      </span>
+                  </p>
+                </div>
+
+              </div>
+            </div>
         {% endfor %}
-    </table>
+        </div>
+    </div>
 
 {% endblock %}
 

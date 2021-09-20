@@ -16,38 +16,20 @@
 {% endblock %}
 
 {% block content %}
-    <button><a href="{% url 'home' %}">Home</a></button>
-    <button><a href="{% url 'rankings' %}">Rankings</a></button>
-    <button><a href="{% url 'logout' %}">Logout</a></button>
+    {% include "user_profile/navbar-profile.html" %}
 
     {% if user.is_authenticated %}
-        <h2>Personal Information - </h2>
-        <b>Username:</b> {{ user.username }}
-{#        <br>#} |
-        <b>Name:</b> {{ user.first_name }} {{ user.last_name }}
-{#        <br>#} |
-        <b>Role:</b> {{ user.userprofile.get_role_display }}
-{#        <br>#} |
-        <b>Registration Number:</b> {{ user.userprofile.registration_no }}
-{#        <br>#} |
-        <b>Course:</b> {{ user.userprofile.get_course_display }}
-{#        <br>#} |
-        <b>Current Year:</b> {{ user.userprofile.get_current_year_display }}
-        |
-        <b>Total Points: </b> {{ user.userprofile.total_points }}
-
-
+        {% include "user_profile/profile-card.html" %}
 
         {% comment %}
             In Django templates you can use the "get_FOO_display()" method, that will return the readable alias
             for the field, where 'FOO' is the name of the field.
         {% endcomment %}
 
-        <br>
-
         {% if user.userprofile.role == user.userprofile.STUDENT %}
-            <h2>Currently Active Issues: </h2>
-            <table border="2" cellpadding="10" cellspacing="5">
+            <div><h1 class="display-6">Currently Active Issues</h1></div>
+            {# TODO: ISSUE: Implement Cards here instead of table  #}
+            <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">
                 <tr>
                     <th>Project</th>
                     <th>Issue #</th>
@@ -59,27 +41,38 @@
                 </tr>
                 {% for active_issue in active_issues %}
                     <tr>
-                        <td><a href="{{ active_issue.issue.project.html_url }}">{{ active_issue.issue.project.name }}</a></td>
+
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary mt-0 p-1" data-mdb-color="dark">
+                                <a href="{{ active_issue.issue.project.html_url }}">{{ active_issue.issue.project.name }}</a>
+                            </button>
+                        </td>
                         <td>{{ active_issue.issue.number }}</td>
-                        <td><a href="{{ active_issue.issue.html_url }}">{{ active_issue.issue.title }}</a></td>
-                        <td>{{ active_issue.issue.mentor }}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-info mt-0 p-1" data-mdb-color="dark">
+                                <a href="{{ active_issue.issue.html_url }}">{{ active_issue.issue.title }}</a>
+                            </button>
+                        </td>
+
+                        <td><b>@{{ active_issue.issue.mentor }}</b></td>
                         <td>{{ active_issue.issue.get_state_display }}</td>
                         <td>
-                            {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
+                             TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.
                             <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
                                 {{ pr_form.as_p }}
                                 <button type="submit">Submit PR Link</button>
                             </form>
                         </td>
                         <td>{{ active_issue.get_remaining_time | timeuntil }}</td>
-                        {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
-                        {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining.  #}
+                         TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing
+                         TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining.
                     </tr>
                 {% endfor %}
             </table>
 
-            <h2>Current Assignment Requests: </h2>
-            <table border="2" cellpadding="10" cellspacing="5">
+            <div><h1 class="display-6">Current Assignment Requests</h1></div>
+            {# TODO: ISSUE: Implement Cards here instead of table  #}
+            <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">
                 <tr>
                     <th>Project</th>
                     <th>#</th>
@@ -89,17 +82,25 @@
                 </tr>
                 {% for request in assignment_requests_by_student %}
                     <tr>
-                        <td><a href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a></td>
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary mt-0 p-1" data-mdb-color="dark">
+                                <a href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
+                            </button>
+                        </td>
                         <td>{{ request.issue.number }}</td>
-                        <td><a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a></td>
+                        <td>
+                            <button type="button" class="btn btn-outline-info mt-0 p-1" data-mdb-color="dark">
+                                <a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a>
+                            </button>
+                        </td>
                         <td>{{ request.get_state_display }}</td>
-                        <td>{{ request.issue.mentor.username }}</td>
+                        <td><b>@{{ request.issue.mentor.username }}</b></td>
                     </tr>
                 {% endfor %}
             </table>
 
-            <h2>PRs Submitted: </h2>
-            <table border="2" cellpadding="10" cellspacing="5">
+            <div><h1 class="display-6">PRs Submitted </h1></div>
+            <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">
                 <tr>
                     <th>Related Issue</th>
                     <th>Issue Number</th>
@@ -107,94 +108,161 @@
                 </tr>
                 {% for pr in pr_requests_by_student %}
                     <tr>
-                        <td>{{ pr.issue.title }}</td>
+                        <td>
+                            <button type="button" class="btn btn-info mt-0 p-1" data-mdb-color="dark">
+                                <a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a>
+                            </button>
+                        </td>
                         <td>{{ pr.issue.number }}</td>
                         <td>{{ pr.get_state_display }}</td>
                     </tr>
                 {% endfor %}
             </table>
-
         {% else %}
-            {% if user.userprofile.role == user.userprofile.ADMIN %}
-                <h2>Available Options - </h2>
-                <button><a href="{% url 'populate_projects' %}">Populate Projects</a></button>
-                <button><a href="{% url 'populate_issues' %}">Populate Issues</a></button>
-            {% endif %}
-            <h2>PR Verification Requests: </h2>
-            <table border="2" cellpadding="10" cellspacing="5">
-                <tr>
-                    <th>Project</th>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>State</th>
-                    <th>Contributor</th>
-                    <th>Submitted</th>
-                    <th>Action</th>
-                </tr>
-                {% for pr in pr_requests_for_mentor %}
-                    <tr>
-                        <td><a href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a></td>
-                        <td>{{ pr.issue.number }}</td>
-                        <td><a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a></td>
-                        <td>{{ pr.get_state_display }}</td>
-                        <td>{{ pr.contributor }}</td>
-                        <td>{{ pr.submitted_at | timesince }} ago</td>
-                        <td>
-                            <button><a href="{{ pr.html_url }}" target="_blank">View PR</a></button>
-                        {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected #}
-                            <button><a href="{% url 'accept_pr' pr.pk %}">Accept</a></button>
-                            <button><a href="{% url 'reject_pr' pr.pk %}">Reject</a></button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+            <div><h1 class="display-6">PR Verification Requests: </h1></div>
+            {# TODO: ISSUE: Implement Cards here instead of table  #}
+            <div class="container-flow p-3" >
+                <div class="row d-flex justify-content-between align-items-stretch" >
+                    {% for pr in pr_requests_for_mentor %}
+                        <div class="col card m-3" style="border-radius: 15px;">
+                          <div class="card-body p-4">
+                            <h3 class="mb-3">
+                                <span class="text-muted small">
+                                <button type="button" class="btn btn-secondary mt-0 p-1" data-mdb-color="dark">#}
+                                    <a style="color: white" href="{{ pr.issue.html_url }}" target="_blank">{ pr.issue.title }}</a>
+                                </button>
+                                </span>
+                            </h3>
+                              <p class="small mb-0"> <b data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Issue #">#{{ pr.issue.number }}</b>
+                                <span class="mx-2">|</span>
+                                <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue State">{{ pr.get_state_display }}</b>
+                                <span class="mx-2">|</span>
+                                <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Requester?">{{ pr.contributor }}</b>
+                                <span class="mx-2">|</span>
+                                <b>{{ pr.submitted_at | timesince }} ago</b>
+                                <button><a style="color: white" href="{{ pr.html_url }}" target="_blank">View PR</a></button>
+                            </p>
 
-            <h2>Issue Assignment Requests: </h2>
-            <table border="2" cellpadding="10" cellspacing="5">
-                <tr>
-                    <th>Project</th>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>State</th>
-                    <th>Requester</th>
-                    <th>Action</th>
-                </tr>
-                {% for request in assignment_requests_for_mentor %}
-                    <tr>
-                        <td><a href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a></td>
-                        <td>{{ request.issue.number }}</td>
-                        <td><a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a></td>
-                        <td>{{ request.get_state_display }}</td>
-                        <td>{{ request.requester }}</td>
-                        <td>
-                        {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected #}
-                            <button><a href="{% url 'accept_issue_request' request.pk %}">Accept</a></button>
-                            <button><a>Reject</a></button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between ">
+                              <h3 class="mb-3">
+                                  <button type="button" class="btn btn-secondary mt-0 p-1" data-mdb-color="dark">
+                                    <a style="color: white" href="{{ pr.issue.project.html_url }}" target="_blank">{{ pr.issue.project.name }}</a>
+                                  </button>
+                              </h3>
+                                <p class="mb-0 text-uppercase">
+                                  <span class="text-muted small">
+                                      <button><a style="color: white" href="{{ pr.html_url }}" target="_blank">View PR</a></button>
+                                  </span>
+                              </p>
+                              {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected #}
+                              <p class="mb-0 text-uppercase">
+                                  <span class="text-muted small">
+                                      <button><a href="{% url 'accept_pr' pr.pk %}">Accept</a></button>
+                                  </span>
+                              </p>
+                              <p class="mb-0 text-uppercase">
+                                  <span class="text-muted small">
+                                      <button><a href="href='{% url 'reject_pr' pr.pk %}'">Reject</a></button>
+                                  </span>
+                              </p>
+                            </div>
 
-            <h2>All Issues Under Me: </h2>
-            <table border="2" cellpadding="10" cellspacing="5">
-                <tr>
-                    <th>Project</th>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>State</th>
-                </tr>
-                {% for issue in mentored_issues %}
-                    <tr>
-                        <td><a href="{{ issue.project.html_url }}">{{ issue.project.name }}</a></td>
-                        <td>{{ issue.number }}</td>
-                        <td><a href="{{ issue.html_url }}">{{ issue.title }}</a></td>
-                        <td>{{ issue.get_state_display }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
+                          </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div><h1 class="display-6">Issue Assignment Requests: </h1></div>
+            <div class="container-flow p-3" >
+                <div class="row d-flex justify-content-between align-items-stretch" >
+                    {% for request in assignment_requests_for_mentor %}
+                        <div class="col card m-3" style="border-radius: 15px;">
+                          <div class="card-body p-4">
+                            <h3 class="mb-3">
+                                <span class="text-muted small">
+                                    <button type="button" class="btn btn-secondary mt-0 p-1" data-mdb-color="dark">
+                                        <a style="color: white" href="{{ request.issue.html_url }}" target="_blank">{{ request.issue.title }}</a>
+                                    </button>
+                                </span>
+                            </h3>
+                              <p class="small mb-0"> <b data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Issue #">#{{ request.issue.number }}</b> <span class="mx-2">|</span> <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Mentor of this Issue">@{{ issue.mentor }}</b>
+                                <span class="mx-2">|</span>
+                                <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue State">{{ request.get_state_display }}</b>
+                                <span class="mx-2">|</span>
+                                <b data-mdb-toggle="tooltip" data-mdb-placement="top" title="Issue Requester?">{{ request.requester }}</b>
+                                <span class="mx-2">|</span>
+                            </p>
+
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between ">
+                              <h3 class="mb-3">
+                                   <button type="button" class="btn btn-secondary mt-0 p-1" data-mdb-color="dark">
+                                        <a style="color: white" href="{{ request.issue.project.html_url }}" target="_blank">{{ request.issue.project.name }}</a>
+                                    </button>
+                              </h3>
+
+                              {# TODO: ISSUE: Disable these buttons from Frontend if Issue is already accepted/rejected#}
+                              <p class="mb-0 text-uppercase">
+                                  <span class="text-muted small">
+                                      <button><a href="{% url 'accept_issue_request' request.pk %}">Accept</a></button>
+                                  </span>
+                              </p>
+                              <p class="mb-0 text-uppercase">
+                                  <span class="text-muted small">
+                                      <button><a>Reject</a></button>
+                                  </span>
+                              </p>
+                            </div>
+
+                          </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div><h1 class="display-6">All Issues Under Me: </h1></div>
+            <div class="container-flow p-3" >
+                <div class="row d-flex justify-content-between align-items-stretch" >
+                    {% for issue in mentored_issues %}
+                        <div class="col card m-3" style="border-radius: 15px;">
+                          <div class="card-body p-4">
+                            <h3 class="mb-3">
+                                <span class="text-muted small">
+                                    <button type="button" class="btn btn-info mt-0 p-1" data-mdb-toggle="tooltip" data-mdb-placement="right" title="Issue Url">
+                                    <a style="color: white" href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
+                                   </button>
+                                </span>
+                            </h3>
+                            <p>
+                                <span class="mx-2">|</span>
+                                <b data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Issue #">#{{ issue.number }}</b>
+                                <span class="mx-2">|</span>
+                                <b data-mdb-toggle="tooltip" data-mdb-placement="right" title="Issue Status">{{ issue.get_state_display }}</b>
+                                <span class="mx-2">|</span>
+                            </p>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between ">
+                              <h3 class="mb-3">
+                                    <button data-mdb-toggle="tooltip" data-mdb-placement="right" title="Project Name" type="button" class="btn btn-secondary mt-0 p-2">
+                                        <a style="color: white" href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
+                                    </button>
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
         {% endif %}
     {% else %}
-        Hello, Anon. You need to Authorize with Github First.
+        <div class="alert alert-secondary" role="alert">
+            Hello, Anon. You need to Authorize with Github First.
+        </div>
     {% endif %}
 {% endblock %}
 

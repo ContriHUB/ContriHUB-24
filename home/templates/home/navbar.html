@@ -1,0 +1,118 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Navbar brand -->
+      <a style="color: #39FF14" class="navbar-brand mt-2 mt-lg-0" href="{% url 'home' %}">
+          <b>ContriHub</b>
+      </a>
+
+        <div class="d-flex align-items-center">
+            <a  class="nav-link" href="https://contrihub.github.io/#about" target="_blank">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-rounded"
+                  data-mdb-ripple-color="dark"
+                >
+                    Rules
+                </button>
+            </a>
+        </div>
+
+      <!-- Left links -->
+        {% if not user.is_authenticated %}
+                <!-- Right elements -->
+                <div class="d-flex align-items-center" style="margin-left: auto">
+                    <a  class="nav-link" href="{% url 'authorize' %}">
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-rounded"
+                          data-mdb-ripple-color="dark"
+                        >
+                            Authorize
+                        </button>
+                    </a>
+                </div>
+                <!-- Right elements -->
+        {% else %}
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a  class="nav-link" href="{% url 'rankings' %}">
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-rounded"
+                          data-mdb-ripple-color="dark"
+                        >
+                            Ranking
+                        </button>
+                    </a>
+                  </li>
+                <li class="nav-item">
+                  <a  class="nav-link" href="{% url 'user_profile'  user.username %}">
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-rounded"
+                          data-mdb-ripple-color="dark"
+                        >
+                            User Profile
+                        </button>
+                    </a>
+                </li>
+                  <li class="nav-link">
+                    <div class="dropdown">
+                      <button
+                        class="btn btn-primary btn-rounded dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButton"
+                        data-mdb-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        All Projects
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        {% for project in projects %}
+                            <li class="nav-link" style="width: 500px">
+                                <span class="dropdown-item-text">
+                                    <button type="button" class="btn btn-secondary p-1" data-mdb-ripple-color="dark">
+                                        <a style="color: white" href="{{ project.html_url }}" target="_blank">
+                                            {{ project.name }}
+                                        </a>
+                                    </button>
+                                    <button type="button" class="btn btn-info p-1" data-mdb-ripple-color="dark">
+                                        <a style="color: white" href="{{ project.api_url }}" target="_blank">
+                                            API URL
+                                        </a>
+                                    </button>
+
+                                </span>
+                            </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </li>
+            </ul>
+            <!-- Right elements -->
+            <div class="d-flex align-items-center">
+                <a  class="nav-link" href="{% url 'logout' %}">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-rounded"
+                      data-mdb-ripple-color="dark"
+                    >
+                        Logout
+                    </button>
+                </a>
+            </div>
+            <!-- Right elements -->
+        {% endif %}
+    </div>
+
+    <!-- Collapsible wrapper -->
+
+
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->

@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% comment %}
     context = {
         'contributors': contributors,
@@ -8,13 +10,12 @@
 {% block title %}
     Rankings
 {% endblock %}
-
 {% block content %}
-    <button><a href="{% url 'home' %}">Home</a></button>
-    <button><a href="{% url 'user_profile' user.username %}">User Profile</a></button>
-    <button><a href="{% url 'logout' %}">Logout</a></button>
-    <h1>Rankings</h1>
-    <table border="2" cellpadding="10" cellspacing="5">
+
+    {% include "user_profile/navbar-rankings.html" %}
+
+    <div style="text-align: center"><h1 class="display-6 text-white">Rankings</h1></div>
+    <table class="table table-bordered text-white" style="background-color: rgba(0,0,0, 0.3);" border="2" cellpadding="10" cellspacing="5">
         <tr>
             <th>Rank</th>
             <th>Username</th>
@@ -24,11 +25,23 @@
         </tr>
         {% for contributor in contributors %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ contributor.user.username }}</td>
-                <td>{{ contributor.total_points }}</td>
-                <td>{{ contributor.bonus_points }}</td>
-                <td>{{ contributor.deducted_points }}</td>
+                <td><b>{{ forloop.counter }}</b></td>
+                <td><b>@{{ contributor.user.username }}</b></td>
+                <td>
+                    <span class="badge badge-pill badge-primary">
+                        {{ contributor.total_points }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge badge-pill badge-success">
+                        {{ contributor.bonus_points }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge badge-pill badge-danger">
+                        {{ contributor.deducted_points }}
+                    </span>
+                </td>
             </tr>
         {% endfor %}
 
