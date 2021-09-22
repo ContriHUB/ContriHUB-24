@@ -11,8 +11,15 @@ User = get_user_model()
 
 # TODO:ISSUE: Implement feature where User can see how many Issues they have solved Level Wise
 
+
 @complete_profile_required
 def profile(request, username):
+    """
+    View which returns User Profile based on username.
+    :param request:
+    :param username:
+    :return:
+    """
     user = request.user
     if user.is_authenticated and username == user.username:
         pr_requests_by_student = PullRequest.objects.filter(contributor=user)
@@ -45,6 +52,11 @@ def profile(request, username):
 
 @login_required
 def complete(request):
+    """
+    For Completing User Profile after First Login.
+    :param request:
+    :return:
+    """
     existing_profile = UserProfile.objects.get(user=request.user)
     if request.method == "GET":
         form = UserProfileForm(instance=existing_profile)
@@ -52,17 +64,17 @@ def complete(request):
             'form': form
         }
         return render(request, 'user_profile/complete_profile.html', context=context)
-    # else:
+
     form = UserProfileForm(request.POST, instance=existing_profile)
     if form.is_valid():
-        # TODO: Backend Check on Registration Number ISSUE
+        # TODO:ISSUE Backend Check on Registration Number
         existing_profile = form.save(commit=False)
         existing_profile.is_complete = True
         existing_profile.save()
     return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
 
 
-    # TODO: Edit Profile Functionality ISSUE
+    # TODO:ISSUE Edit Profile Functionality
 
 
 @login_required

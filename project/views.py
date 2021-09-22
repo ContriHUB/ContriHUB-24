@@ -1,18 +1,22 @@
 from django.shortcuts import HttpResponseRedirect, reverse
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
-    LABEL_RESTRICTED
+    LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, DEFAULT_HARD_POINTS
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import safe_hit_url, SUCCESS, complete_profile_required
-
 User = get_user_model()
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
 @complete_profile_required
 def populate_projects(request):
-
+    """
+    Used to Populate Projects in Local Database. Creates entries based on project names present in AVAILABLE_PROJECTS
+    config variable in settings.py
+    :param request:
+    :return:
+    """
     api_uri = "https://api.github.com/repos/ContriHUB/"
     html_uri = "https://github.com/ContriHUB/"
     print(AVAILABLE_PROJECTS)
@@ -33,6 +37,11 @@ def populate_projects(request):
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
 @complete_profile_required
 def populate_issues(request):
+    """
+    Used to Populate Issues in Local Database. It fetches Issues from Github using Github API.
+    :param request:
+    :return:
+    """
     project_qs = Project.objects.all()
 
     social = request.user.social_auth.get(provider='github')
@@ -97,10 +106,10 @@ def parse_labels(labels):
             mentor = parse_mentor(label["name"])
 
         if str(label["description"]).lower() == LABEL_LEVEL:  # Parsing Level
-            level = parse_level(label["name"])
+            level, points = parse_level(label["name"])  # Fetching Level and it's default point
 
         if str(label["description"]).lower() == LABEL_POINTS:  # Parsing Points
-            points = parse_points(label["name"])
+            points = parse_points(label["name"])  # Consider Custom points if provided
 
         if str(label["name"]).lower() == LABEL_RESTRICTED:  # Parsing Is Restricted
             is_restricted = True
@@ -110,12 +119,13 @@ def parse_labels(labels):
 
 def parse_level(level):
     level = str(level).lower()
-    levels_read = (Issue.FREE_READ, Issue.EASY_READ, Issue.MEDIUM_READ, Issue.DIFFICULT_READ)
-    levels = (Issue.FREE, Issue.EASY, Issue.MEDIUM, Issue.DIFFICULT)
+    levels_read = (Issue.FREE_READ, Issue.EASY_READ, Issue.MEDIUM_READ, Issue.HARD_READ)
+    levels = (Issue.FREE, Issue.EASY, Issue.MEDIUM, Issue.HARD)
+    default_points = (DEFAULT_FREE_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, DEFAULT_HARD_POINTS)
 
-    for lev, read in zip(levels, levels_read):
+    for lev, read, pts in zip(levels, levels_read, default_points):
         if level == str(read).lower():
-            return lev
+            return lev, pts
 
     return Issue.EASY  # Default FallBack
 

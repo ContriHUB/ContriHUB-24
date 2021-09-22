@@ -27,7 +27,7 @@
         {% endcomment %}
 
         {% if user.userprofile.role == user.userprofile.STUDENT %}
-            <div><h1 class="display-6">Currently Active Issues</h1></div>
+            <div style="text-align: center"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
             {# TODO: ISSUE: Implement Cards here instead of table  #}
             <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">
                 <tr>
@@ -69,8 +69,7 @@
                     </tr>
                 {% endfor %}
             </table>
-
-            <div><h1 class="display-6">Current Assignment Requests</h1></div>
+            <div style="text-align: center"><h1 class="display-6 text-white"><b>Current Assignment Requests</b></h1></div>
             {# TODO: ISSUE: Implement Cards here instead of table  #}
             <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">
                 <tr>
@@ -99,7 +98,7 @@
                 {% endfor %}
             </table>
 
-            <div><h1 class="display-6">PRs Submitted </h1></div>
+            <div style="text-align: center"><h1 class="display-6 text-white"><b>PRs Submitted</b></h1></div>
             <table class="table table-bordered" border="2" cellpadding="10" cellspacing="5">
                 <tr>
                     <th>Related Issue</th>
@@ -119,7 +118,7 @@
                 {% endfor %}
             </table>
         {% else %}
-            <div><h1 class="display-6">PR Verification Requests: </h1></div>
+            <div style="text-align: center"><h1 class="display-6 text-white"><b>PR Verification Requests</b></h1></div>
             {# TODO: ISSUE: Implement Cards here instead of table  #}
             <div class="container-flow p-3" >
                 <div class="row d-flex justify-content-between align-items-stretch" >
@@ -174,7 +173,7 @@
                 </div>
             </div>
 
-            <div><h1 class="display-6">Issue Assignment Requests: </h1></div>
+            <div style="text-align: center"><h1 class="display-6 text-white"><b>Issue Assignment Requests</b></h1></div>
             <div class="container-flow p-3" >
                 <div class="row d-flex justify-content-between align-items-stretch" >
                     {% for request in assignment_requests_for_mentor %}
@@ -222,7 +221,8 @@
                 </div>
             </div>
 
-            <div><h1 class="display-6">All Issues Under Me: </h1></div>
+            <div style="text-align: center"><h1 class="display-6 text-white"><b>All Issues Under Me</b></h1></div>
+
             <div class="container-flow p-3" >
                 <div class="row d-flex justify-content-between align-items-stretch" >
                     {% for issue in mentored_issues %}

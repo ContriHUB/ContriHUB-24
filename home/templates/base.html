@@ -30,6 +30,7 @@
 
     {% include 'css.html' %}
     <style>
+        {# TODO:ISSUE Move styles to separate CSS file #}
         html {
             height:100%;
         }
@@ -42,6 +43,10 @@
             overflow: auto;
             background: url('{% static "images/body/background.jpg" %}');
             background-size: cover;
+        }
+
+        .btn {
+          text-transform: unset !important;
         }
         {% block style %}
         {% endblock %}

@@ -7,4 +7,4 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('registration_no', 'course', 'current_year')
+        fields = ('registration_no', 'course', 'current_year', 'ms_teams_id')

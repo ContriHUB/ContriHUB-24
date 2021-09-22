@@ -18,13 +18,13 @@ class Project(models.Model):
 
 
 class Issue(models.Model):
-    FREE, EASY, MEDIUM, DIFFICULT = 0, 1, 2, 3
-    FREE_READ, EASY_READ, MEDIUM_READ, DIFFICULT_READ = "Free", "Easy", "Medium", "Difficult"  # Human Readable Names
+    FREE, EASY, MEDIUM, HARD = 0, 1, 2, 3
+    FREE_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Easy", "Medium", "Hard"  # Human Readable Names
     LEVELS = (
         (FREE, FREE_READ),  # (Value, Human Readable Name)
         (EASY, EASY_READ),
         (MEDIUM, MEDIUM_READ),
-        (DIFFICULT, DIFFICULT_READ),
+        (HARD, HARD_READ),
     )
 
     OPEN, CLOSED = 1, 3

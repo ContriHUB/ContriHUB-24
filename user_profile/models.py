@@ -36,7 +36,11 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    registration_no = models.CharField(verbose_name='Registration Number', max_length=10, default='NA')
+    registration_no = models.CharField(verbose_name='Registration Number', max_length=10, default='')
+
+    ms_teams_id = models.EmailField(verbose_name="MS Teams ID", default='')
+
+    # TODO:ISSUE Add a field to take What'sapp Number with all checks (External App can be used)
 
     course = models.PositiveSmallIntegerField(verbose_name='Course', choices=COURSES, default=B_TECH)
 
