@@ -24,6 +24,7 @@ def profile(request, username):
     if user.is_authenticated:
         native_profile = UserProfile.objects.get(user__username=username)
         if username == user.username:
+            # TODO: ISSUE Fetch User's Avatar's URL from Github API and display it in profile
             pr_requests_by_student = PullRequest.objects.filter(contributor=user)
             assignment_requests_by_student = IssueAssignmentRequest.objects.filter(requester=user)
             active_issues = ActiveIssue.objects.filter(contributor=user)
