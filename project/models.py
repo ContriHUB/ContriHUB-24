@@ -109,7 +109,7 @@ class PullRequest(models.Model):
         (PENDING_VERIFICATION, "Pending Verification"),
     )
 
-    html_url = models.URLField(verbose_name="HTML URL")
+    pr_link = models.URLField(verbose_name="PR Link")
 
     contributor = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -218,7 +218,7 @@ class ActiveIssue(models.Model):
 
     contributor = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    assigned_at = models.DateTimeField(verbose_name="Decided At", default=timezone.now)
+    assigned_at = models.DateTimeField(verbose_name="Assigned At", default=timezone.now)
 
     def __str__(self):
         return f"{self.contributor}_{self.issue}"

@@ -5,43 +5,50 @@
         <div class="card mb-3" style="border-radius: .5rem;">
           <div class="row g-0">
             <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-              <h5>{{ user.first_name }} {{ user.last_name }}</h5>
-              <p>@{{ user.username }}</p>
+              <h5>{{ native_profile.user.first_name }} {{ native_profile.user.last_name }}</h5>
+              <p>@{{ native_profile.user.username }}</p>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 text-center">
               <div class="card-body p-4">
                 <h6><b>Personal Information</b></h6>
                 <hr class="mt-0 mb-4">
                 <div class="row pt-1">
                   <div class="col-6 mb-3">
                     <h6><b>Role</b></h6>
-                    <p class="text-muted">{{ user.userprofile.get_role_display }}</p>
+                    <p class="text-muted">{{ native_profile.get_role_display }}</p>
                   </div>
                   <div class="col-6 mb-3">
                     <h6><b>Regno</b></h6>
-                    <p class="text-muted">{{ user.userprofile.registration_no }}</p>
+                    <p class="text-muted">{{ native_profile.registration_no }}</p>
+                  </div>
+                </div>
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6><b>Course</b></h6>
+                    <p class="text-muted">{{ native_profile.get_course_display }}</p>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <h6><b>Current Year</b></h6>
+                    <p class="text-muted">{{ native_profile.get_current_year_display }}</p>
                   </div>
                 </div>
 
-                <div class="row pt-1">
-                  <div class="col-6 mb-3">
-                    <h6>Course</h6>
-                    <p class="text-muted">{{ user.userprofile.get_course_display }}</p>
-                  </div>
-                  <div class="col-6 mb-3">
-                    <h6>Current Year</h6>
-                    <p class="text-muted">{{ user.userprofile.get_current_year_display }}</p>
+                  <div class="row pt-1">
+                  <div class="col-12 mb-3">
+                    <h6><b>MS Teams ID</b></h6>
+                    <p class="text-muted">{{ native_profile.ms_teams_id }}</p>
                   </div>
                 </div>
-
-                <h6><b>#Respect</b></h6>
-                <hr class="mt-0 mb-4">
-                <div class="row pt-1">
-                  <div class="col-6 mb-3">
-                    <h6>Total Points</h6>
-                    <p class="text-muted">{{ user.userprofile.total_points }}</p>
-                  </div>
-                </div>
+                  {% if native_profile.role == native_profile.STUDENT %}
+                    <h6><b>#Respect</b></h6>
+                    <hr class="mt-0 mb-4">
+                    <div class="row pt-1">
+                      <div class="col-12 mb-3">
+                        <h6><b>Total Points</b></h6>
+                        <p class="text-muted">{{ native_profile.total_points }}</p>
+                      </div>
+                    </div>
+                  {% endif %}
               </div>
             </div>
           </div>

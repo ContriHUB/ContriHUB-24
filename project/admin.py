@@ -11,7 +11,7 @@ class IssueAdmin(admin.ModelAdmin):
 
 
 class PullRequestAdmin(admin.ModelAdmin):
-    list_display = ('contributor', 'html_url', 'state', 'bonus', 'penalty', 'submitted_at')
+    list_display = ('contributor', 'pr_link', 'state', 'bonus', 'penalty', 'submitted_at')
 
 
 class IssueAssignmentRequestAdmin(admin.ModelAdmin):

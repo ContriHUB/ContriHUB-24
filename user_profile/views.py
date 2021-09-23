@@ -21,27 +21,35 @@ def profile(request, username):
     :return:
     """
     user = request.user
-    if user.is_authenticated and username == user.username:
-        pr_requests_by_student = PullRequest.objects.filter(contributor=user)
-        assignment_requests_by_student = IssueAssignmentRequest.objects.filter(requester=user)
-        active_issues = ActiveIssue.objects.filter(contributor=user)
+    if user.is_authenticated:
+        native_profile = UserProfile.objects.get(user__username=username)
+        if username == user.username:
+            pr_requests_by_student = PullRequest.objects.filter(contributor=user)
+            assignment_requests_by_student = IssueAssignmentRequest.objects.filter(requester=user)
+            active_issues = ActiveIssue.objects.filter(contributor=user)
 
-        mentored_issues = Issue.objects.filter(mentor=user)
-        assignment_requests_for_mentor = IssueAssignmentRequest.objects.filter(issue__mentor=user)
-        pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
+            mentored_issues = Issue.objects.filter(mentor=user)
+            assignment_requests_for_mentor = IssueAssignmentRequest.objects.filter(issue__mentor=user)
+            pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
 
-        pr_form = PRSubmissionForm()
+            pr_form = PRSubmissionForm()
 
-        context = {
-            "mentored_issues": mentored_issues,
-            "pr_requests_by_student": pr_requests_by_student,
-            "pr_requests_for_mentor": pr_requests_for_mentor,
-            "active_issues": active_issues,
-            "assignment_requests_by_student": assignment_requests_by_student,
-            "assignment_requests_for_mentor": assignment_requests_for_mentor,
-            'pr_form': pr_form,
-        }
-        return render(request, 'user_profile/profile.html', context=context)
+            context = {
+                "mentored_issues": mentored_issues,
+                "pr_requests_by_student": pr_requests_by_student,
+                "pr_requests_for_mentor": pr_requests_for_mentor,
+                "active_issues": active_issues,
+                "assignment_requests_by_student": assignment_requests_by_student,
+                "assignment_requests_for_mentor": assignment_requests_for_mentor,
+                'pr_form': pr_form,
+                "native_profile": native_profile
+            }
+            return render(request, 'user_profile/profile.html', context=context)
+        else:
+            context = {
+                "native_profile": native_profile
+            }
+            return render(request, 'user_profile/profile.html', context=context)
     else:
         response = "EMPTY ERROR"
     context = {

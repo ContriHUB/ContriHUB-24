@@ -6,4 +6,4 @@ class PRSubmissionForm(forms.ModelForm):
 
     class Meta:
         model = PullRequest
-        fields = ('html_url',)
+        fields = ('pr_link',)
