@@ -71,12 +71,12 @@ class Issue(models.Model):
 
         is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, requester=requester)
 
-        if is_already_requested:
+        if is_already_requested: # Current requester has already requested it.
             return False
 
         profile = requester.userprofile
 
-        if profile.role != profile.STUDENT:
+        if profile.role != profile.STUDENT: # Issues can be assigned to Student Role only
             return False
 
         if profile.current_year == profile.FINAL:  # Final Year Students not allowed

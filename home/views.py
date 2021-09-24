@@ -1,4 +1,8 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, Http404
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+
+from home.helpers import send_email
+from django.core import mail
+
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -13,6 +17,8 @@ from django.utils import timezone
 # TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
 # TODO:ISSUE: Make a Custom Http404 Page
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
+from user_profile.models import UserProfile
+
 
 @complete_profile_required
 def home(request):
@@ -50,7 +56,23 @@ def request_issue_assignment(request, issue_pk):
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
-        return HttpResponse(message)
+
+        template_path = "home/mail_template_request_issue_assignment.html"
+        email_context = {
+            'mentor': issue.mentor,
+            'user': requester,
+            'url': issue.html_url,
+            'protocol': request.get_raw_uri().split('://')[0],
+            'host': request.get_host(),
+            'subject': "Request for Issue Assignment under ContriHUB-21.",
+        }
+        try:
+            send_email(template_path=template_path, email_context=email_context)
+            # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
+            return HttpResponse(f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
+        except mail.BadHeaderError:
+            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+            return HttpResponse(f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
@@ -103,12 +125,26 @@ def submit_pr_request(request, active_issue_pk):
                 pr.state = PullRequest.PENDING_VERIFICATION
                 pr.submitted_at = timezone.now()
                 pr.save()
+
                 # TODO:ISSUE Create Check on URL in backend so that it is a Valid Github PR URL.
 
-                # TODO: Send Email to Mentor
-
-                message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                template_path = "home/mail_template_submit_pr_request.html"
+                email_context = {
+                    'mentor': issue.mentor,
+                    'user': contributor,
+                    'url': pr.pr_link,
+                    'protocol': request.get_raw_uri().split('://')[0],
+                    'host': request.get_host(),
+                    'subject': "Request for Approval of PR on an issue under ContriHUB-21.",
+                }
+                try:
+                    send_email(template_path=template_path, email_context=email_context)
+                    message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                except mail.BadHeaderError:
+                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
                 return HttpResponse(message)
             else:
                 message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
