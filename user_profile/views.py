@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
@@ -22,8 +22,11 @@ def profile(request, username):
     :return:
     """
     user = request.user
-    if user.is_authenticated:
-        native_profile = UserProfile.objects.get(user__username=username)
+    native_profile_qs = UserProfile.objects.filter(user__username=username)
+    if native_profile_qs:  # Checking if profile exists
+
+        native_profile = native_profile_qs.first()
+
         if username == user.username:
             # TODO: ISSUE Fetch User's Avatar's URL from Github API and display it in profile
             pr_requests_by_student = PullRequest.objects.filter(contributor=user)
@@ -52,12 +55,7 @@ def profile(request, username):
                 "native_profile": native_profile
             }
             return render(request, 'user_profile/profile.html', context=context)
-    else:
-        response = "EMPTY ERROR"
-    context = {
-        "response": response
-    }
-    return render(request, 'user_profile/profile.html', context=context)
+    return HttpResponse("Profile not found!")
 
 
 @login_required
