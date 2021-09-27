@@ -13,6 +13,8 @@ class Project(models.Model):
 
     html_url = models.URLField(verbose_name="HTML URL")
 
+    domain = models.CharField(verbose_name="Domain", max_length=100, null=True, blank=True)
+
     def __str__(self):
         return self.name
 

@@ -3,7 +3,7 @@ from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveI
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'api_url', 'html_url')
+    list_display = ('name', 'domain', 'html_url')
 
 
 class IssueAdmin(admin.ModelAdmin):
