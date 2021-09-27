@@ -174,8 +174,13 @@ LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")
 LABEL_RESTRICTED = config('LABEL_RESTRICTED', default="restricted")
 DEPENDABOT_LOGIN = config('DEPENDABOT_LOGIN', default="dependabot[bot]")
+
 MAX_SIMULTANEOUS_ISSUE = config('MAX_SIMULTANEOUS_ISSUE', default=2, cast=int)
-DAYS_PER_ISSUE = config('DAYS_PER_ISSUE', default=2, cast=int)
+
+DAYS_PER_ISSUE_FREE = config('DAYS_PER_ISSUE_FREE', default=1, cast=int)
+DAYS_PER_ISSUE_EASY = config('DAYS_PER_ISSUE_EASY', default=1, cast=int)
+DAYS_PER_ISSUE_MEDIUM = config('DAYS_PER_ISSUE_MEDIUM', default=2, cast=int)
+DAYS_PER_ISSUE_HARD = config('DAYS_PER_ISSUE_HARD', default=3, cast=int)
 
 DEFAULT_FREE_POINTS = config('DEFAULT_FREE_POINTS', default=0, cast=int)
 DEFAULT_EASY_POINTS = config('DEFAULT_EASY_POINTS', default=15, cast=int)

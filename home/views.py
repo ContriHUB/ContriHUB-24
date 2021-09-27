@@ -6,7 +6,7 @@ from django.core import mail
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from helper import complete_profile_required
+from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
 
@@ -48,6 +48,7 @@ def logout_(request):
 
 @login_required
 @complete_profile_required
+@check_issue_time_limit
 def request_issue_assignment(request, issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
@@ -104,6 +105,7 @@ def reject_issue_request():
 
 @login_required
 @complete_profile_required
+@check_issue_time_limit
 def submit_pr_request(request, active_issue_pk):
     if request.method == 'GET':
         contributor = request.user

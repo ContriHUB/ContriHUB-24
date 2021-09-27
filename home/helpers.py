@@ -1,6 +1,5 @@
 # Import for sending mail
 from django.core import mail
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
@@ -15,7 +14,7 @@ from django.utils.html import strip_tags
 
 
 def send_email(template_path, email_context):
-    print(email_context)
+    # print(email_context)
     context = {
         'mentor': email_context['mentor'].username,
         'user': email_context['user'].username,

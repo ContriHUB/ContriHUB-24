@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE
+from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD
 from django.utils import timezone
 
 User = get_user_model()
@@ -100,6 +100,15 @@ class Issue(models.Model):
 
         return True
 
+    def get_issue_days_limit(self):
+        if self.level == 0:
+            return DAYS_PER_ISSUE_FREE
+        elif self.level == 1:
+            return DAYS_PER_ISSUE_EASY
+        elif self.level == 2:
+            return DAYS_PER_ISSUE_MEDIUM
+        elif self.level == 3:
+            return DAYS_PER_ISSUE_HARD
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
@@ -241,5 +250,9 @@ class ActiveIssue(models.Model):
 
         return True
 
+    # TODO: ISSUE: Rename this function to 'get_deadline' as it is more suitable. Don't Forget to update name at all
+    #  places.
     def get_remaining_time(self):
-        return self.assigned_at + timezone.timedelta(days=DAYS_PER_ISSUE)
+        return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+
+

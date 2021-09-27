@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm
 from .models import UserProfile
-from helper import complete_profile_required
+from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 
 User = get_user_model()
@@ -13,6 +13,7 @@ User = get_user_model()
 
 
 @complete_profile_required
+@check_issue_time_limit
 def profile(request, username):
     """
     View which returns User Profile based on username.
