@@ -71,12 +71,12 @@ class Issue(models.Model):
 
         is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, requester=requester)
 
-        if is_already_requested: # Current requester has already requested it.
+        if is_already_requested:  # Current requester has already requested it.
             return False
 
         profile = requester.userprofile
 
-        if profile.role != profile.STUDENT: # Issues can be assigned to Student Role only
+        if profile.role != profile.STUDENT:  # Issues can be assigned to Student Role only
             return False
 
         if profile.current_year == profile.FINAL:  # Final Year Students not allowed
@@ -90,8 +90,9 @@ class Issue(models.Model):
                 if profile.current_year in (profile.THIRD, profile.FINAL):
                     return False
 
-            # if requester.course == requester.MCA:  # TODO: Check what to allow
-            #     if requester.current_year in (requester.)
+            if profile.course == profile.MCA:
+                if profile.current_year in (profile.THIRD, profile.FINAL):
+                    return False
 
         requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
 
@@ -101,14 +102,15 @@ class Issue(models.Model):
         return True
 
     def get_issue_days_limit(self):
-        if self.level == 0:
+        if self.level == self.FREE:
             return DAYS_PER_ISSUE_FREE
-        elif self.level == 1:
+        elif self.level == self.EASY:
             return DAYS_PER_ISSUE_EASY
-        elif self.level == 2:
+        elif self.level == self.MEDIUM:
             return DAYS_PER_ISSUE_MEDIUM
-        elif self.level == 3:
+        elif self.level == self.HARD:
             return DAYS_PER_ISSUE_HARD
+
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
