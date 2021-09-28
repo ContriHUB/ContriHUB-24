@@ -126,7 +126,7 @@ def parse_level(level):
         if level == str(read).lower():
             return lev, pts
 
-    return Issue.EASY  # Default FallBack
+    return Issue.EASY, DEFAULT_EASY_POINTS  # Default FallBack
 
 
 def parse_mentor(mentor):
