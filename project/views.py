@@ -58,7 +58,6 @@ def populate_issues(request):
         if response['status'] == SUCCESS:
             issues = response['data']
             for issue in issues:
-
                 # TODO: Can be given as ISSUE
                 if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
                     continue
@@ -66,7 +65,7 @@ def populate_issues(request):
                 title, number = issue['title'], issue['number']
                 mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
                 api_url, html_url = issue['url'], issue['html_url']
-                issue_qs = Issue.objects.filter(number=number)
+                issue_qs = Issue.objects.filter(number=number, project=project)
 
                 if issue_qs:  # Update if already present
                     db_issue = issue_qs.first()
