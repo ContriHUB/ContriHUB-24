@@ -176,10 +176,11 @@ def accept_pr(request, pk):
 
         if mentor.username == issue.mentor.username:
             contributor = pr.contributor
+
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
                 pr.accept()
-                message = f"Successfully accepted <a href={pr.html_url}>PR</a> of Issue <a href={issue.html_url}>" \
+                message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected."
