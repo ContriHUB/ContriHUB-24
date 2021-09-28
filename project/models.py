@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD
+from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
 
 User = get_user_model()
@@ -20,10 +20,11 @@ class Project(models.Model):
 
 
 class Issue(models.Model):
-    FREE, EASY, MEDIUM, HARD = 0, 1, 2, 3
-    FREE_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Easy", "Medium", "Hard"  # Human Readable Names
+    FREE, EASY, MEDIUM, HARD, VERY_EASY = 0, 1, 2, 3, 4
+    FREE_READ, VERY_EASY_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Very-Easy", "Easy", "Medium", "Hard"  # Human Readable Names
     LEVELS = (
         (FREE, FREE_READ),  # (Value, Human Readable Name)
+        (VERY_EASY, VERY_EASY_READ),
         (EASY, EASY_READ),
         (MEDIUM, MEDIUM_READ),
         (HARD, HARD_READ),
@@ -47,7 +48,7 @@ class Issue(models.Model):
 
     mentor = models.ForeignKey(User, related_name="mentor", on_delete=models.DO_NOTHING, null=True)
 
-    # 1-Easy, 2-Medium, 3-Difficult
+    # 1-Easy, 2-Medium, 3-Hard, 4-Very-Easy
     level = models.PositiveSmallIntegerField(verbose_name='Level', choices=LEVELS, default=1)
 
     points = models.IntegerField(verbose_name="Points", default=0)
@@ -106,6 +107,8 @@ class Issue(models.Model):
     def get_issue_days_limit(self):
         if self.level == self.FREE:
             return DAYS_PER_ISSUE_FREE
+        elif self.level == self.VERY_EASY:
+            return DAYS_PER_ISSUE_VERY_EASY
         elif self.level == self.EASY:
             return DAYS_PER_ISSUE_EASY
         elif self.level == self.MEDIUM:
