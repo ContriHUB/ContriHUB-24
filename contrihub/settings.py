@@ -184,7 +184,7 @@ DAYS_PER_ISSUE_MEDIUM = config('DAYS_PER_ISSUE_MEDIUM', default=2, cast=int)
 DAYS_PER_ISSUE_HARD = config('DAYS_PER_ISSUE_HARD', default=3, cast=int)
 
 DEFAULT_FREE_POINTS = config('DEFAULT_FREE_POINTS', default=0, cast=int)
-DEFAULT_VERY_EASY_POINTS = config('DEFAULT_EASY_POINTS', default=2, cast=int)
+DEFAULT_VERY_EASY_POINTS = config('DEFAULT_VERY_EASY_POINTS', default=2, cast=int)
 DEFAULT_EASY_POINTS = config('DEFAULT_EASY_POINTS', default=10, cast=int)
 DEFAULT_MEDIUM_POINTS = config('DEFAULT_MEDIUM_POINTS', default=20, cast=int)
 DEFAULT_HARD_POINTS = config('DEFAULT_HARD_POINTS', default=30, cast=int)
