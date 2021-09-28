@@ -21,7 +21,7 @@ class Project(models.Model):
 
 class Issue(models.Model):
     FREE, EASY, MEDIUM, HARD, VERY_EASY = 0, 1, 2, 3, 4
-    FREE_READ, VERY_EASY_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Very-Easy", "Easy", "Medium", "Hard"  # Human Readable Names
+    FREE_READ, VERY_EASY_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Cakewalk", "Easy", "Medium", "Hard"  # Human Readable Names
     LEVELS = (
         (FREE, FREE_READ),  # (Value, Human Readable Name)
         (VERY_EASY, VERY_EASY_READ),
@@ -56,7 +56,7 @@ class Issue(models.Model):
     # 1 - Open, 0 - Closed
     state = models.PositiveSmallIntegerField('State', choices=STATES, default=1)
 
-    # Restricted only for BTech 2nd yr and MCA 1st yr.
+    # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 
     def __str__(self):

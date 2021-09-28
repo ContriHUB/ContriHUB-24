@@ -20,12 +20,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Navbar brand -->
         <a class="navbar-brand mt-2 mt-lg-0" href="#">
-        <img
-          src="{% static 'images/logo/ch.png' %}"
-          height="45"
-          alt=""
-          loading="lazy"
-        />
+        <img src="{% static 'images/logo/ch.png' %}" height="45" alt="" loading="lazy"/>
         </a>
         <strong>
           <a class="navbar-brand text-success mt-2 mt-lg-0" href="{% url 'home' %}">
@@ -71,7 +66,7 @@
                                 <span class="dropdown-item-text">
                                     <button type="button" class="btn btn-secondary p-1" data-mdb-ripple-color="dark">
                                         <a class='text-white' href="{{ project.html_url }}" target="_blank"> {# style="color: white"  #}
-                                            {{ project.name }}
+                                           <b>{{ project.name }}</b> [ {{ project.domain }} ]
                                         </a>
                                     </button>
                                 </span>
