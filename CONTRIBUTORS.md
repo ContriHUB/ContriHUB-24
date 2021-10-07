@@ -2,5 +2,5 @@
 
 Add your name in the given format.
 
-* [Ankit Sangwan](https://contrihub21.herokuapp.com/profile/user/ankitsangwan1999/)
-* [Kshitiz Srivastava](https://contrihub21.herokuapp.com/profile/user/pirateksh/)
+* [Kajal Shahi](https://contrihub21.herokuapp.com/profile/user/shahikaju7/)
+
