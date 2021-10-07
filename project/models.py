@@ -92,7 +92,7 @@ class Issue(models.Model):
         if profile.current_year == profile.FINAL:  # Final Year Students not allowed
             return False
 
-        if self.is_restricted:
+        if self.is_restricted or self.level == self.VERY_EASY:
             if profile.course in (profile.M_TECH, profile.M_SC, profile.PHD):
                 return False
 
@@ -102,6 +102,7 @@ class Issue(models.Model):
 
             if profile.course == profile.MCA:
                 if profile.current_year in (profile.THIRD, profile.FINAL):
+                    print("Cant be Assigned")
                     return False
 
         if requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
