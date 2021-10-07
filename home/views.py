@@ -99,8 +99,17 @@ def accept_issue_request(request, issue_req_pk):
         return HttpResponse(message)
 
 
-def reject_issue_request():
-    pass  # TODO: ISSUE: Implement Reject Issue Request
+def reject_issue_request(request, issue_req_pk):
+    # TODO: ISSUE: [Ask Mentor for Clarification]: Implement Reject Issue Request with proper error handling
+    user = request.user
+    issue_request = IssueAssignmentRequest.objects.get(pk=issue_req_pk)
+    issue = issue_request.issue
+    requester = issue_request.requester
+    issue_request.state = IssueAssignmentRequest.REJECTED
+    issue_request.save()
+    message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
+              f"{issue.project.name}</a> is rejected for {requester}"
+    return HttpResponse(message)
 
 
 @login_required
@@ -183,12 +192,14 @@ def accept_pr(request, pk):
                 message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
-                message = f"This PR Verification Request is already Accepted/Rejected."
+                message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
+                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
         else:
             message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
                       f"{issue.project.html_url}>{issue.project.name}</a>"
     else:
-        message = f"This PR is probably already Accepted/Rejected."
+        message = f"This PR is probably already Accepted. Probably in the FrontEnd You still see the " \
+                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
 
 
@@ -209,10 +220,12 @@ def reject_pr(request, pk):
                 message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
-                message = f"This PR Verification Request is already Accepted/Rejected."
+                message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
+                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
         else:
             message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
                       f"{issue.project.html_url}>{issue.project.name}</a>"
     else:
-        message = f"This PR is probably already Accepted/Rejected."
+        message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
+                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
