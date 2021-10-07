@@ -77,6 +77,13 @@ class Issue(models.Model):
         if is_already_requested:  # Current requester has already requested it.
             return False
 
+        # TEST: Start
+        requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester, state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
+        requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
+        if requester_requests_count + requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
+            return False
+        # TEST: End
+
         profile = requester.userprofile
 
         if profile.role != profile.STUDENT:  # Issues can be assigned to Student Role only
@@ -96,8 +103,6 @@ class Issue(models.Model):
             if profile.course == profile.MCA:
                 if profile.current_year in (profile.THIRD, profile.FINAL):
                     return False
-
-        requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
 
         if requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
             return False
@@ -168,7 +173,10 @@ class PullRequest(models.Model):
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        self.issue.activeissue_set.first().delete()
+        try:
+            self.issue.activeissue_set.first().delete()
+        except AttributeError:
+            pass
 
     def reject(self, bonus=0, penalty=0):
         """
@@ -189,6 +197,12 @@ class PullRequest(models.Model):
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
+
+        # Deleting Active Issue related to this PR
+        try:
+            self.issue.activeissue_set.first().delete()
+        except AttributeError:
+            pass
 
 
 class IssueAssignmentRequest(models.Model):
