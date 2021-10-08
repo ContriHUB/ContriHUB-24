@@ -53,10 +53,12 @@ def populate_issues(request):
     uri = "https://api.github.com/repos/contrihub/"
 
     for project in project_qs:
-        url = f"{uri}{project.name}/issues"
+        url = f"{uri}{project.name}/issues?per_page=100"
         response = safe_hit_url(url=url, headers=headers)
+        print("PROJECT: ", project.name)
         if response['status'] == SUCCESS:
             issues = response['data']
+            print("COUNT: ", len(issues))
             for issue in issues:
                 # TODO: Can be given as ISSUE
                 if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
@@ -88,7 +90,7 @@ def populate_issues(request):
                         is_restricted=is_restricted
                     )
 
-                print(db_issue)
+                # print(db_issue)
                 try:
                     mentor = User.objects.get(username=mentor_name)
                     db_issue.mentor = mentor
