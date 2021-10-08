@@ -80,7 +80,7 @@ class Issue(models.Model):
         # TEST: Start
         requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester, state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
         requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
-        if requester_requests_count + requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
+        if requester_requests_count + requester_active_issue_count >= MAX_SIMULTANEOUS_ISSUE:
             return False
         # TEST: End
 
