@@ -21,7 +21,7 @@
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
 {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
     <div class="container-flow p-3" >
-    <div class="row row-cols-1 row-cols-md-1">
+        <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
                     <div class="card m-3" style="border-radius: 15px;">
                         <div class="card-header text-center">
@@ -29,8 +29,13 @@
                         </div>
                         <div class="card-body">
                             <ol>
-                                <li class="animate slideInRight">
-                                    <div class="animated slideInRight">
+                                <li>
+                                    <div class="animated bounceInUp">
+                                        <b>Time for some self service 😁. </b><span class="text-danger">️HOT ISSUE:</span> <span class="text-info">Disable "Request Assignment" Button #13.</span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
                                         <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
                                     </div>
                                 </li>
@@ -59,11 +64,10 @@
 
                             </ol>
                         </div>
-                        <div class="card-footer text-muted">
-                        </div>
+                        <div class="card-footer text-muted"></div>
                     </div>
                 </div>
-    </div>
+        </div>
         <div class="row row-cols-1 row-cols-md-2">
             {% for issue in issues %}
                 <div class="col">
@@ -73,7 +77,7 @@
                         </div>
                         <div class="card-body">
 
-                            <h5 class="card-titl
+                            <h5 class="card-title">
                                 <a href="{{ issue.html_url }}">{{ issue.title }}</a>
                             </h5>
                             <h6 class="">
