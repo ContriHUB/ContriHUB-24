@@ -1,8 +1,8 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
-
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse,redirect
+from django.core.mail import EmailMessage
 from home.helpers import send_email
 from django.core import mail
-
+from django.template.loader import render_to_string
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -18,7 +18,7 @@ from django.utils import timezone
 # TODO:ISSUE: Make a Custom Http404 Page
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
-
+from .forms import ContactForm
 
 @complete_profile_required
 def home(request):
@@ -229,3 +229,25 @@ def reject_pr(request, pk):
         message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
+
+@login_required
+def contact_form(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        user = form['name'].value()
+        email = form['email'].value()
+        body = form['body'].value()
+        subject = form['subject'].value()
+        message = render_to_string('home/contact_body.html', {
+            'user': user,
+            'email': email,
+            'body': body,
+        })
+        email = EmailMessage(
+            subject, message, to=['contrihub.avishkar@gmail.com']
+        )
+        email.send()
+        return redirect('home')
+    elif request.method == 'GET':
+        form = ContactForm()
+        return render(request, 'home/contact_form.html', context={'form': form})
