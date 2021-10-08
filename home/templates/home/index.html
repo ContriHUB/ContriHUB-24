@@ -15,12 +15,45 @@
     {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
     {# TODO:ISSUE Display who is currently working on this issue #}
     {# TODO:ISSUE Make Link open in new tab #}
-
     {% include "home/navbar.html"%}
     {# TODO:ISSUE Remove all Inline Styles and move to External CSS File #}
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
 {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px; z-index:1;">
+  <!-- Position it -->
     <div class="container-flow p-3" >
+     <div style="position: absolute; top: 0; right: 0; z-index:1;">
+    <div class="">    
+    <div class="toast bg-success" id="upVoteToast">
+        <div class="toast-header">
+            <strong class="me-auto"> Message</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Upvoted successfully
+        </div>
+     </div>
+     <div class="toast bg-success" id="downVoteToast">
+        <div class="toast-header">
+             <strong class="me-auto"> Message</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+           Downvoted successfully
+        </div>
+     </div>
+      <div class="toast bg-danger" id="errorToast">
+        <div class="toast-header">
+             <strong class="me-auto"> Message</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Error has occured!
+        </div>
+     </div>
+    </div>
+    </div>
+    </div>
     <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
                     <div class="card m-3" style="border-radius: 15px;">
@@ -68,13 +101,13 @@
                         </div>
                         <div class="card-body">
 
-                            <h5 class="card-titl
+                            <h5 class="card-title"
                                 <a href="{{ issue.html_url }}">{{ issue.title }}</a>
                             </h5>
                             <h6 class="">
                                 <a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
                             </h6>
-
+                            
                             <p class="card-text">
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">@{{ issue.mentor }}</a>
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a>
@@ -85,7 +118,9 @@
                                     </a>
                                 {% endif %}
                             </p>
-
+                            <div id="vote-section">
+                            {% include 'home/vote.html' %}
+                            </div>
                       </div>
                         <div class="card-footer text-muted">
                             {% if issue.state == issue.OPEN %}
@@ -105,11 +140,44 @@
             {% endfor %}
         </div>
     </div>
-
+    
 {% endblock %}
 
 {% block javascript %}
-
+   <script type="text/javascript">
+   jQuery(document).ready(function(event) {
+        $(document).on('click', '#votebtn', function (event) {
+            event.preventDefault()
+            var type = $(this).attr('type');
+            var iid = $(this).attr('iid');
+            console.log(type,iid);
+            $.ajax({
+                url: '{% url "handle_vote" %}',
+                type: 'post',
+                data: {
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    id: iid,
+                    type: type,
+                },
+                success: function (data) {
+                    $('#vote-section').html(data['html'])
+                    if (type=='0')
+                     {
+                         $("#upVoteToast").toast("show");
+                     }
+                    else if (type=='1')
+                    {
+                        $("#downVoteToast").toast("show");
+                    }
+                }
+                error: function(data)
+                {
+                    $("#errorToast").toast("show");
+                }
+            })
+        })
+    })
+</script>
 {% endblock %}
 
 {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}

@@ -1,0 +1,14 @@
+<p class="card-text">
+                            {% if request.user in issue.upvotes.all %}
+                            <button class="btn btn-success" id="votebtn" type="0" iid="{{issue.pk}}">Upvoted</button>
+                            {% else %}
+                            <button class="btn btn-primary" id="votebtn" type="0" iid="{{issue.pk}}">Upvote</button>
+                            {% endif %}
+                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Votes">{{ issue.upvotes.all.count }}</a>
+                            {% if request.user in issue.downvotes.all %}
+                            <button class="btn btn-danger" id="votebtn" type="1" iid="{{issue.pk}}">Downvoted</button>
+                            {% else %}
+                            <button class="btn btn-primary" id="votebtn" type="1" iid="{{issue.pk}}">Downvote</button>
+                            {% endif %}
+                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Votes">{{ issue.downvotes.all.count }}</a>
+                            </p>

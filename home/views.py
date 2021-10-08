@@ -6,11 +6,11 @@ from django.core import mail
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from helper import complete_profile_required, check_issue_time_limit
+from helper import SUCCESS, complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
-
-
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -229,3 +229,33 @@ def reject_pr(request, pk):
         message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
+
+@login_required
+def handle_vote(request):
+    id=request.POST.get('id')
+    type=request.POST.get('type')
+    id=int(id)
+    type=int(type)
+    issue=Issue.objects.get(pk=id)
+    is_upvoted=request.user in issue.upvotes.all()
+    is_downvoted=request.user in issue.downvotes.all()
+    if(type==0):
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+        else:
+            issue.upvotes.add(request.user)
+            if is_downvoted:
+                issue.downvotes.remove(request.user)
+    elif type==1:
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        else:
+            issue.downvotes.add(request.user)
+            if is_upvoted:
+                issue.upvotes.remove(request.user)
+    context = {
+        'issue' : issue,
+    }
+    html = render_to_string('home/vote.html',context, request = request)
+    return JsonResponse({'html':html})
+
