@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse,redirect
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.core.mail import EmailMessage
 from home.helpers import send_email
 from django.core import mail
@@ -10,7 +10,6 @@ from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
 
-
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -19,6 +18,7 @@ from django.utils import timezone
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
 from .forms import ContactForm
+
 
 @complete_profile_required
 def home(request):
@@ -70,10 +70,12 @@ def request_issue_assignment(request, issue_pk):
         try:
             send_email(template_path=template_path, email_context=email_context)
             # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-            return HttpResponse(f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
+            return HttpResponse(
+                f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
         except mail.BadHeaderError:
             ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-            return HttpResponse(f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
+            return HttpResponse(
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
@@ -193,7 +195,7 @@ def accept_pr(request, pk):
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
+                          f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
         else:
             message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
                       f"{issue.project.html_url}>{issue.project.name}</a>"
@@ -221,7 +223,7 @@ def reject_pr(request, pk):
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
+                          f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
         else:
             message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
                       f"{issue.project.html_url}>{issue.project.name}</a>"
@@ -229,6 +231,7 @@ def reject_pr(request, pk):
         message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
+
 
 @login_required
 def contact_form(request):
