@@ -13,4 +13,5 @@ urlpatterns = [
     path('accept_pr/<int:pk>/', views.accept_pr, name='accept_pr'),
     path('reject_pr/<int:pk>/', views.reject_pr, name='reject_pr'),
     path('votes/',views.handle_vote,name='handle_vote'),
+    path('contact/',views.contact_form,name='contact_form')
 ]

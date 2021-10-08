@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     
     # 3rd Party Libraries
     'social_django',  # Social Media Login
+    'crispy_forms',   # Crispy Form for django
 ]
 
 MIDDLEWARE = [
@@ -157,6 +158,7 @@ LOGIN_URL = 'authorize'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Email Setup
 EMAIL_HOST = config('EMAIL_HOST', default="")
 EMAIL_PORT = config('EMAIL_PORT', default="")
