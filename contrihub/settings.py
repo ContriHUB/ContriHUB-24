@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     
     # 3rd Party Libraries
     'social_django',  # Social Media Login
+    'crispy_forms',  # Crispy Form for django
 ]
 
 MIDDLEWARE = [
@@ -158,14 +159,16 @@ LOGIN_URL = 'authorize'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 # Email Setup
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default="")
 EMAIL_PORT = config('EMAIL_PORT', default="")
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default="")
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default="")
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
-
 
 AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-21",
                             cast=lambda v: [s.strip() for s in v.split(',')])
