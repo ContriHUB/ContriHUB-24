@@ -5,7 +5,11 @@
         <div class="card mb-3" style="border-radius: .5rem;">
           <div class="row g-0">
             <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-              <h5>{{ native_profile.user.first_name }} {{ native_profile.user.last_name }}</h5>
+                <div class="row">
+                  <img src="https://avatars.githubusercontent.com/{{ native_profile.user.username }}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
+                  <br>
+                </div>
+                <h5>{{ native_profile.user.first_name }} {{ native_profile.user.last_name }}</h5>
               <p>@{{ native_profile.user.username }}</p>
             </div>
             <div class="col-md-8 text-center">
