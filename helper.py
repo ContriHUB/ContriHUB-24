@@ -57,6 +57,7 @@ def complete_profile_required(func):
     :param func:
     :return:
     """
+
     def wrapper(*args, **kwargs):
         request = args[0]
         user = request.user
@@ -73,6 +74,7 @@ def check_issue_time_limit(func):
     :param func:
     :return:
     """
+
     def wrapper(*args, **kwargs):
         request = args[0]
         user = request.user
@@ -125,3 +127,19 @@ def is_deadline_passed(active_issue):
     if total_seconds <= 0:  # Deadline Crossed
         return True
     return False
+
+
+# Fetches all the issues(PRs included) both Open and Closed
+def fetch_all_issues(uri, project_name, headers):
+    issues = {'data': []}
+    page = 0
+    while True:
+        page += 1
+        url = f"{uri}{project_name}/issues?per_page=100&state=all&page={page}"  # All PR's and Issues
+        response = safe_hit_url(url=url, headers=headers)
+        if response['status'] == SUCCESS:
+            if len(response['data']) == 0:  # No results from this and further page numbers
+                break
+            else:
+                issues['data'].extend(response['data'])
+    return issues
