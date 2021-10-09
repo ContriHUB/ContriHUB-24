@@ -166,11 +166,15 @@ class PullRequest(models.Model):
         self.issue.state = self.issue.CLOSED
         self.issue.save()
 
+         # Updated accepted pr req. of current user
+        accepted_pr_count = PullRequest.objects.filter(contributor=self.contributor,state=self.ACCEPTED).count()
+
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
         contributor_profile.total_points += int(self.issue.points)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
+        contributor_profile.issues_solved = accepted_pr_count
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
