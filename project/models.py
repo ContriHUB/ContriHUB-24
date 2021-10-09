@@ -171,6 +171,7 @@ class PullRequest(models.Model):
         contributor_profile.total_points += int(self.issue.points)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
+        contributor_profile.issues_solved += 1
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
