@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 
-
 urlpatterns = [
     path('', views.home, name='home'),
     path('authorize/', views.authorize, name='authorize'),
@@ -12,5 +11,6 @@ urlpatterns = [
     path('submit_pr_request/<int:active_issue_pk>/', views.submit_pr_request, name='submit_pr_request'),
     path('accept_pr/<int:pk>/', views.accept_pr, name='accept_pr'),
     path('reject_pr/<int:pk>/', views.reject_pr, name='reject_pr'),
-    path('contact/',views.contact_form,name='contact_form'),
+    path('contact/', views.contact_form, name='contact_form'),
+    path('votes/', views.handle_vote, name='handle_vote'),
 ]

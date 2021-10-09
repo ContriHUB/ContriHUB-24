@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
+from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, \
+    DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
 
 User = get_user_model()
@@ -59,6 +60,10 @@ class Issue(models.Model):
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 
+    upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
+
+    downvotes = models.ManyToManyField(User, related_name="downvotes", blank=True)
+
     def __str__(self):
         return self.title
 
@@ -78,7 +83,8 @@ class Issue(models.Model):
             return False
 
         # TEST: Start
-        requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester, state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
+        requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester,
+                                                                         state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
         requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
         if requester_requests_count + requester_active_issue_count >= MAX_SIMULTANEOUS_ISSUE:
             return False
@@ -244,7 +250,6 @@ class IssueAssignmentRequest(models.Model):
 
 
 class ActiveIssue(models.Model):
-
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
     contributor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -276,5 +281,3 @@ class ActiveIssue(models.Model):
     #  places.
     def get_remaining_time(self):
         return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
-
-

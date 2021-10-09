@@ -20,51 +20,88 @@
     {# TODO:ISSUE Remove all Inline Styles and move to External CSS File #}
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
 
-{#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
-    <div class="container-flow p-3" >
+    {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
+    <div class="container-flow p-3">
+        <div style="position: fixed; top: 0; right: 0; z-index:1;">
+            <div class="">
+                <div class="toast bg-success" id="upVoteToast">
+                    <div class="toast-header">
+                        <strong class="me-auto"> Message</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Upvoted successfully
+                    </div>
+                </div>
+                <div class="toast bg-success" id="downVoteToast">
+                    <div class="toast-header">
+                        <strong class="me-auto"> Message</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Downvoted successfully
+                    </div>
+                </div>
+                <div class="toast bg-danger" id="errorToast">
+                    <div class="toast-header">
+                        <strong class="me-auto"> Message</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Error has occured!
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row row-cols-1 row-cols-md-1">
-                <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
-                        <div class="card-header text-center">
-                            <h6>Announcements!</h6>
-                        </div>
-                        <div class="card-body">
-                            <ol>
-                                <li>
-                                    <div class="animated bounceInUp">
-                                        <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests. It was due to a missing equality(=) sign.
-                                        <span>Youtube developers once made a similar mistake which led to an interesting <span class="text-success">fun fact.</span></span>
-                                        <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="animated bounceInUp">
-                                        <b>Time for some self service 😁. </b><span class="text-danger">️HOT ISSUE:</span>
-                                        <ol>
-                                            <li>
-                                                <span class="text-info">Disable "Request Assignment" Button #13.</span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span>
-                                            </li>
-                                            <li>
-                                                <span class="text-info">Disable "Accept/Reject" PR button #8.</span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
-                                    </div>
-                                </li>
-{#                                <li>#}
-{#                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.#}
-{#                                </li>#}
-                                <li>
-                                    Some issues are <b>locked</b> and will be unlocked only after you solve the once which are <b>mentioned in the description</b> of a locked Issues.
-                                </li>
-                                <li>
-                                    <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
+            <div class="col">
+                <div class="card m-3" style="border-radius: 15px;">
+                    <div class="card-header text-center">
+                        <h6>Announcements!</h6>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>
+                                <div class="animated bounceInUp">
+                                    <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests.
+                                    It was due to a missing equality(=) sign.
+                                    <span>Youtube developers once made a similar mistake which led to an interesting <span
+                                            class="text-success">fun fact.</span></span>
+                                    <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="animated bounceInUp">
+                                    <b>Time for some self service 😁. </b><span class="text-danger">️HOT ISSUE:</span>
                                     <ol>
                                         <li>
+                                            <span class="text-info">Disable "Request Assignment" Button #13.</span> <b>Project</b>:
+                                            <span class="text-secondary">ContriHub-21</span>
+                                        </li>
+                                        <li>
+                                            <span class="text-info">Disable "Accept/Reject" PR button #8.</span> <b>Project</b>:
+                                            <span class="text-secondary">ContriHub-21</span>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active
+                                    Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
+                                </div>
+                            </li>
+                            {#                                <li>#}
+                            {#                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.#}
+                            {#                                </li>#}
+                            <li>
+                                Some issues are <b>locked</b> and will be unlocked only after you solve the once which
+                                are <b>mentioned in the description</b> of a locked Issues.
+                            </li>
+                            <li>
+                                <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
+                                <ol>
+                                    <li>
                                         Some other person has <b>already-requested/already-solving</b> the same issue.
                                     </li>
                                     <li>
@@ -119,6 +156,9 @@
                             </p>
 
                         </div>
+                        <div id="vote-section">
+                            {% include 'home/vote.html' %}
+                        </div>
                         <div class="card-footer text-muted">
                             {% if issue.state == issue.OPEN %}
                                 <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
@@ -142,7 +182,35 @@
 {% endblock %}
 
 {% block javascript %}
-
+    <script type="text/javascript">
+        jQuery(document).ready(function (event) {
+            $(document).on('click', '#votebtn', function (event) {
+                event.preventDefault()
+                var type = $(this).attr('type');
+                var iid = $(this).attr('iid');
+                $.ajax({
+                    url: '{% url "handle_vote" %}',
+                    type: 'post',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        id: iid,
+                        type: type,
+                    },
+                    success: function (data) {
+                        $('#vote-section').html(data['html'])
+                        if (type == '0') {
+                            $("#upVoteToast").toast("show");
+                        } else if (type == '1') {
+                            $("#downVoteToast").toast("show");
+                        }
+                    },
+                    error: function (data) {
+                        $("#errorToast").toast("show");
+                    }
+                })
+            })
+        })
+    </script>
 {% endblock %}
 
 {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}

@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
-
+from django.http import JsonResponse
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -254,3 +254,33 @@ def contact_form(request):
     elif request.method == 'GET':
         form = ContactForm()
         return render(request, 'home/contact_form.html', context={'form': form})
+
+
+@login_required
+def handle_vote(request):
+    id = request.POST.get('id')
+    type = request.POST.get('type')
+    id = int(id)
+    type = int(type)
+    issue = Issue.objects.get(pk=id)
+    is_upvoted = request.user in issue.upvotes.all()
+    is_downvoted = request.user in issue.downvotes.all()
+    if (type == 0):
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+        else:
+            issue.upvotes.add(request.user)
+            if is_downvoted:
+                issue.downvotes.remove(request.user)
+    elif type == 1:
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        else:
+            issue.downvotes.add(request.user)
+            if is_upvoted:
+                issue.upvotes.remove(request.user)
+    context = {
+        'issue': issue,
+    }
+    html = render_to_string('home/vote.html', context, request=request)
+    return JsonResponse({'html': html})
