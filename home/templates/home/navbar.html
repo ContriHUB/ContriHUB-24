@@ -1,108 +1,117 @@
 <!-- Navbar -->
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-  <!-- Container wrapper -->
-  <div class="container-fluid">
-       <!-- Toggle button -->
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+        <!-- Toggle button -->
         <button
-          class="navbar-toggler"
-          type="button"
-          data-mdb-toggle="collapse"
-          data-mdb-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+                class="navbar-toggler"
+                type="button"
+                data-mdb-toggle="collapse"
+                data-mdb-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
         >
-          <i class="fas fa-bars"></i>
+            <i class="fas fa-bars"></i>
         </button>
 
-    <!-- Collapsible wrapper -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Navbar brand -->
-        <a class="navbar-brand mt-2 mt-lg-0" href="#">
-        <img src="{% static 'images/logo/ch.png' %}" height="45" alt="" loading="lazy"/>
-        </a>
-        <strong>
-          <a class="navbar-brand text-success mt-2 mt-lg-0" href="{% url 'home' %}">
-              <b>ContriHUB</b>
-          </a>
-        </strong>
-        <div class="d-flex align-items-center">
-            <a  class="nav-link" href="https://contrihub.github.io/#about" target="_blank">
-                <button type="button" class="btn btn-secondary btn-rounded" data-mdb-ripple-color="dark">
-                    Rules
-                </button>
+        <!-- Collapsible wrapper -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- Navbar brand -->
+            <a class="navbar-brand mt-2 mt-lg-0" href="#">
+                <img src="{% static 'images/logo/ch.png' %}" height="45" alt="" loading="lazy"/>
             </a>
-        </div>
+            <strong>
+                <a class="navbar-brand text-success mt-2 mt-lg-0" href="{% url 'home' %}">
+                    <b>ContriHUB</b>
+                </a>
+            </strong>
+            <div class="d-flex align-items-center">
+                <a class="nav-link" href="https://contrihub.github.io/#about" target="_blank">
+                    <button type="button" class="btn btn-secondary btn-rounded" data-mdb-ripple-color="dark">
+                        Rules
+                    </button>
+                </a>
+            </div>
 
-      <!-- Left links -->
+            <!-- Left links -->
 
-        {% if user.is_authenticated %}
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a  class="nav-link" href="{% url 'rankings' %}">
-                        <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
-                            Ranking
-                        </button>
-                    </a>
-                  </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'user_profile'  user.username %}">
-                        <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
-                            User Profile
-                        </button>
-                    </a>
-                </li>
-                  <li class="nav-item dropdown">
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'rankings' %}">
+                            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+                                Ranking
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_profile'  user.username %}">
+                            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+                                User Profile
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
 
-                    <div class="dropdown nav-item nav-link">
-                      <button class="btn btn-primary btn-rounded dropdown-toggle" type="button" id="dropdownMenuButton"
-                              data-mdb-toggle="dropdown" aria-expanded="false">
-                        All Projects
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        {% for project in projects %}
-                            <li class="" style="width: 500px">
+                        <div class="dropdown nav-item nav-link">
+                            <button class="btn btn-primary btn-rounded dropdown-toggle" type="button"
+                                    id="dropdownMenuButton"
+                                    data-mdb-toggle="dropdown" aria-expanded="false">
+                                All Projects
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                {% for project in projects %}
+                                    <li class="" style="width: 500px">
                                 <span class="dropdown-item-text">
                                     <button type="button" class="btn btn-secondary p-1" data-mdb-ripple-color="dark">
-                                        <a class='text-white' href="{{ project.html_url }}" target="_blank"> {# style="color: white"  #}
+                                        <a class='text-white' href="{{ project.html_url }}"
+                                           target="_blank"> {# style="color: white"  #}
                                            <b>{{ project.name }}</b> [ {{ project.domain }} ]
                                         </a>
                                     </button>
                                 </span>
-                            </li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  </li>
-            </ul>
-        {% endif %}
-        <div class="form-check form-switch">
-          <label class="form-check-label text-light" >Dark Mode</label>
-          <input class="form-check-input" type="checkbox" id="theme-control" onchange="darkmodetoggle(this.checked);" />
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact_form' %}">
+                            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+                                Contact Us
+                            </button>
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+            <div class="form-check form-switch">
+                <label class="form-check-label text-light">Dark Mode</label>
+                <input class="form-check-input" type="checkbox" id="theme-control" onchange="darkmodetoggle(this.checked);" />
+            </div>
         </div>
-    </div>
-          <!-- Right elements -->
-    <div class="d-flex align-items-center">
+        <!-- Right elements -->
+        <div class="d-flex align-items-center">
             {% if not user.is_authenticated %}
-                <a  class="nav-link" href="{% url 'authorize' %}">
+                <a class="nav-link" href="{% url 'authorize' %}">
                     <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
                         Authorize
                     </button>
                 </a>
             {% else %}
-                <a  class="nav-link" href="{% url 'logout' %}">
+                <a class="nav-link" href="{% url 'logout' %}">
                     <button type="button" class="btn btn-danger btn-rounded" data-mdb-ripple-color="dark">
                         Logout
                     </button>
                 </a>
-        {% endif %}
-    </div>
+            {% endif %}
+        </div>
         <!-- Right elements -->
 
-    <!-- Collapsible wrapper -->
-  </div>
-  <!-- Container wrapper -->
+        <!-- Collapsible wrapper -->
+    </div>
+    <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
 
