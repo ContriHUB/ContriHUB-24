@@ -54,28 +54,38 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-
-                        <div class="dropdown nav-item nav-link">
-                            <button class="btn btn-primary btn-rounded dropdown-toggle" type="button"
-                                    id="dropdownMenuButton"
-                                    data-mdb-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link">
+                            <button type="button" class="btn btn-primary btn-rounded" data-toggle="modal" data-target="#exampleModal">
                                 All Projects
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                {% for project in projects %}
-                                    <li class="" style="width: 500px">
-                                <span class="dropdown-item-text">
-                                    <button type="button" class="btn btn-secondary p-1" data-mdb-ripple-color="dark">
-                                        <a class='text-white' href="{{ project.html_url }}"
-                                           target="_blank"> {# style="color: white"  #}
-                                           <b>{{ project.name }}</b> [ {{ project.domain }} ]
-                                        </a>
-                                    </button>
-                                </span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        </a>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" style="max-width: fit-content;" role="document">
+                              <div class="modal-content" style="background-color: #204278;">
+                                <div class="modal-header" style="color: aliceblue;">
+                                  <h5 class="modal-title" id="exampleModalLabel">All Projects</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered text-white" cellpadding="10" cellspacing="5">
+                                        <tr>
+                                            <th>Project Name</th>
+                                            <th>Domain</th>
+                                        </tr>
+                                        {% for project in projects %}
+                                            <tr>
+                                                <td><a href="{{project.html_url}}"><button type="button" class="btn btn-lg btn-warning ">{{ project.name }}</button></td></a>
+                                                <td><button type="button" class="btn btn-lg btn-warning">{{ project.domain }}</button></td></td>
+                                            </tr>
+                                        {% endfor %}
+                                
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact_form' %}">
