@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -24,9 +24,17 @@ from .forms import ContactForm
 def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(issues_qs, 20)
+    try:
+        issue_p = paginator.page(page)
+    except PageNotAnInteger:
+        issue_p = paginator.page(1)
+    except EmptyPage:
+        issue_p = paginator.page(paginator.num_pages)
     context = {
         'projects': project_qs,
-        'issues': issues_qs
+        'issues': issue_p
     }
     return render(request, 'home/index.html', context=context)
 
