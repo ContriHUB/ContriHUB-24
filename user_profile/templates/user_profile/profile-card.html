@@ -48,15 +48,14 @@
                                 <div class="row pt-1">
                                     <div class="col-12 mb-3">
                                         <h6><b>MS Teams ID</b></h6>
-                                        <form id="#ms_id_form">
                                         <div class="container">
                                             <input type="email" id="ms_field" name="name"
                                                    value="{{ native_profile.ms_teams_id }}" disabled size="36"
                                                    style="text-align:center;">
                                         </div>
-                                        <button class="btn btn-primary" id="submit">Edit</button>
+
+                                        <button class="btn btn-primary" id="toggle_ms">Edit</button>
                                         <button class="btn btn-primary" id="ms_edit" type="submit">Save</button>
-                                        </form>
                                     </div>
                                 </div>
                                 {% if native_profile.role == native_profile.STUDENT %}

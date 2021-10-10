@@ -41,6 +41,15 @@
                     Email requesting for change of information has been sent
                 </div>
             </div>
+            <div class="toast bg-danger" id="emailErrorToast">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    MS ID Invalid Please Check!!
+                </div>
+            </div>
             <div class="toast bg-danger" id="errorToast">
                 <div class="toast-header">
                     <strong class="me-auto"> Message</strong>
@@ -420,11 +429,23 @@
         })
     </script>
     <script type="text/javascript">
+        function validateEmail(value) {
+            var input = document.createElement('input');
+
+            input.type = 'email';
+            input.required = true;
+            input.value = value;
+
+            return typeof input.checkValidity === 'function' ? input.checkValidity() : /\S+@\S+\.\S+/.test(value);
+        }
+
         jQuery(document).ready(function (event) {
             $(document).on('click', '#ms_edit', function (event) {
                 event.preventDefault()
                 var ms_id = $('#ms_field').val();
-                $.ajax({
+                if(validateEmail(ms_id))
+                {
+                    $.ajax({
                     url: '{% url "change_msid" %}',
                     type: 'post',
                     data: {
@@ -438,12 +459,17 @@
                         $("#errorToast").toast("show");
                     }
                 })
+                }
+                else
+                {
+                    $("#emailErrorToast").toast("show");
+                }
             })
         })
     </script>
     <script>
         $(document).ready(function () {
-            $('#submit').click(function () {
+            $('#toggle_ms').click(function () {
                 var disabled = $("#ms_field").attr('disabled');
                 if (disabled === undefined) {
                     $("#ms_field").attr('disabled', 'disabled');

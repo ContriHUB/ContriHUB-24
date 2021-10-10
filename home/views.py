@@ -19,11 +19,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from user_profile.models import UserProfile
 from .forms import ContactForm
 
-
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all()
+    issues_qs = Issue.objects.all().order_by('-id')
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
