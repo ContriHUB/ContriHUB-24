@@ -167,8 +167,9 @@
             <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
         {% endif %}
 
-        <div class="loading" style="display: none;">
-            Loading...
+        <div class="loading container" style="display: none;">
+            <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
+                 style="display:block;margin-left:auto;margin-right:auto;">
         </div>
     </div>
 
