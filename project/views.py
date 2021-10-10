@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import complete_profile_required, fetch_all_issues
-
+from config import Apis
 User = get_user_model()
 
 
@@ -18,7 +18,7 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = "https://api.github.com/repos/ContriHUB/"
+    api_uri = Apis['api_contri_hub_1']
     html_uri = "https://github.com/ContriHUB/"
     print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
@@ -50,7 +50,7 @@ def populate_issues(request):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-    uri = "https://api.github.com/repos/contrihub/"
+    uri = Apis['api_contri_hub_2']
 
     for project in project_qs:
         print("PROJECT: ", project.name)
