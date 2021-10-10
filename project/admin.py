@@ -13,15 +13,23 @@ class IssueAdmin(admin.ModelAdmin):
 
 
 class PullRequestAdmin(admin.ModelAdmin):
-    list_display = ('contributor', 'pr_link', 'state', 'bonus', 'penalty', 'submitted_at')
-
-
-class IssueAssignmentRequestAdmin(admin.ModelAdmin):
-    list_display = ('requester', 'issue', 'state', 'get_id', 'get_project_name')
+    list_display = ('contributor', 'get_id', 'issue', 'get_project_name', 'pr_link', 'state', 'bonus', 'penalty', 'submitted_at')
 
     @display(ordering='issue__id', description='Issue_ki_id')
     def get_id(self, obj):
-        return obj.issue.id\
+        return obj.issue.id
+
+    @display(ordering='issue__project', description='Project_ka_naam')
+    def get_project_name(self, obj):
+        return obj.issue.project
+
+
+class IssueAssignmentRequestAdmin(admin.ModelAdmin):
+    list_display = ('requester', 'issue', 'state', 'get_id', 'get_project_name', 'created_on')
+
+    @display(ordering='issue__id', description='Issue_ki_id')
+    def get_id(self, obj):
+        return obj.issue.id
 
     @display(ordering='issue__project', description='Project_ka_naam')
     def get_project_name(self, obj):
@@ -33,7 +41,7 @@ class ActiveIssueAdmin(admin.ModelAdmin):
 
     @display(ordering='issue__id', description='Issue_ki_id')
     def get_id(self, obj):
-        return obj.issue.id\
+        return obj.issue.id
 
     @display(ordering='issue__project', description='Project_ka_naam')
     def get_project_name(self, obj):
