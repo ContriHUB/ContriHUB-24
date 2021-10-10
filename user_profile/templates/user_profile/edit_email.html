@@ -1,6 +1,7 @@
 {% autoescape off %}
-    User {{ user }}, requested to change their personal Information with the following information
-    Registration Number:{{ reg_num }}
-    Course:{{ course }}
-    Current Year:{{ year }}
+    <p>User <a href="https://contrihub21.herokuapp.com/profile/user/{{ user }}/">{{ user }}</a>, requested to change
+        their personal Information with the following information</p>
+    <p>Registration Number:{{ reg_num }}</p>
+    <p>Course:{{ course }}</p>
+    <p> Current Year:{{ year }}</p>
 {% endautoescape %}

@@ -101,12 +101,12 @@ def rankings(request):
 
 @login_required
 def edit_profile(request):
-    if request.method=='POST':
+    if request.method=="POST":
         form=EditProfileForm(request.POST)
         user = request.user
         reg_num = form['registration_no'].value()
         year = form['current_year'].value()
-        course =form['course'].value()
+        course = form.instance.get_course_display()
         subject = "Change in Personal Information"
         message = render_to_string('user_profile/edit_email.html', {
             'user': user,
@@ -114,9 +114,11 @@ def edit_profile(request):
             'year': year,
             'course': course,
         })
+
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
+        email.content_subtype="html"
         email.send()
         return JsonResponse({'status': 'success'})
     else:
