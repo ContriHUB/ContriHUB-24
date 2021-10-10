@@ -54,70 +54,51 @@
             </div>
         </div>
         <div class="row row-cols-1 row-cols-md-1">
-                <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
-                        <div class="card-header text-center">
-                            <h6>Announcements!</h6>
-                        </div>
-                        <div class="card-body">
-                            <ol>
+            <div class="col">
+                <div class="card m-3" style="border-radius: 15px;">
+                    <div class="card-header text-center">
+                        <h6>Announcements!</h6>
+                    </div>
+                    <div class="card-body">
+                        <ol>
 
-                                <li>
-                                    <div class="animated bounceInDown">
-                                        <b>Enhancements:</b>
-                                        <ol>
-                                            <li>
-                                                <b>We have Contact Us feature now 😎️. </b>Thanks to <span class="text-success"><a href="{% url 'user_profile' "DuP-491" %}">@Dup-491</a></span>
-                                            </li>
-                                            <li>
-                                                <b>Profile Pics are now visible on your profile.</b>Thanks to <span class="text-success"><a href="{% url 'user_profile' "CyrilMishra" %}">@CyrilMishra</a></span>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                </li>
-                                <li class="animated bounceInLeft">
-                                    <b class="text-danger">️HOT ISSUE:</b> #13. <b>Project:</b> ContriHUB-21, is currently assigned to <span class="text-success"><a href="{% url 'user_profile' "shobhit2002" %}">@shobhit2002</a></span>
-                                </li>
-                                <li>
-                                    <div class="animated bounceInUp">
-                                        <b>Time for some self service 😁. </b><span class="text-danger">️HOT ISSUE:</span>
-                                        <ol>
-                                            <li>
-                                                <span class="text-info">Disable "Accept/Reject" PR button #8.</span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span> 😋️
-                                            </li>
-                                        </ol>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="animated">
-                                        <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests. It was due to a missing equality(=) sign.
-                                        <span>Youtube developers once made a similar mistake which led to an interesting <span class="text-success">fun fact.</span></span>
-                                        <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
-                                    </div>
-                                </li>
-{#                                <li>#}
-{#                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.#}
-{#                                </li>#}
-                                <li>
-                                    Some issues are <b>locked</b> and will be unlocked only after you solve the once which are <b>mentioned in the description</b> of a locked Issues.
-                                </li>
-                                <li>
-                                    <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
+                            <li>
+                                <div class="animated bounceInDown">
+                                    <b>Enhancements:</b>
                                     <ol>
                                         <li>
-                                            <span class="text-info">Disable "Request Assignment" Button #13.</span> <b>Project</b>:
-                                            <span class="text-secondary">ContriHub-21</span>
+                                            <b>We have Contact Us feature now 😎️. </b>Thanks to <span
+                                                class="text-success"><a href="{% url 'user_profile' "DuP-491" %}">@Dup-491</a></span>
                                         </li>
                                         <li>
-                                            <span class="text-info">Disable "Accept/Reject" PR button #8.</span> <b>Project</b>:
-                                            <span class="text-secondary">ContriHub-21</span>
+                                            <b>Profile Pics are now visible on your profile.</b>Thanks to <span
+                                                class="text-success"><a href="{% url 'user_profile' "CyrilMishra" %}">@CyrilMishra</a></span>
                                         </li>
                                     </ol>
+                                </div>
+                            </li>
+                            <li class="animated bounceInLeft">
+                                <b class="text-danger">️HOT ISSUE:</b> #13. <b>Project:</b> ContriHUB-21, is currently
+                                assigned to <span class="text-success"><a href="{% url 'user_profile' "shobhit2002" %}">@shobhit2002</a></span>
+                            </li>
+                            <li>
+                                <div class="animated bounceInUp">
+                                    <b>Time for some self service 😁. </b><span class="text-danger">️HOT ISSUE:</span>
+                                    <ol>
+                                        <li>
+                                            <span class="text-info">Disable "Accept/Reject" PR button #8.</span> <b>Project</b>:
+                                            <span class="text-secondary">ContriHub-21</span> 😋️
+                                        </li>
+                                    </ol>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="animated">
+                                    <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests.
+                                    It was due to a missing equality(=) sign.
+                                    <span>Youtube developers once made a similar mistake which led to an interesting <span
+                                            class="text-success">fun fact.</span></span>
+                                    <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
                                 </div>
                             </li>
                             <li>
@@ -137,81 +118,106 @@
                                 <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
                                 <ol>
                                     <li>
-                                        Some other person has <b>already-requested/already-solving</b> the same issue.
+                                        <span class="text-info">Disable "Request Assignment" Button #13.</span> <b>Project</b>:
+                                        <span class="text-secondary">ContriHub-21</span>
                                     </li>
                                     <li>
-                                        The issue is still locked. <b>So Check the Description of Issue on GitHub first
-                                        then Request it.</b>
+                                        <span class="text-info">Disable "Accept/Reject" PR button #8.</span>
+                                        <b>Project</b>:
+                                        <span class="text-secondary">ContriHub-21</span>
                                     </li>
                                 </ol>
                             </li>
-                            <li>
-                                <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
-                                Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
-                                Add your name, and create a Pull Request. These PR will not fetch you any points.</span>
-                            </li>
+                        </ol>
+                        </li>
+                        <li>
+                            <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active
+                            Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
+                        </li>
+                        <li>
+                            Some issues are <b>locked</b> and will be unlocked only after you solve the once which
+                            are <b>mentioned in the description</b> of a locked Issues.
+                        </li>
+                        <li>
+                            <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
+                            <ol>
+                                <li>
+                                    Some other person has <b>already-requested/already-solving</b> the same issue.
+                                </li>
+                                <li>
+                                    The issue is still locked. <b>So Check the Description of Issue on GitHub first
+                                    then Request it.</b>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
+                            Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
+                            Add your name, and create a Pull Request. These PR will not fetch you any points.</span>
+                        </li>
 
                         </ol>
                     </div>
+                </div>
+                <div class="card-footer text-muted">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row row-cols-1 row-cols-md-2">
+        {% for issue in issues %}
+            <div class="col">
+                <div class="card m-3 text-center" style="border-radius: 15px;">
+                    <div class="card-header">
+                        Issue #{{ issue.number }} - {{ issue.project.domain }}
+                    </div>
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            <a href="{{ issue.html_url }}">{{ issue.title }}</a>
+                        </h5>
+                        <h6 class="">
+                            <a data-mdb-toggle="tooltip" title="Project"
+                               href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
+                        </h6>
+
+                        <p class="card-text">
+                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                               title="Mentor">@{{ issue.mentor }}</a>
+                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                               title="Level">{{ issue.get_level_display }}</a>
+                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                               title="Points">{{ issue.points }}</a>
+                            {% if issue.is_restricted %}
+                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </a>
+                            {% endif %}
+                        </p>
+
+                    </div>
+                    <div id="vote-section-{{ issue.pk }}">
+                        {% include 'home/vote.html' %}
+                    </div>
                     <div class="card-footer text-muted">
+                        {% if issue.state == issue.OPEN %}
+                            <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
+                            <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                                    title="Ask mentor for assigning Issue" type="button"
+                                    class="btn btn-primary mt-0">
+                                <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                    Request Assignment
+                                </a>
+                            </button>
+                        {% else %}
+                            <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-
-        </div>
-        <div class="row row-cols-1 row-cols-md-2">
-            {% for issue in issues %}
-                <div class="col">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
-                        <div class="card-header">
-                            Issue #{{ issue.number }} - {{ issue.project.domain }}
-                        </div>
-                        <div class="card-body">
-
-                            <h5 class="card-title">
-                                <a href="{{ issue.html_url }}">{{ issue.title }}</a>
-                            </h5>
-                            <h6 class="">
-                                <a data-mdb-toggle="tooltip" title="Project"
-                                   href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
-                            </h6>
-
-                            <p class="card-text">
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Mentor">@{{ issue.mentor }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Level">{{ issue.get_level_display }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Points">{{ issue.points }}</a>
-                                {% if issue.is_restricted %}
-                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </a>
-                                {% endif %}
-                            </p>
-
-                        </div>
-                        <div id="vote-section-{{ issue.pk }}">
-                            {% include 'home/vote.html' %}
-                        </div>
-                        <div class="card-footer text-muted">
-                            {% if issue.state == issue.OPEN %}
-                                <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
-                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                        title="Ask mentor for assigning Issue" type="button"
-                                        class="btn btn-primary mt-0">
-                                    <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                        Request Assignment
-                                    </a>
-                                </button>
-                            {% else %}
-                                <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+        {% endfor %}
+    </div>
     </div>
 
 {% endblock %}
@@ -233,7 +239,7 @@
                         type: type,
                     },
                     success: function (data) {
-                        $('#vote-section-'+iid).html(data['html'])
+                        $('#vote-section-' + iid).html(data['html'])
                         if (type == '0') {
                             $("#upVoteToast").toast("show");
                         } else if (type == '1') {

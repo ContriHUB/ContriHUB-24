@@ -9,7 +9,17 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'number', 'project', 'mentor', 'level', 'points', 'state')
+    list_display = ('id', 'title', 'number', 'project', 'mentor', 'level', 'points', 'state', 'get_upvotes_cnt', 'get_downvotes_cnt')
+
+    @display(ordering='issue__upvotes', description='Count of Upvotes')
+    def get_upvotes_cnt(self, obj):
+        return obj.upvotes.all().count()
+
+
+    @display(ordering='issue__downvotes', description='Count of Downvotes')
+    def get_downvotes_cnt(self, obj):
+        return obj.downvotes.all().count()
+
 
 
 class PullRequestAdmin(admin.ModelAdmin):
