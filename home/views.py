@@ -20,10 +20,11 @@ from user_profile.models import UserProfile
 from .forms import ContactForm
 import smtplib
 
+
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all()
+    issues_qs = Issue.objects.all().order_by('-id')
 
     #get all active issues
     active_qs_obj = ActiveIssue.objects.all()
@@ -37,7 +38,7 @@ def home(request):
             all_active_issues.append(issue)
             active_issue=active_issue[0]
             issue.contributor=active_issue.contributor    # set contributor for that active issue
-
+            
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:

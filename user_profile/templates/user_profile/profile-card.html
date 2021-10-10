@@ -1,63 +1,111 @@
+{% load crispy_forms_tags %}
 <section class="vh-100">
-  <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col col-lg-6 mb-4 mb-lg-0">
-        <div class="card mb-3" style="border-radius: .5rem;">
-          <div class="row g-0">
-            <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-                <div class="row">
-                  <img src="https://avatars.githubusercontent.com/{{ native_profile.user.username }}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
-                  <br>
-                </div>
-                <h5>{{ native_profile.user.first_name }} {{ native_profile.user.last_name }}</h5>
-              <p>@{{ native_profile.user.username }}</p>
-            </div>
-            <div class="col-md-8 text-center">
-              <div class="card-body p-4">
-                <h6><b>Personal Information</b></h6>
-                <hr class="mt-0 mb-4">
-                <div class="row pt-1">
-                  <div class="col-6 mb-3">
-                    <h6><b>Role</b></h6>
-                    <p class="text-muted">{{ native_profile.get_role_display }}</p>
-                  </div>
-                  <div class="col-6 mb-3">
-                    <h6><b>Regno</b></h6>
-                    <p class="text-muted">{{ native_profile.registration_no }}</p>
-                  </div>
-                </div>
-                <div class="row pt-1">
-                  <div class="col-6 mb-3">
-                    <h6><b>Course</b></h6>
-                    <p class="text-muted">{{ native_profile.get_course_display }}</p>
-                  </div>
-                  <div class="col-6 mb-3">
-                    <h6><b>Current Year</b></h6>
-                    <p class="text-muted">{{ native_profile.get_current_year_display }}</p>
-                  </div>
-                </div>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-lg-6 mb-4 mb-lg-0">
+                <div class="card mb-3" style="border-radius: .5rem;">
+                    <div class="row g-0">
+                        <div class="col-md-4 gradient-custom text-center"
+                             style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                            <div class="row">
+                                <img src="https://avatars.githubusercontent.com/{{ native_profile.user.username }}"
+                                     alt="Avatar"
+                                     style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
+                                <br>
+                            </div>
+                            <h5>{{ native_profile.user.first_name }} {{ native_profile.user.last_name }}</h5>
+                            <p>@{{ native_profile.user.username }}</p>
+                        </div>
+                        <div class="col-md-8 text-center">
+                            <div class="card-body p-4">
+                                <h6><b>Personal Information</b></h6>
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6><b>Role</b></h6>
+                                        <p class="text-muted">{{ native_profile.get_role_display }}</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6><b>Regno</b></h6>
+                                        <p class="text-muted">{{ native_profile.registration_no }}</p>
+                                    </div>
+                                </div>
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6><b>Course</b></h6>
+                                        <p class="text-muted">{{ native_profile.get_course_display }}</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6><b>Current Year</b></h6>
+                                        <p class="text-muted">{{ native_profile.get_current_year_display }}</p>
+                                    </div>
+                                </div>
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#formmodal">
+                                    Edit Personal Information
+                                </button>
+                                <div class="row pt-1">
+                                    <div class="col-12 mb-3">
+                                        <h6><b>MS Teams ID</b></h6>
+                                        <div class="container">
+                                            <input type="email" id="ms_field" name="name"
+                                                   value="{{ native_profile.ms_teams_id }}" disabled
+                                                   style="text-align:center; width: 100%;">
+                                        </div>
 
-                  <div class="row pt-1">
-                  <div class="col-12 mb-3">
-                    <h6><b>MS Teams ID</b></h6>
-                    <p class="text-muted">{{ native_profile.ms_teams_id }}</p>
-                  </div>
-                </div>
-                  {% if native_profile.role == native_profile.STUDENT %}
-                    <h6><b>#Respect</b></h6>
-                    <hr class="mt-0 mb-4">
-                    <div class="row pt-1">
-                      <div class="col-12 mb-3">
-                        <h6><b>Total Points</b></h6>
-                        <p class="text-muted">{{ native_profile.total_points }}</p>
-                      </div>
+                                        <button class="btn btn-primary" id="toggle_ms">Edit</button>
+                                        <button class="btn btn-primary" id="ms_edit" type="submit">Save</button>
+                                    </div>
+                                </div>
+                                {% if native_profile.role == native_profile.STUDENT %}
+                                    <h6><b>#Respect</b></h6>
+                                    <hr class="mt-0 mb-4">
+                                    <div class="row pt-1">
+                                        <div class="col-12 mb-3">
+                                            <h6><b>Total Points</b></h6>
+                                            <p class="text-muted">{{ native_profile.total_points }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                  {% endif %}
-              </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+    <!-- Modal -->
+    <div class="modal fade" id="formmodal" tabindex="-1"
+         aria-labelledby="formmodal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Personal Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method='POST' action="{% url 'edit_profile' %}" id="form">
+                        {% csrf_token %}
+                        {{ pe_form|crispy }}
+                        <div class="row p-3">
+                            <div class="offset-5">
+                                <button class='btn btn-primary' id="pr_edit" data-bs-dismiss="modal" type='Submit'>
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
+
