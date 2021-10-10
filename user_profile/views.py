@@ -41,7 +41,8 @@ def profile(request, username):
             pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
 
             pr_form = PRSubmissionForm()
-            pe_form = EditProfileForm()
+
+            pe_form = EditProfileForm(instance=request.user.userprofile)
             context = {
                 "mentored_issues": mentored_issues,
                 "pr_requests_by_student": pr_requests_by_student,
@@ -102,11 +103,10 @@ def rankings(request):
 def edit_profile(request):
     if request.method=='POST':
         form=EditProfileForm(request.POST)
-        print(form)
         user = request.user
         reg_num = form['registration_no'].value()
         year = form['current_year'].value()
-        course =form['course']
+        course =form['course'].value()
         subject = "Change in Personal Information"
         message = render_to_string('user_profile/edit_email.html', {
             'user': user,
@@ -117,7 +117,7 @@ def edit_profile(request):
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
-        email.send()
+        # email.send()
         return JsonResponse({'status': 'success'})
     else:
         return HttpResponse("Something went wrong")

@@ -23,13 +23,13 @@
     {% include "user_profile/navbar-profile.html" %}
     <div style="position: fixed; top: 0; right: 0; z-index:1;">
         <div class="">
-            <div class="toast bg-success" id="ms_update">
+            <div class="toast bg-warning" id="warnToast">
                 <div class="toast-header">
                     <strong class="me-auto"> Message</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body">
-                    MS ID updated successfully
+                    Your Request is being Processed! Please Wait
                 </div>
             </div>
             <div class="toast bg-success" id="ps_update">
@@ -39,6 +39,15 @@
                 </div>
                 <div class="toast-body">
                     Email requesting for change of information has been sent
+                </div>
+            </div>
+             <div class="toast bg-success" id="ms_update">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    MS ID updated successfully
                 </div>
             </div>
             <div class="toast bg-danger" id="emailErrorToast">
@@ -408,16 +417,13 @@
         $(document).ready(function () {
             $("#form").on('submit', function (event) {
                 event.preventDefault();
-                var myModal = new bootstrap.Modal(document.getElementById('formmodal'), {
-                    keyboard: false
-                });
                 var the_post = $(this).serialize();
+                $("#warnToast").toast("show");
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'post',
                     data: the_post,
                     success(data) {
-                        myModal.hide();
                         $("#ps_update").toast("show");
                     }
                     ,
@@ -443,25 +449,23 @@
             $(document).on('click', '#ms_edit', function (event) {
                 event.preventDefault()
                 var ms_id = $('#ms_field').val();
-                if(validateEmail(ms_id))
-                {
+                if (validateEmail(ms_id)) {
                     $.ajax({
-                    url: '{% url "change_msid" %}',
-                    type: 'post',
-                    data: {
-                        csrfmiddlewaretoken: "{{csrf_token}}",
-                        ms_id: ms_id,
-                    },
-                    success: function (data) {
-                        $("#ms_update").toast("show");
-                    },
-                    error: function (data) {
-                        $("#errorToast").toast("show");
-                    }
-                })
-                }
-                else
-                {
+                        url: '{% url "change_msid" %}',
+                        type: 'post',
+                        data: {
+                            csrfmiddlewaretoken: "{{csrf_token}}",
+                            ms_id: ms_id,
+                        },
+                        success: function (data) {
+                            $("#ms_update").toast("show");
+                            $("#ms_field").attr('disabled', 'disabled');
+                        },
+                        error: function (data) {
+                            $("#errorToast").toast("show");
+                        }
+                    })
+                } else {
                     $("#emailErrorToast").toast("show");
                 }
             })
