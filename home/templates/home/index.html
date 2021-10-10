@@ -135,13 +135,13 @@
                         </div>
                         <div class="card-footer text-muted">
 
-                            {% if issue in all_active_issues %}
-                                <a class="btn btn-rounded btn-warning">In Progress</a> 
+                            {% if issue in all_active_issues %} 
                                 <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                    title="Already Assigned to this Contributor" type="button" class="btn btn-primary mt-0">
+                                    title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
                                     <a class="text-white">
-                                        By : @{{ issue.contributor.username }}
+                                        Assigned to @{{ issue.contributor.username }}
                                     </a>
+                                </button>
                             {% elif issue.state == issue.OPEN %}
                                 <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
                                 <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
