@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
 from .forms import ContactForm
-
+import smtplib
 
 @complete_profile_required
 def home(request):
@@ -84,7 +84,10 @@ def request_issue_assignment(request, issue_pk):
             ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
             return HttpResponse(
                 f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
-
+        except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+            return HttpResponse(
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
     return HttpResponse(message)
@@ -163,6 +166,10 @@ def submit_pr_request(request, active_issue_pk):
                     message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
                 except mail.BadHeaderError:
+                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
+                except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
                     ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
                     message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
