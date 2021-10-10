@@ -211,16 +211,14 @@
                                             <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
+                                            <button class="btn btn-success mt-0">
+                                            <a class="text-white" href="{% url 'accept_pr' pr.pk %}">Accept</a>
+                                            </button>
+                                            <button class="btn btn-danger mt-0">
+                                             <a class="text-white" href="{% url 'reject_pr' pr.pk %}">Reject</a>
+                                            </button>
+
                                         {% endif %}
-                                    {# TODO: ISSUE: Disable these buttons from Frontend if PR is already accepted/rejected #}
-                                        <button class="btn btn-success mt-0">
-                                            <a class="text-white" href="{% url 'accept_pr' pr.pk %}">
-                                                Accept
-                                            </a>
-                                        </button>
-                                        <button class="btn btn-danger mt-0">
-                                            <a class="text-white" href="{% url 'reject_pr' pr.pk %}">Reject</a>
-                                        </button>
                                         <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
                                             <a class="text-white" href="{{ pr.pr_link }}"><i class="fas fa-eye"></i></a>
                                         </button>
