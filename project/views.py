@@ -4,7 +4,8 @@ from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LA
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
-from helper import safe_hit_url, SUCCESS, complete_profile_required
+from helper import complete_profile_required, fetch_all_issues
+
 User = get_user_model()
 
 
@@ -49,55 +50,52 @@ def populate_issues(request):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-
     uri = "https://api.github.com/repos/contrihub/"
 
     for project in project_qs:
-        url = f"{uri}{project.name}/issues?per_page=100"
-        response = safe_hit_url(url=url, headers=headers)
         print("PROJECT: ", project.name)
-        if response['status'] == SUCCESS:
-            issues = response['data']
-            print("COUNT: ", len(issues))
-            for issue in issues:
-                # TODO: Can be given as ISSUE
-                if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
-                    continue
-                if issue.get('pull_request') is not None: # this issue is actually a PR.
-                    # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
-                    print("This issue is a actually a PR")
-                    continue
-                title, number = issue['title'], issue['number']
-                mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
-                api_url, html_url = issue['url'], issue['html_url']
-                issue_qs = Issue.objects.filter(number=number, project=project)
+        issues_dict = fetch_all_issues(uri, project.name, headers)
+        issues = issues_dict['data']
+        print("COUNT: ", len(issues))
+        for issue in issues:
+            # TODO: Can be given as ISSUE
+            if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
+                continue
+            if issue.get('pull_request') is not None: # this issue is actually a PR.
+                # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
+                print("This issue is a actually a PR")
+                continue
+            title, number = issue['title'], issue['number']
+            mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
+            api_url, html_url = issue['url'], issue['html_url']
+            issue_qs = Issue.objects.filter(number=number, project=project)
+            # print("I: ", number, title, mentor_name, level)
+            if issue_qs:  # Update if already present
+                db_issue = issue_qs.first()
+                db_issue.title = title
+                db_issue.level = level
+                db_issue.points = points
+                db_issue.is_restricted = is_restricted
+            else:  # Else Create New
+                db_issue = Issue(
+                    number=number,
+                    title=title,
+                    api_url=api_url,
+                    html_url=html_url,
+                    project=project,
+                    level=level,
+                    points=points,
+                    is_restricted=is_restricted
+                )
 
-                if issue_qs:  # Update if already present
-                    db_issue = issue_qs.first()
-                    db_issue.title = title
-                    db_issue.level = level
-                    db_issue.points = points
-                    db_issue.is_restricted = is_restricted
-                else:  # Else Create New
-                    db_issue = Issue(
-                        number=number,
-                        title=title,
-                        api_url=api_url,
-                        html_url=html_url,
-                        project=project,
-                        level=level,
-                        points=points,
-                        is_restricted=is_restricted
-                    )
+            # print(db_issue)
+            try:
+                mentor = User.objects.get(username=mentor_name)
+                db_issue.mentor = mentor
+            except User.DoesNotExist:
+                pass
 
-                # print(db_issue)
-                try:
-                    mentor = User.objects.get(username=mentor_name)
-                    db_issue.mentor = mentor
-                except User.DoesNotExist:
-                    pass
-
-                db_issue.save()
+            db_issue.save()
 
     return HttpResponseRedirect(reverse('home'))
 

@@ -22,6 +22,8 @@
             <th>Total Points</th>
             <th>Bonus Points</th>
             <th>Deducted Points</th>
+            <th>Issues Solved</th>
+
         </tr>
         {% for contributor in contributors %}
             <tr>
@@ -40,6 +42,11 @@
                 <td>
                     <span class="badge badge-pill badge-danger">
                         {{ contributor.deducted_points }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge badge-pill badge-success">
+                        {{ contributor.issues_solved }}
                     </span>
                 </td>
             </tr>

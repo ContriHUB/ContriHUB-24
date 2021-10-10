@@ -166,18 +166,24 @@ class PullRequest(models.Model):
         self.issue.state = self.issue.CLOSED
         self.issue.save()
 
+         # Updated accepted pr req. of current user
+        accepted_pr_count = PullRequest.objects.filter(contributor=self.contributor,state=self.ACCEPTED).count()
+
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
         contributor_profile.total_points += int(self.issue.points)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
+        contributor_profile.issues_solved = accepted_pr_count
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        try:
-            self.issue.activeissue_set.first().delete()
-        except AttributeError:
-            pass
+        ActiveIssue.objects.get(issue=self.issue, contributor=self.contributor).delete()
+
+        # try:
+        #     self.issue.activeissue_set.first().delete()
+        # except AttributeError:
+        #     pass
 
     def reject(self, bonus=0, penalty=0):
         """
@@ -200,10 +206,12 @@ class PullRequest(models.Model):
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        try:
-            self.issue.activeissue_set.first().delete()
-        except AttributeError:
-            pass
+        ActiveIssue.objects.get(issue=self.issue, contributor=self.contributor).delete()
+
+        # try:
+        #     self.issue.activeissue_set.first().delete()
+        # except AttributeError:
+        #     pass
 
 
 class IssueAssignmentRequest(models.Model):
@@ -220,6 +228,8 @@ class IssueAssignmentRequest(models.Model):
 
     state = models.PositiveSmallIntegerField(verbose_name="State", choices=STATES, default=PENDING_VERIFICATION)
 
+    created_on = models.DateTimeField(default=timezone.now)
+
     def __str__(self):
         return f"{self.requester}_{self.issue}"
 
@@ -235,9 +245,15 @@ class IssueAssignmentRequest(models.Model):
         if self.state != self.PENDING_VERIFICATION:  # If this Issue Request was already Accepted/Rejected
             return False
 
-        active_count = ActiveIssue.objects.filter(contributor=requester, issue=issue).count()
+        is_active = ActiveIssue.objects.filter(issue=self.issue)
 
-        if active_count >= MAX_SIMULTANEOUS_ISSUE:
+        if is_active:  # If this issue is already assigned to someone currently
+            return False
+
+        active_count = ActiveIssue.objects.filter(contributor=requester).count()
+
+        if active_count >= MAX_SIMULTANEOUS_ISSUE: # If this requester is already working on MAX_SIMULTANEOUS_ISSUE
+            # issues
             return False
 
         return True
