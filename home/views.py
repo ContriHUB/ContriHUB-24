@@ -265,7 +265,9 @@ def handle_vote(request):
     issue = Issue.objects.get(pk=id)
     is_upvoted = request.user in issue.upvotes.all()
     is_downvoted = request.user in issue.downvotes.all()
+    message=""
     if (type == 0):
+        message="Upvoted Successfully"
         if is_upvoted:
             issue.upvotes.remove(request.user)
         else:
@@ -273,6 +275,7 @@ def handle_vote(request):
             if is_downvoted:
                 issue.downvotes.remove(request.user)
     elif type == 1:
+        message="Downvoted Successfully"
         if is_downvoted:
             issue.downvotes.remove(request.user)
         else:
@@ -283,4 +286,4 @@ def handle_vote(request):
         'issue': issue,
     }
     html = render_to_string('home/vote.html', context, request=request)
-    return JsonResponse({'html': html})
+    return JsonResponse({'html': html,'message':message})
