@@ -106,7 +106,8 @@ def edit_profile(request):
         user = request.user
         reg_num = form['registration_no'].value()
         year = form['current_year'].value()
-        course = form.instance.get_course_display()
+        course = form['course'].value()
+        course=dict(form.fields['course'].choices)[int(course)]
         subject = "Change in Personal Information"
         message = render_to_string('user_profile/edit_email.html', {
             'user': user,
