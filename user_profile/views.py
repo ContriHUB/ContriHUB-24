@@ -28,7 +28,6 @@ def profile(request, username):
         native_profile = native_profile_qs.first()
 
         if username == user.username:
-            # TODO: ISSUE Fetch User's Avatar's URL from Github API and display it in profile
             pr_requests_by_student = PullRequest.objects.filter(contributor=user)
             assignment_requests_by_student = IssueAssignmentRequest.objects.filter(requester=user)
             active_issues = ActiveIssue.objects.filter(contributor=user)
@@ -39,6 +38,24 @@ def profile(request, username):
 
             pr_form = PRSubmissionForm()
 
+            free_issues_solved = 0
+            v_easy_issues_solved = 0
+            easy_issues_solved = 0
+            medium_issues_solved = 0
+            hard_issues_solved = 0
+
+            for pr in pr_requests_by_student:
+                if pr.state == pr.ACCEPTED and pr.issue.level == 0:
+                    free_issues_solved += 1
+                if pr.state == pr.ACCEPTED and pr.issue.level == 4:
+                    v_easy_issues_solved += 1
+                if pr.state == pr.ACCEPTED and pr.issue.level == 1:
+                    easy_issues_solved += 1
+                if pr.state == pr.ACCEPTED and pr.issue.level == 2:
+                    medium_issues_solved += 1
+                if pr.state == pr.ACCEPTED and pr.issue.level == 3:
+                    hard_issues_solved += 1
+
             context = {
                 "mentored_issues": mentored_issues,
                 "pr_requests_by_student": pr_requests_by_student,
@@ -47,7 +64,12 @@ def profile(request, username):
                 "assignment_requests_by_student": assignment_requests_by_student,
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
-                "native_profile": native_profile
+                "native_profile": native_profile,
+                "free_issues_solved": free_issues_solved,
+                "v_easy_issues_solved": v_easy_issues_solved,
+                "easy_issues_solved": easy_issues_solved,
+                "medium_issues_solved": medium_issues_solved,
+                "hard_issues_solved": hard_issues_solved,
             }
             return render(request, 'user_profile/profile.html', context=context)
         else:
