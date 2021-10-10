@@ -24,6 +24,20 @@ import smtplib
 def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.all()
+
+    #get all active issues
+    active_qs_obj = ActiveIssue.objects.all()
+    all_active_issues = []
+
+    for issue in issues_qs:
+
+        active_issue = active_qs_obj.filter(issue=issue)
+
+        if active_issue:
+            all_active_issues.append(issue)
+            active_issue=active_issue[0]
+            issue.contributor=active_issue.contributor    # set contributor for that active issue
+
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
@@ -32,9 +46,11 @@ def home(request):
         issue_p = paginator.page(1)
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
+        
     context = {
         'projects': project_qs,
-        'issues': issue_p
+        'issues': issue_p,
+        'all_active_issues': all_active_issues
     }
     return render(request, 'home/index.html', context=context)
 
