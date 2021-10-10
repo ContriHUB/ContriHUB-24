@@ -117,7 +117,7 @@ def edit_profile(request):
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
-        # email.send()
+        email.send()
         return JsonResponse({'status': 'success'})
     else:
         return HttpResponse("Something went wrong")
