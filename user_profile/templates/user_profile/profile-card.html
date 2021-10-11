@@ -40,24 +40,26 @@
                                         <p class="text-muted">{{ native_profile.get_current_year_display }}</p>
                                     </div>
                                 </div>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#formmodal">
-                                    Edit Personal Information
-                                </button>
-                                <div class="row pt-1">
-                                    <div class="col-12 mb-3">
-                                        <h6><b>MS Teams ID</b></h6>
-                                        <div class="container">
-                                            <input type="email" id="ms_field" name="name"
-                                                   value="{{ native_profile.ms_teams_id }}" disabled
-                                                   style="text-align:center; width: 100%;">
-                                        </div>
+                                {% if user.username == native_profile.user.username %}
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#formmodal">
+                                        Edit Personal Information
+                                    </button>
+                                    <div class="row pt-1">
+                                        <div class="col-12 mb-3">
+                                            <h6><b>MS Teams ID</b></h6>
+                                            <div class="container">
+                                                <input type="email" id="ms_field" name="name"
+                                                       value="{{ native_profile.ms_teams_id }}" disabled
+                                                       style="text-align:center; width: 100%;">
+                                            </div>
 
-                                        <button class="btn btn-primary" id="toggle_ms">Edit</button>
-                                        <button class="btn btn-primary" id="ms_edit" type="submit">Save</button>
+                                            <button class="btn btn-primary" id="toggle_ms">Edit</button>
+                                            <button class="btn btn-primary" id="ms_edit" type="submit">Save</button>
+                                        </div>
                                     </div>
-                                </div>
+                                {% endif %}
                                 {% if native_profile.role == native_profile.STUDENT %}
                                     <h6><b>#Respect</b></h6>
                                     <hr class="mt-0 mb-4">
