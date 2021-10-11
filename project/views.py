@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import complete_profile_required, fetch_all_issues
-from config import Apis
+from config import APIS, URIS
 User = get_user_model()
 
 
@@ -18,8 +18,8 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = Apis['api_contri_hub']
-    html_uri = "https://github.com/ContriHUB/"
+    api_uri = APIS['api_contrihub']
+    html_uri = URIS['uri_html']
     print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
