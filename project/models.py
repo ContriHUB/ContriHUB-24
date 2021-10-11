@@ -148,6 +148,9 @@ class PullRequest(models.Model):
     def __str__(self):
         return f"{self.contributor}_{self.issue}"
 
+    class Meta:
+        ordering=['-state','submitted_at']
+
     def accept(self, bonus=0, penalty=0):
         """
         Method to accept (verify) PR.
@@ -235,6 +238,9 @@ class IssueAssignmentRequest(models.Model):
 
     def __str__(self):
         return f"{self.requester}_{self.issue}"
+
+    class Meta:
+        ordering=['-state','created_on']
 
     def is_acceptable(self, mentor):
 
