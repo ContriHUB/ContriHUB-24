@@ -27,10 +27,6 @@
     if (nav.classList.contains('navbar-dark') == false) nav.classList.add('navbar-dark');
 
     if (document.body.classList.contains('body-dark') == false) document.body.classList.add('body-dark');
-
-    document.getElementsByClassName('card').forEach(e => {
-      if (e.classList.contains('card-dark') == false) e.classList.add('card-dark');
-    });
     localStorage.setItem('darkmode', true);
 
   }
@@ -40,10 +36,6 @@
     let nav = document.getElementsByTagName('nav')[0];
     if (nav.classList.contains('navbar-dark')) nav.classList.remove('navbar-dark');
     document.body.classList.remove('body-dark');
-    document.getElementsByClassName('card').forEach(e => {
-      e.classList.remove('card-dark');
-    });
-
   }
 </script>
 
