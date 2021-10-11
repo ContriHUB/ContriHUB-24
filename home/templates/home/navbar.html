@@ -72,8 +72,8 @@
                                             <th>Domain</th>
                                         </tr>
                                         {% for project in projects %}
-                                            <tr>
-                                                <td><a target="_blank href="{{project.html_url}}"><button type="button" class="btn btn-lg btn-warning ">{{ project.name }}</button></td></a>
+                                            <tr
+                                                <td><a target="_blank" href="{{project.html_url}}"><button type="button" class="btn btn-lg btn-warning ">{{ project.name }}</button></td></a>
                                                 <td><button type="button" class="btn btn-lg btn-warning">{{ project.domain }}</button></td></td>
                                             </tr>
                                         {% endfor %}
