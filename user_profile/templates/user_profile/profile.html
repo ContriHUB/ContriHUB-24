@@ -80,9 +80,7 @@
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
-                <br>
-                <br>
-                <div class="text-center mt-5"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
+                <div class="text-center"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
                 <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for active_issue in active_issues %}

@@ -49,15 +49,15 @@ def profile(request, username):
             hard_issues_solved = 0
 
             for pr in pr_requests_by_student:
-                if pr.state == pr.ACCEPTED and pr.issue.level == 0:
+                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.FREE:
                     free_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == 4:
+                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.VERY_EASY:
                     v_easy_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == 1:
+                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.EASY:
                     easy_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == 2:
+                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.MEDIUM:
                     medium_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == 3:
+                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.HARD:
                     hard_issues_solved += 1
 
             pe_form = EditProfileForm(instance=request.user.userprofile)
