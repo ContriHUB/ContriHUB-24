@@ -18,7 +18,7 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = Apis['api_contri_hub_1']
+    api_uri = Apis['api_contri_hub']
     html_uri = "https://github.com/ContriHUB/"
     print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
@@ -50,7 +50,7 @@ def populate_issues(request):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-    uri = Apis['api_contri_hub_2']
+    uri = Apis['api_contri_hub']
 
     for project in project_qs:
         print("PROJECT: ", project.name)
