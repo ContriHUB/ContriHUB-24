@@ -178,8 +178,9 @@ class PullRequest(models.Model):
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        ActiveIssue.objects.get(issue=self.issue, contributor=self.contributor).delete()
-
+        active_issue = ActiveIssue.objects.filter(issue=self.issue, contributor=self.contributor)
+        if active_issue:
+            active_issue[0].delete()
         # try:
         #     self.issue.activeissue_set.first().delete()
         # except AttributeError:
@@ -206,7 +207,9 @@ class PullRequest(models.Model):
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        ActiveIssue.objects.get(issue=self.issue, contributor=self.contributor).delete()
+        active_issue = ActiveIssue.objects.filter(issue=self.issue, contributor=self.contributor)
+        if active_issue:
+            active_issue[0].delete()
 
         # try:
         #     self.issue.activeissue_set.first().delete()
