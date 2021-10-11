@@ -1,16 +1,15 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
-
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
+from django.core.mail import EmailMessage
 from home.helpers import send_email
 from django.core import mail
-
+from django.template.loader import render_to_string
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
-
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -18,15 +17,41 @@ from django.utils import timezone
 # TODO:ISSUE: Make a Custom Http404 Page
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
+from .forms import ContactForm
+import smtplib
 
 
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all()
+    issues_qs = Issue.objects.all().order_by('-id')
+
+    #get all active issues
+    active_qs_obj = ActiveIssue.objects.all()
+    all_active_issues = []
+
+    for issue in issues_qs:
+
+        active_issue = active_qs_obj.filter(issue=issue)
+
+        if active_issue:
+            all_active_issues.append(issue)
+            active_issue=active_issue[0]
+            issue.contributor=active_issue.contributor    # set contributor for that active issue
+            
+    page = request.GET.get('page', 1)
+    paginator = Paginator(issues_qs, 20)
+    try:
+        issue_p = paginator.page(page)
+    except PageNotAnInteger:
+        issue_p = paginator.page(1)
+    except EmptyPage:
+        issue_p = paginator.page(paginator.num_pages)
+        
     context = {
         'projects': project_qs,
-        'issues': issues_qs
+        'issues': issue_p,
+        'all_active_issues': all_active_issues
     }
     return render(request, 'home/index.html', context=context)
 
@@ -70,11 +95,16 @@ def request_issue_assignment(request, issue_pk):
         try:
             send_email(template_path=template_path, email_context=email_context)
             # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-            return HttpResponse(f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
+            return HttpResponse(
+                f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
         except mail.BadHeaderError:
             ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-            return HttpResponse(f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
-
+            return HttpResponse(
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
+        except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+            return HttpResponse(
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
     return HttpResponse(message)
@@ -156,6 +186,10 @@ def submit_pr_request(request, active_issue_pk):
                     ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
                     message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
+                except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
                 return HttpResponse(message)
             else:
                 message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
@@ -193,7 +227,7 @@ def accept_pr(request, pk):
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
+                          f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
         else:
             message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
                       f"{issue.project.html_url}>{issue.project.name}</a>"
@@ -221,7 +255,7 @@ def reject_pr(request, pk):
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
+                          f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
         else:
             message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
                       f"{issue.project.html_url}>{issue.project.name}</a>"
@@ -229,3 +263,26 @@ def reject_pr(request, pk):
         message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
+
+
+@login_required
+def contact_form(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        user = form['name'].value()
+        email = form['email'].value()
+        body = form['body'].value()
+        subject = form['subject'].value()
+        message = render_to_string('home/contact_body.html', {
+            'user': user,
+            'email': email,
+            'body': body,
+        })
+        email = EmailMessage(
+            subject, message, to=['contrihub.avishkar@gmail.com']
+        )
+        email.send()
+        return redirect('home')
+    elif request.method == 'GET':
+        form = ContactForm()
+        return render(request, 'home/contact_form.html', context={'form': form})

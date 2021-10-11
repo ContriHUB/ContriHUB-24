@@ -16,12 +16,13 @@
     {# TODO:ISSUE Display who is currently working on this issue #}
     {# TODO:ISSUE Make Link open in new tab #}
 
-    {% include "home/navbar.html"%}
+    {% include "home/navbar.html" %}
     {# TODO:ISSUE Remove all Inline Styles and move to External CSS File #}
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
+
 {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
-    <div class="container-flow p-3" >
-    <div class="row row-cols-1 row-cols-md-1">
+    <div class="container-flow p-3">
+        <div class="row row-cols-1 row-cols-md-1 animated zoomInUp">
                 <div class="col">
                     <div class="card m-3" style="border-radius: 15px;">
                         <div class="card-header text-center">
@@ -29,25 +30,60 @@
                         </div>
                         <div class="card-body">
                             <ol>
-                                <li class="animate slideInRight">
-                                    <div class="animated slideInRight">
-                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
+
+{#                                <li>#}
+{#                                    <div class="animated bounceInDown">#}
+{#                                        <b>Enhancements:</b>#}
+{#                                        <ol>#}
+{#                                            <li>#}
+{#                                                <b>We have Contact Us feature now 😎️. </b>Thanks to <span class="text-success"><a href="{% url 'user_profile' "DuP-491" %}">@Dup-491</a></span>#}
+{#                                            </li>#}
+{#                                            <li>#}
+{#                                                <b>Profile Pics are now visible on your profile.</b>Thanks to <span class="text-success"><a href="{% url 'user_profile' "CyrilMishra" %}">@CyrilMishra</a></span>#}
+{#                                            </li>#}
+{#                                        </ol>#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                                <li class="animated bounceInLeft">#}
+{#                                    <b class="text-danger">️HOT ISSUE:</b> #13. <b>Project:</b> ContriHUB-21, is currently assigned to <span class="text-success"><a href="{% url 'user_profile' "shobhit2002" %}">@shobhit2002</a></span>#}
+{#                                </li>#}
+                                <li>
+                                    <div>
+                                        <b><span class="text-danger">️New HOT ISSUE:</span></b>
+{#                                        <ol>#}
+{#                                            <li>#}
+                                                <span class="text-info">Show Pending PRs and Pending Issues first. #65.</span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span> 😋️
+{#                                            </li>#}
+{#                                        </ol>#}
                                     </div>
                                 </li>
                                 <li>
-                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.
+                                    <div class="animated">
+                                        <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests. It was due to a missing equality(=) sign.
+                                        <span>Youtube developers once made a similar mistake which led to an interesting <span class="text-success">fun fact.</span></span>
+                                        <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
+                                    </div>
                                 </li>
+                                <li>
+                                    <div>
+                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
+                                    </div>
+                                </li>
+{#                                <li>#}
+{#                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.#}
+{#                                </li>#}
                                 <li>
                                     Some issues are <b>locked</b> and will be unlocked only after you solve the once which are <b>mentioned in the description</b> of a locked Issues.
                                 </li>
                                 <li>
-                                    <b>NOTE: </b>If your Issue Assignment is rejected, it is most probably because
+                                    <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
                                     <ol>
                                         <li>
-                                        Some other person has <b>already-requested/already-solving</b> the same issue.
+                                            Some other person has <b>already-requested/already-solving</b> the same issue.
                                         </li>
                                         <li>
-                                        The issue is still locked. <b>So Check the Description of Issue on GitHub first then Request it.</b>
+                                            The issue is still locked. <b>So Check the Description of Issue on GitHub first
+                                            then Request it.</b>
                                         </li>
                                     </ol>
                                 </li>
@@ -56,47 +92,61 @@
                                     Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
                                     Add your name, and create a Pull Request. These PR will not fetch you any points.</span>
                                 </li>
-
-                            </ol>
-                        </div>
-                        <div class="card-footer text-muted">
-                        </div>
+                        </ol>
+                    </div>
+                    <div class="card-footer text-muted">
                     </div>
                 </div>
-    </div>
-        <div class="row row-cols-1 row-cols-md-2">
+            </div>
+
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 infinite-container">
             {% for issue in issues %}
-                <div class="col">
+                <div class="col infinite-item">
                     <div class="card m-3 text-center" style="border-radius: 15px;">
                         <div class="card-header">
-                        Issue #{{ issue.number }} - {{ issue.project.domain }}
+                            Issue #{{ issue.number }} - {{ issue.project.domain }}
                         </div>
                         <div class="card-body">
 
-                            <h5 class="card-titl
+                            <h5 class="card-title">
                                 <a href="{{ issue.html_url }}">{{ issue.title }}</a>
                             </h5>
                             <h6 class="">
-                                <a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
+                                <a data-mdb-toggle="tooltip" title="Project"
+                                   href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
                             </h6>
 
                             <p class="card-text">
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">@{{ issue.mentor }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
+                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                   title="Mentor">@{{ issue.mentor }}</a>
+                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                   title="Level">{{ issue.get_level_display }}</a>
+                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                   title="Points">{{ issue.points }}</a>
                                 {% if issue.is_restricted %}
-                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                       title="Restricted">
                                         <i class="fas fa-exclamation-triangle"></i>
                                     </a>
                                 {% endif %}
                             </p>
 
-                      </div>
+                        </div>
                         <div class="card-footer text-muted">
-                            {% if issue.state == issue.OPEN %}
+
+                            {% if issue in all_active_issues %} 
+                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                                    title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
+                                    <a class="text-white">
+                                        Assigned to @{{ issue.contributor.username }}
+                                    </a>
+                                </button>
+                            {% elif issue.state == issue.OPEN %}
                                 <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
                                 <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                    title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
+                                        title="Ask mentor for assigning Issue" type="button"
+                                        class="btn btn-primary mt-0">
                                     <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
                                         Request Assignment
                                     </a>
@@ -104,17 +154,36 @@
                             {% else %}
                                 <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
                             {% endif %}
+                            
                         </div>
                     </div>
                 </div>
             {% endfor %}
+        </div>
+        {% if issues.has_next %}
+            <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
+        {% endif %}
+
+        <div class="loading container" style="display: none;">
+            <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
+                 style="display:block;margin-left:auto;margin-right:auto;">
         </div>
     </div>
 
 {% endblock %}
 
 {% block javascript %}
-
+    <script>
+        var infinite = new Waypoint.Infinite({
+            element: $('.infinite-container')[0],
+            onBeforePageLoad: function () {
+                $('.loading').show();
+            },
+            onAfterPageLoad: function ($items) {
+                $('.loading').hide();
+            }
+        });
+    </script>
 {% endblock %}
 
 {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}

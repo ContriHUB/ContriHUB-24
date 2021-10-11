@@ -21,7 +21,55 @@
 
 {% block content %}
     {% include "user_profile/navbar-profile.html" %}
-
+    <div style="position: fixed; top: 0; right: 0; z-index:1;">
+        <div class="">
+            <div class="toast bg-warning" id="warnToast">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Your Request is being Processed! Please Wait
+                </div>
+            </div>
+            <div class="toast bg-success" id="ps_update">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Email requesting for change of information has been sent
+                </div>
+            </div>
+             <div class="toast bg-success" id="ms_update">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    MS ID updated successfully
+                </div>
+            </div>
+            <div class="toast bg-danger" id="emailErrorToast">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    MS ID Invalid Please Check!!
+                </div>
+            </div>
+            <div class="toast bg-danger" id="errorToast">
+                <div class="toast-header">
+                    <strong class="me-auto"> Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Error has occured!
+                </div>
+            </div>
+        </div>
+    </div>
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
 
@@ -35,13 +83,13 @@
                 <br>
                 <br>
                 <div class="text-center mt-5"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
-                            <div class="container-flow p-3" >
+                <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for active_issue in active_issues %}
                             <div class="col">
                                 <div class="card m-3 text-center" style="border-radius: 15px;">
                                     <div class="card-header">
-                                    Issue #{{ active_issue.issue.number }}
+                                        Issue #{{ active_issue.issue.number }}
                                     </div>
                                     <div class="card-body">
 
@@ -49,30 +97,35 @@
                                             <a href="{{ active_issue.issue.html_url }}">{{ active_issue.issue.title }}</a>
                                         </h5>
                                         <h6 class="">
-                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ active_issue.issue.project.html_url }}">{{ active_issue.issue.project.name }}</a>
+                                            <a data-mdb-toggle="tooltip" title="Project"
+                                               href="{{ active_issue.issue.project.html_url }}">{{ active_issue.issue.project.name }}</a>
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Mentor">
                                                 @{{ active_issue.issue.mentor }}
                                             </a>
                                             <a class="btn btn-rounded btn-info">{{ active_issue.issue.get_level_display }}</a>
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ active_issue.issue.points }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Points">{{ active_issue.issue.points }}</a>
                                             {% if active_issue.issue.is_restricted %}
-                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                                   title="Restricted">
                                                     <i class="fas fa-exclamation-triangle"></i>
                                                 </a>
                                             {% endif %}
                                         </p>
-                                    {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
-                                    {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
-                                            {{ active_issue.get_remaining_time | timeuntil }} remaining
+                                        {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
+                                        {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
+                                        {{ active_issue.get_remaining_time | timeuntil }} remaining
 
-                                  </div>
+                                    </div>
                                     <div class="card-footer text-muted">
-                                    {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
+                                        {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
                                         <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
-                                            <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Enter PR Link">{{ pr_form.pr_link }}</a>
+                                            <a class="btn btn-primary" data-mdb-toggle="tooltip"
+                                               title="Enter PR Link">{{ pr_form.pr_link }}</a>
                                             <button class="btn btn-rounded btn-success" type="submit">Submit</button>
                                         </form>
                                     </div>
@@ -85,13 +138,13 @@
 
                 <div class="text-center"><h1 class="display-6 text-white"><b>Current Assignment Requests</b></h1></div>
 
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for request in assignment_requests_by_student %}
                             <div class="col">
                                 <div class="card m-3 text-center" style="border-radius: 15px;">
                                     <div class="card-header">
-                                    Issue #{{ request.issue.number }}
+                                        Issue #{{ request.issue.number }}
                                     </div>
                                     <div class="card-body">
 
@@ -99,23 +152,27 @@
                                             <a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a>
                                         </h5>
                                         <h6 class="">
-                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
+                                            <a data-mdb-toggle="tooltip" title="Project"
+                                               href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Mentor">
                                                 @{{ request.issue.mentor }}
                                             </a>
                                             <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ request.issue.points }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Points">{{ request.issue.points }}</a>
                                             {% if request.issue.is_restricted %}
-                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                                   title="Restricted">
                                                     <i class="fas fa-exclamation-triangle"></i>
                                                 </a>
                                             {% endif %}
                                         </p>
 
-                                  </div>
+                                    </div>
                                     <div class="card-footer text-muted">
                                         {% if request.state == request.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ request.get_state_display }}</a>
@@ -133,13 +190,13 @@
 
                 <div class="text-center"><h1 class="display-6 text-white"><b>PRs Submitted</b></h1></div>
 
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for pr in pr_requests_by_student %}
                             <div class="col">
                                 <div class="card m-3 text-center" style="border-radius: 15px;">
                                     <div class="card-header">
-                                    Issue #{{ pr.issue.number }}
+                                        Issue #{{ pr.issue.number }}
                                     </div>
                                     <div class="card-body">
 
@@ -147,19 +204,22 @@
                                             <a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a>
                                         </h5>
                                         <h6 class="">
-                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a>
+                                            <a data-mdb-toggle="tooltip" title="Project"
+                                               href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a>
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Mentor">
                                                 @{{ pr.issue.mentor }}
                                             </a>
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Time Since">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Time Since">
                                                 {{ pr.submitted_at | timesince }} ago
                                             </a>
                                         </p>
 
-                                  </div>
+                                    </div>
                                     <div class="card-footer text-muted">
                                         {% if pr.state == pr.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
@@ -168,8 +228,10 @@
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
                                         {% endif %}
-                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
-                                            <a class="text-white" href="{{ pr.pr_link }}" target="_blank"><i class="fas fa-eye"></i></a>
+                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip"
+                                                title="View PR">
+                                            <a class="text-white" href="{{ pr.pr_link }}" target="_blank"><i
+                                                    class="fas fa-eye"></i></a>
                                         </button>
                                     </div>
                                 </div>
@@ -179,13 +241,17 @@
                 </div>
             {% else %}
                 <div class="text-center"><h1 class="display-6 text-white"><b>PR Verification Requests</b></h1></div>
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for pr in pr_requests_for_mentor %}
                             <div class="col">
                                 <div class="card m-3 text-center" style="border-radius: 15px;">
                                     <div class="card-header">
+                                        <svg class="mx-2 my-2" status="{{pr.state}}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="30px" width="30px" fill="#fd7e14" version="1.1" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
+                                            <path d="M85.7,19.2C76.7,8.8,63.7,2.9,50,2.9C38.7,2.9,27.7,7,19.2,14.4C9.7,22.6,3.9,34,3,46.6  C2.1,59.1,6.1,71.3,14.3,80.8C22.6,90.3,34,96.1,46.6,97l0,0l0,0c1.1,0.1,2.2,0.1,3.3,0.1c11.3,0,22.3-4.1,30.8-11.5  C90.3,77.4,96.1,66,97,53.4C97.9,40.9,93.9,28.7,85.7,19.2z M87.5,52.7c-0.7,10-5.3,19.2-12.9,25.7C67.8,84.4,59,87.6,50,87.6  c-0.9,0-1.8,0-2.7-0.1l0,0l0,0c-10-0.7-19.2-5.3-25.7-12.9C15,67,11.8,57.3,12.5,47.3c0.7-10,5.3-19.2,12.9-25.7  c6.8-5.9,15.6-9.2,24.6-9.2c10.9,0,21.3,4.7,28.5,13C85,33,88.2,42.7,87.5,52.7z M50,24.4c-6.2,0-12.1,2.2-16.8,6.2  c-5.2,4.5-8.3,10.7-8.8,17.5C24,55,26.1,61.6,30.6,66.8c4.5,5.2,10.7,8.3,17.5,8.8c0.6,0,1.3,0.1,1.9,0.1c6.2,0,12.1-2.2,16.8-6.2  c5.2-4.5,8.3-10.7,8.8-17.5c0.5-6.8-1.7-13.4-6.2-18.6C64.5,27.6,57.4,24.4,50,24.4z M67.6,51.3c-0.3,4.7-2.5,9-6,12  c-3.2,2.8-7.3,4.3-11.5,4.3c-0.4,0-0.8,0-1.3,0c-4.7-0.3-9-2.5-12.1-6.1c-3.1-3.6-4.6-8.1-4.2-12.8c0.3-4.7,2.5-9,6-12  c3.2-2.8,7.3-4.3,11.5-4.3c5.1,0,10,2.2,13.3,6.1C66.4,42,67.9,46.6,67.6,51.3z M55.4,51.3c-0.1,0.4-0.2,0.8-0.4,1.2  c-0.3,0.7-0.8,1.2-1.4,1.7c-0.6,0.5-1.3,0.9-2.1,1.1c-0.5,0.2-1.1,0.3-1.6,0.3c-0.1,0-0.3,0-0.4,0c-0.7-0.1-1.5-0.3-2.1-0.6  c-0.3-0.2-0.6-0.4-0.9-0.6c-0.3-0.2-0.6-0.5-0.8-0.8c-1-1.1-1.5-2.6-1.4-4.1c0-0.4,0.1-0.7,0.2-1.1c0.3-1.1,0.9-2,1.7-2.7  c0.3-0.2,0.5-0.4,0.8-0.6c0.4-0.2,0.8-0.4,1.2-0.5c0.5-0.2,1.1-0.3,1.7-0.3c0.2,0,0.4,0,0.6,0c0.2,0,0.4,0.1,0.6,0.1  c0.2,0,0.4,0.1,0.6,0.2c0.4,0.1,0.7,0.3,1.1,0.5c0.3,0.1,0.5,0.3,0.7,0.5c0.2,0.2,0.5,0.4,0.7,0.7c0.7,0.9,1.2,1.9,1.3,3  c0,0.4,0.1,0.7,0,1.1C55.6,50.7,55.5,51,55.4,51.3z"/>
+                                        </svg>
                                     Issue #{{ pr.issue.number }}
+
                                     </div>
                                     <div class="card-body">
 
@@ -193,22 +259,25 @@
                                             <a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a>
                                         </h5>
                                         <h6 class="">
-                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a>
+                                            <a data-mdb-toggle="tooltip" title="Project"
+                                               href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a>
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Contributor">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Contributor">
                                                 @{{ pr.contributor }}
                                             </a>
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Time Since">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Time Since">
                                                 {{ pr.submitted_at | timesince }} ago
                                             </a>
                                         </p>
 
-                                  </div>
+                                    </div>
                                     <div class="card-footer text-muted">
                                         {% if pr.state == pr.ACCEPTED %}
-                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
+                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }} </a>                                            
                                         {% elif pr.state == pr.REJECTED %}
                                             <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
@@ -233,13 +302,13 @@
 
                 <div class="text-center"><h1 class="display-6 text-white"><b>Issue Assignment Requests</b></h1></div>
 
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for request in assignment_requests_for_mentor %}
                             <div class="col">
                                 <div class="card m-3 text-center" style="border-radius: 15px;">
                                     <div class="card-header">
-                                    Issue #{{ request.issue.number }}
+                                        Issue #{{ request.issue.number }}
                                     </div>
                                     <div class="card-body">
 
@@ -247,21 +316,25 @@
                                             <a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a>
                                         </h5>
                                         <h6 class="">
-                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
+                                            <a data-mdb-toggle="tooltip" title="Project"
+                                               href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Requester">@{{ request.requester }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Requester">@{{ request.requester }}</a>
                                             <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ request.issue.points }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Points">{{ request.issue.points }}</a>
                                             {% if request.issue.is_restricted %}
-                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                                   title="Restricted">
                                                     <i class="fas fa-exclamation-triangle"></i>
                                                 </a>
                                             {% endif %}
                                         </p>
 
-                                  </div>
+                                    </div>
                                     <div class="card-footer text-muted">
                                         {% if request.state == request.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ request.get_state_display }}</a>
@@ -270,12 +343,14 @@
                                         {% elif request.state == request.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ request.get_state_display }}</a>
                                             <button class="btn btn-success mt-0">
-                                                <a class="text-white" href="{% url 'accept_issue_request' request.pk %}">
+                                                <a class="text-white"
+                                                   href="{% url 'accept_issue_request' request.pk %}">
                                                     Accept
                                                 </a>
                                             </button>
                                             <button class="btn btn-danger mt-0">
-                                                <a class="text-white" href="{% url 'reject_issue_request' request.pk %}">Reject</a>
+                                                <a class="text-white"
+                                                   href="{% url 'reject_issue_request' request.pk %}">Reject</a>
                                             </button>
                                         {% endif %}
                                     </div>
@@ -287,13 +362,13 @@
 
                 <div class="text-center"><h1 class="display-6 text-white"><b>All Issues Under Me</b></h1></div>
 
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for issue in mentored_issues %}
                             <div class="col">
                                 <div class="card m-3 text-center" style="border-radius: 15px;">
                                     <div class="card-header">
-                                    Issue #{{ issue.number }}
+                                        Issue #{{ issue.number }}
                                     </div>
                                     <div class="card-body">
 
@@ -301,20 +376,23 @@
                                             <a href="{{ issue.html_url }}">{{ issue.title }}</a>
                                         </h5>
                                         <h6 class="">
-                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
+                                            <a data-mdb-toggle="tooltip" title="Project"
+                                               href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
                                         </h6>
 
                                         <p class="card-text">
                                             <a class="btn btn-rounded btn-info">{{ issue.get_level_display }}</a>
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                               title="Points">{{ issue.points }}</a>
                                             {% if issue.is_restricted %}
-                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                                   title="Restricted">
                                                     <i class="fas fa-exclamation-triangle"></i>
                                                 </a>
                                             {% endif %}
                                         </p>
 
-                                  </div>
+                                    </div>
                                     <div class="card-footer text-muted">
                                         {% if issue.state == issue.OPEN %}
                                             <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
@@ -338,5 +416,74 @@
 {% endblock %}
 
 {% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#form").on('submit', function (event) {
+                event.preventDefault();
+                var the_post = $(this).serialize();
+                $("#warnToast").toast("show");
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'post',
+                    data: the_post,
+                    success(data) {
+                        $("#ps_update").toast("show");
+                    }
+                    ,
+                    error: function (data) {
+                        $("#errorToast").toast("show");
+                    }
+                })
+            })
+        })
+    </script>
+    <script type="text/javascript">
+        function validateEmail(value) {
+            var input = document.createElement('input');
 
+            input.type = 'email';
+            input.required = true;
+            input.value = value;
+
+            return typeof input.checkValidity === 'function' ? input.checkValidity() : /\S+@\S+\.\S+/.test(value);
+        }
+
+        jQuery(document).ready(function (event) {
+            $(document).on('click', '#ms_edit', function (event) {
+                event.preventDefault()
+                var ms_id = $('#ms_field').val();
+                if (validateEmail(ms_id)) {
+                    $.ajax({
+                        url: '{% url "change_msid" %}',
+                        type: 'post',
+                        data: {
+                            csrfmiddlewaretoken: "{{csrf_token}}",
+                            ms_id: ms_id,
+                        },
+                        success: function (data) {
+                            $("#ms_update").toast("show");
+                            $("#ms_field").attr('disabled', 'disabled');
+                        },
+                        error: function (data) {
+                            $("#errorToast").toast("show");
+                        }
+                    })
+                } else {
+                    $("#emailErrorToast").toast("show");
+                }
+            })
+        })
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#toggle_ms').click(function () {
+                var disabled = $("#ms_field").attr('disabled');
+                if (disabled === undefined) {
+                    $("#ms_field").attr('disabled', 'disabled');
+                } else {
+                    $("#ms_field").removeAttr('disabled');
+                }
+            })
+        });
+    </script>
 {% endblock %}
