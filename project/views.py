@@ -50,7 +50,7 @@ def populate_issues(request):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-    uri = Apis['api_contri_hub']
+    uri = APIS['api_contrihub']
 
     for project in project_qs:
         print("PROJECT: ", project.name)
