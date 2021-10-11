@@ -1,3 +1,7 @@
-Apis={
-    'api_contri_hub':'https://api.github.com/repos/ContriHUB/',
+APIS={
+    'api_contrihub':"https://api.github.com/repos/ContriHUB/",
+}
+
+URIS={
+    'uri_html': "https://github.com/ContriHUB/",
 }
