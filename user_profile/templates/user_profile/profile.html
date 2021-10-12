@@ -70,6 +70,19 @@
             </div>
         </div>
     </div>
+
+    <div style="position: fixed; top: 10px; right: 10px; color: aliceblue;">
+        <div class="toast bg-danger" id="invalidPR">
+            <div class="toast-header">
+                <strong class="me-auto"> Error</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Invalid PR Link...!!
+            </div>
+        </div>
+    </div>
+
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
 
@@ -121,14 +134,14 @@
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
-                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
-                                            <a class="btn btn-primary" data-mdb-toggle="tooltip"
+                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}" onsubmit=" return validate_pr(event)">
+                                            <a class="btn btn-primary" data-mdb-toggle="tooltip" id="pr_link"
                                                title="Enter PR Link">{{ pr_form.pr_link }}</a>
                                             <button class="btn btn-rounded btn-success" type="submit">Submit</button>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         {% endfor %}
                     </div>
                 </div>
@@ -484,4 +497,19 @@
             })
         });
     </script>
+
+    <script>
+        function validate_pr(event)
+        {
+            var submitted_link = event.target.elements.pr_link.value;
+            var regex = /^https?:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
+            var check=regex.test(submitted_link);
+            if(check==true)
+            return true;
+            
+            $("#invalidPR").toast("show");
+            return false;
+        }
+    </script>
+
 {% endblock %}

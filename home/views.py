@@ -19,6 +19,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from user_profile.models import UserProfile
 from .forms import ContactForm
 import smtplib
+import re
 
 
 @complete_profile_required
@@ -161,6 +162,13 @@ def submit_pr_request(request, active_issue_pk):
 
             if active_issue.can_raise_pr(contributor=contributor) and form.is_valid():
                 pr = form.save(commit=False)
+
+                # checking if pr link is valid or not
+                pr_url = pr.pr_link
+                regex = "^https?:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
+                if not re.match(regex,pr_url):
+                    return HttpResponse("Invalid PR Link...!!")
+
                 pr.issue = issue
                 pr.contributor = request.user
                 pr.state = PullRequest.PENDING_VERIFICATION
