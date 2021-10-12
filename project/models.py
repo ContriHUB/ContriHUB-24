@@ -59,6 +59,10 @@ class Issue(models.Model):
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 
+    upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
+
+    downvotes = models.ManyToManyField(User, related_name="downvotes", blank=True)
+
     def __str__(self):
         return self.title
 
@@ -148,6 +152,9 @@ class PullRequest(models.Model):
     def __str__(self):
         return f"{self.contributor}_{self.issue}"
 
+    class Meta:
+        ordering=['-state','submitted_at']
+
     def accept(self, bonus=0, penalty=0):
         """
         Method to accept (verify) PR.
@@ -178,8 +185,9 @@ class PullRequest(models.Model):
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        ActiveIssue.objects.get(issue=self.issue, contributor=self.contributor).delete()
-
+        active_issue = ActiveIssue.objects.filter(issue=self.issue, contributor=self.contributor)
+        if active_issue:
+            active_issue[0].delete()
         # try:
         #     self.issue.activeissue_set.first().delete()
         # except AttributeError:
@@ -206,7 +214,9 @@ class PullRequest(models.Model):
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        ActiveIssue.objects.get(issue=self.issue, contributor=self.contributor).delete()
+        active_issue = ActiveIssue.objects.filter(issue=self.issue, contributor=self.contributor)
+        if active_issue:
+            active_issue[0].delete()
 
         # try:
         #     self.issue.activeissue_set.first().delete()
@@ -232,6 +242,9 @@ class IssueAssignmentRequest(models.Model):
 
     def __str__(self):
         return f"{self.requester}_{self.issue}"
+
+    class Meta:
+        ordering=['-state','created_on']
 
     def is_acceptable(self, mentor):
 

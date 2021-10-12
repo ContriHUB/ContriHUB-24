@@ -19,57 +19,56 @@
     <!-- Collapsible wrapper -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Navbar brand -->
-        <a class="navbar-brand mt-2 mt-lg-0" href="#">
-        <img
-          src="{% static 'images/logo/ch.png' %}"
-          height="45"
-          alt=""
-          loading="lazy"
-        />
-        </a>
+      <a class="navbar-brand mt-2 mt-lg-0" href="#">
+        <img src="{% static 'images/logo/ch.png' %}" height="45" alt="" loading="lazy" />
+      </a>
       <a style="color: #39FF14" class="navbar-brand mt-2 mt-lg-0" href="{% url 'home' %}">
-          <b>ContriHub</b>
+        <b>ContriHub</b>
       </a>
       <!-- Left links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a  class="nav-link" href="{% url 'user_profile' user.username %}">
-                <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
-                    Home
-                </button>
-            </a>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">
+            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+              Home
+            </button>
+          </a>
         </li>
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a  class="nav-link" href="{% url 'user_profile' user.username %}">
-                    <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
-                        User Profile
-                    </button>
-                </a>
-            </li>
-          {% endif %}
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'user_profile' user.username %}">
+            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+              User Profile
+            </button>
+          </a>
+        </li>
+        {% endif %}
       </ul>
+      <div class="form-check form-switch">
+        <label class="form-check-label text-light">Dark Mode</label>
+        <input class="form-check-input" type="checkbox" id="theme-control" onchange="darkmodetoggle(this.checked);" />
+      </div>
     </div>
     <!-- Collapsible wrapper -->
 
     <!-- Right elements -->
-  {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
     <div class="d-flex align-items-center">
-        <a class="nav-link" href="{% url 'logout' %}">
-            <button type="button" class="btn btn-danger btn-rounded" data-mdb-ripple-color="dark">
-                Logout
-            </button>
-        </a>
+      <a class="nav-link" href="{% url 'logout' %}">
+        <button type="button" class="btn btn-danger btn-rounded" data-mdb-ripple-color="dark">
+          Logout
+        </button>
+      </a>
     </div>
-  {% else %}
-        <div class="d-flex align-items-center">
-            <a class="nav-link" href="{% url 'authorize' %}">
-                <button type="button" class="btn btn-success btn-rounded" data-mdb-ripple-color="dark">
-                    Authorize
-                </button>
-            </a>
-        </div>
-  {% endif %}
+    {% else %}
+    <div class="d-flex align-items-center">
+      <a class="nav-link" href="{% url 'authorize' %}">
+        <button type="button" class="btn btn-success btn-rounded" data-mdb-ripple-color="dark">
+          Authorize
+        </button>
+      </a>
+    </div>
+    {% endif %}
     <!-- Right elements -->
   </div>
   <!-- Container wrapper -->

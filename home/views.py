@@ -19,11 +19,26 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from user_profile.models import UserProfile
 from .forms import ContactForm
 import smtplib
+from django.http import JsonResponse
 
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all()
+    issues_qs = Issue.objects.all().order_by('-id')
+
+    #get all active issues
+    active_qs_obj = ActiveIssue.objects.all()
+    all_active_issues = []
+
+    for issue in issues_qs:
+
+        active_issue = active_qs_obj.filter(issue=issue)
+
+        if active_issue:
+            all_active_issues.append(issue)
+            active_issue=active_issue[0]
+            issue.contributor=active_issue.contributor    # set contributor for that active issue
+            
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
@@ -32,9 +47,11 @@ def home(request):
         issue_p = paginator.page(1)
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
+        
     context = {
         'projects': project_qs,
-        'issues': issue_p
+        'issues': issue_p,
+        'all_active_issues': all_active_issues
     }
     return render(request, 'home/index.html', context=context)
 
@@ -269,3 +286,36 @@ def contact_form(request):
     elif request.method == 'GET':
         form = ContactForm()
         return render(request, 'home/contact_form.html', context={'form': form})
+
+
+@login_required
+def handle_vote(request):
+    id = request.POST.get('id')
+    type = request.POST.get('type')
+    id = int(id)
+    type = int(type)
+    issue = Issue.objects.get(pk=id)
+    is_upvoted = request.user in issue.upvotes.all()
+    is_downvoted = request.user in issue.downvotes.all()
+    message=""
+    if (type == 0):
+        message="Upvoted Successfully"
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+        else:
+            issue.upvotes.add(request.user)
+            if is_downvoted:
+                issue.downvotes.remove(request.user)
+    elif type == 1:
+        message="Downvoted Successfully"
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        else:
+            issue.downvotes.add(request.user)
+            if is_upvoted:
+                issue.upvotes.remove(request.user)
+    context = {
+        'issue': issue,
+    }
+    html = render_to_string('home/vote.html', context, request=request)
+    return JsonResponse({'html': html,'message':message})

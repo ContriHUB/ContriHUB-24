@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import complete_profile_required, fetch_all_issues
-
+from config import APIS, URIS
 User = get_user_model()
 
 
@@ -18,8 +18,8 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = "https://api.github.com/repos/ContriHUB/"
-    html_uri = "https://github.com/ContriHUB/"
+    api_uri = APIS['api_contrihub']
+    html_uri = URIS['uri_html']
     print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
@@ -50,7 +50,7 @@ def populate_issues(request):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-    uri = "https://api.github.com/repos/contrihub/"
+    uri = APIS['api_contrihub']
 
     for project in project_qs:
         print("PROJECT: ", project.name)
@@ -61,47 +61,49 @@ def populate_issues(request):
             # TODO: Can be given as ISSUE
             if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
                 continue
-            if issue.get('pull_request') is not None: # this issue is actually a PR.
+            if issue.get('pull_request') is not None:  # this issue is actually a PR.
                 # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
                 print("This issue is a actually a PR")
                 continue
             title, number = issue['title'], issue['number']
             mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
-            api_url, html_url = issue['url'], issue['html_url']
-            issue_qs = Issue.objects.filter(number=number, project=project)
-            # print("I: ", number, title, mentor_name, level)
-            if issue_qs:  # Update if already present
-                db_issue = issue_qs.first()
-                db_issue.title = title
-                db_issue.level = level
-                db_issue.points = points
-                db_issue.is_restricted = is_restricted
-            else:  # Else Create New
-                db_issue = Issue(
-                    number=number,
-                    title=title,
-                    api_url=api_url,
-                    html_url=html_url,
-                    project=project,
-                    level=level,
-                    points=points,
-                    is_restricted=is_restricted
-                )
 
-            # print(db_issue)
-            try:
-                mentor = User.objects.get(username=mentor_name)
-                db_issue.mentor = mentor
-            except User.DoesNotExist:
-                pass
+            if mentor_name and level:  # If mentor name and level labels are present in issue
+                api_url, html_url = issue['url'], issue['html_url']
+                issue_qs = Issue.objects.filter(number=number, project=project)
+                # print("I: ", number, title, mentor_name, level)
+                if issue_qs:  # Update if already present
+                    db_issue = issue_qs.first()
+                    db_issue.title = title
+                    db_issue.level = level
+                    db_issue.points = points
+                    db_issue.is_restricted = is_restricted
+                else:  # Else Create New
+                    db_issue = Issue(
+                        number=number,
+                        title=title,
+                        api_url=api_url,
+                        html_url=html_url,
+                        project=project,
+                        level=level,
+                        points=points,
+                        is_restricted=is_restricted
+                    )
 
-            db_issue.save()
+                # print(db_issue)
+                try:
+                    mentor = User.objects.get(username=mentor_name)
+                    db_issue.mentor = mentor
+                except User.DoesNotExist:
+                    pass
+
+                db_issue.save()
 
     return HttpResponseRedirect(reverse('home'))
 
 
 def parse_labels(labels):
-    mentor, level, points, is_restricted = None, Issue.EASY, 0, False
+    mentor, level, points, is_restricted = None, None, 0, False
     for label in labels:
 
         if str(label["description"]).lower() == LABEL_MENTOR:  # Parsing Mentor
