@@ -32,14 +32,11 @@
         {% endcomment %}
 
 
-        <div style="position: fixed; top: 10px; right: 10px; color: aliceblue;">
+        <div class="myToast">
             <div class="toast bg-danger" id="invalidPR">
-                <div class="toast-header">
-                    <strong class="me-auto"> Error</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
                 <div class="toast-body">
                     Invalid PR Link...!!
+                    <button onclick="removeToast()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -454,6 +451,12 @@
             $('#invalidPR').toast('show');
             return false;
         }
+
+        function removeToast()
+        {
+            $("#invalidPR").toast('hide');
+        }
+
     </script>
 
 {% endblock %}
