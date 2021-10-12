@@ -166,7 +166,7 @@ def submit_pr_request(request, active_issue_pk):
 
                 # checking if pr link is valid or not
                 pr_url = pr.pr_link
-                regex = "^https?:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
+                regex = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
                 if not re.match(regex,pr_url):
                     return HttpResponse("Invalid PR Link...!!")
 
