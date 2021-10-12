@@ -119,11 +119,10 @@ def complete(request):
                 if re.match(reg_ex[course-1],reg_no) and re.match(reg_ex[course-2],reg_no):
                     flag=False
         if flag:
-            return HttpResponse("All is well")
-            # existing_profile = form.save(commit=False)
-            # existing_profile.is_complete = True
-            # existing_profile.save()
-            # return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+            existing_profile = form.save(commit=False)
+            existing_profile.is_complete = True
+            existing_profile.save()
+            return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
         return HttpResponseRedirect(reverse('complete_profile'))
         
     
