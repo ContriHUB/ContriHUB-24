@@ -31,6 +31,20 @@
             for the field, where 'FOO' is the name of the field.
         {% endcomment %}
 
+
+        <div style="position: fixed; top: 10px; right: 10px; color: aliceblue;">
+            <div class="toast bg-danger" id="invalidPR">
+                <div class="toast-header">
+                    <strong class="me-auto"> Error</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Invalid PR Link...!!
+                </div>
+            </div>
+        </div>
+
+
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
                 <div class="text-center"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
@@ -437,17 +451,6 @@
             if(check==true)
             return true;
             
-            $("body").append(`<div style="position: fixed; top: 10px; right: 10px; color: aliceblue;">
-                                    <div class="toast bg-danger" id="invalidPR">
-                                        <div class="toast-header">
-                                            <strong class="me-auto"> Error</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                                        </div>
-                                        <div class="toast-body">
-                                            Invalid PR Link...!!
-                                        </div>
-                                    </div>
-                                </div>`);
             $('#invalidPR').toast('show');
             return false;
         }
