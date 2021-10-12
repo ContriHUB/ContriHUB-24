@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -18,15 +18,40 @@ from django.utils import timezone
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
 from .forms import ContactForm
-
+import smtplib
+from django.http import JsonResponse
 
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all()
+    issues_qs = Issue.objects.all().order_by('-id')
+
+    #get all active issues
+    active_qs_obj = ActiveIssue.objects.all()
+    all_active_issues = []
+
+    for issue in issues_qs:
+
+        active_issue = active_qs_obj.filter(issue=issue)
+
+        if active_issue:
+            all_active_issues.append(issue)
+            active_issue=active_issue[0]
+            issue.contributor=active_issue.contributor    # set contributor for that active issue
+            
+    page = request.GET.get('page', 1)
+    paginator = Paginator(issues_qs, 20)
+    try:
+        issue_p = paginator.page(page)
+    except PageNotAnInteger:
+        issue_p = paginator.page(1)
+    except EmptyPage:
+        issue_p = paginator.page(paginator.num_pages)
+        
     context = {
         'projects': project_qs,
-        'issues': issues_qs
+        'issues': issue_p,
+        'all_active_issues': all_active_issues
     }
     return render(request, 'home/index.html', context=context)
 
@@ -76,7 +101,10 @@ def request_issue_assignment(request, issue_pk):
             ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
             return HttpResponse(
                 f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
-
+        except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+            return HttpResponse(
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
     return HttpResponse(message)
@@ -155,6 +183,10 @@ def submit_pr_request(request, active_issue_pk):
                     message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
                 except mail.BadHeaderError:
+                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
+                except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
                     ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
                     message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
@@ -254,3 +286,36 @@ def contact_form(request):
     elif request.method == 'GET':
         form = ContactForm()
         return render(request, 'home/contact_form.html', context={'form': form})
+
+
+@login_required
+def handle_vote(request):
+    id = request.POST.get('id')
+    type = request.POST.get('type')
+    id = int(id)
+    type = int(type)
+    issue = Issue.objects.get(pk=id)
+    is_upvoted = request.user in issue.upvotes.all()
+    is_downvoted = request.user in issue.downvotes.all()
+    message=""
+    if (type == 0):
+        message="Upvoted Successfully"
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+        else:
+            issue.upvotes.add(request.user)
+            if is_downvoted:
+                issue.downvotes.remove(request.user)
+    elif type == 1:
+        message="Downvoted Successfully"
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        else:
+            issue.downvotes.add(request.user)
+            if is_upvoted:
+                issue.upvotes.remove(request.user)
+    context = {
+        'issue': issue,
+    }
+    html = render_to_string('home/vote.html', context, request=request)
+    return JsonResponse({'html': html,'message':message})

@@ -4,7 +4,8 @@ from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LA
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
-from helper import safe_hit_url, SUCCESS, complete_profile_required
+from helper import complete_profile_required, fetch_all_issues
+from config import APIS, URIS
 User = get_user_model()
 
 
@@ -17,8 +18,8 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = "https://api.github.com/repos/ContriHUB/"
-    html_uri = "https://github.com/ContriHUB/"
+    api_uri = APIS['api_contrihub']
+    html_uri = URIS['uri_html']
     print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
@@ -49,29 +50,28 @@ def populate_issues(request):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-
-    uri = "https://api.github.com/repos/contrihub/"
+    uri = APIS['api_contrihub']
 
     for project in project_qs:
-        url = f"{uri}{project.name}/issues?per_page=100"
-        response = safe_hit_url(url=url, headers=headers)
         print("PROJECT: ", project.name)
-        if response['status'] == SUCCESS:
-            issues = response['data']
-            print("COUNT: ", len(issues))
-            for issue in issues:
-                # TODO: Can be given as ISSUE
-                if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
-                    continue
-                if issue.get('pull_request') is not None: # this issue is actually a PR.
-                    # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
-                    print("This issue is a actually a PR")
-                    continue
-                title, number = issue['title'], issue['number']
-                mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
+        issues_dict = fetch_all_issues(uri, project.name, headers)
+        issues = issues_dict['data']
+        print("COUNT: ", len(issues))
+        for issue in issues:
+            # TODO: Can be given as ISSUE
+            if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
+                continue
+            if issue.get('pull_request') is not None:  # this issue is actually a PR.
+                # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
+                print("This issue is a actually a PR")
+                continue
+            title, number = issue['title'], issue['number']
+            mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
+
+            if mentor_name and level:  # If mentor name and level labels are present in issue
                 api_url, html_url = issue['url'], issue['html_url']
                 issue_qs = Issue.objects.filter(number=number, project=project)
-
+                # print("I: ", number, title, mentor_name, level)
                 if issue_qs:  # Update if already present
                     db_issue = issue_qs.first()
                     db_issue.title = title
@@ -103,7 +103,7 @@ def populate_issues(request):
 
 
 def parse_labels(labels):
-    mentor, level, points, is_restricted = None, Issue.EASY, 0, False
+    mentor, level, points, is_restricted = None, None, 0, False
     for label in labels:
 
         if str(label["description"]).lower() == LABEL_MENTOR:  # Parsing Mentor
