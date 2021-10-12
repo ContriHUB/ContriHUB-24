@@ -133,6 +133,9 @@
                             </p>
 
                         </div>
+                        <div id="vote-section-{{ issue.pk }}">
+                            {% include 'home/vote.html' %}
+                        </div>
                         <div class="card-footer text-muted">
 
                             {% if issue in all_active_issues %} 
@@ -173,7 +176,7 @@
 {% endblock %}
 
 {% block javascript %}
-    <script>
+    <script type="text/javascript">
         var infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0],
             onBeforePageLoad: function () {
@@ -183,7 +186,35 @@
                 $('.loading').hide();
             }
         });
+
+        // For Voting and Downvoting
+        jQuery(document).ready(function (event) {
+            $(document).on('click', '#votebtn', function (event) {
+                event.preventDefault()
+                var type = $(this).attr('type');
+                var iid = $(this).attr('iid');
+                console.log(iid);
+                $.ajax({
+                    url: '{% url "handle_vote" %}',
+                    type: 'post',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        id: iid,
+                        type: type,
+                    },
+                    success: function (data) {
+                        $('#vote-section-' + iid).html(data['html'])
+                        $("#voteToast").children(".toast-body").text(data['message']);
+                        $("#voteToast").toast("show");
+                    },
+                    error: function (data) {
+                        $("#errorToast").toast("show");
+                    }
+                })
+            })
+        })
     </script>
+
 {% endblock %}
 
 {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
