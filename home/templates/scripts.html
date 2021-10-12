@@ -1,7 +1,53 @@
 {# SOURCE: https://mdbootstrap.com/docs/standard/getting-started/installation/ #}
 <!-- MDB -->
 {% load static %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'js/infinite.min.js' %}"></script>
 <script
   type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"
 ></script>
+<script>
+  //check if darkmode enable from cache
+  if (localStorage.getItem('darkmode') == null) localStorage.setItem('darkmode', false);
+  if (localStorage.getItem('darkmode') === 'true') {
+    document.getElementById('theme-control').checked = true;
+    darkmodeON();
+  }
+
+  function darkmodetoggle(check) {
+    if (check) darkmodeON();
+    else { darkmodeOFF(); }
+    return;
+  }
+
+  function darkmodeON() {
+    let nav = document.getElementsByTagName('nav')[0];
+    if (nav.classList.contains('navbar-dark') == false) nav.classList.add('navbar-dark');
+
+    if (document.body.classList.contains('body-dark') == false) document.body.classList.add('body-dark');
+
+    document.getElementsByClassName('card').forEach(e => {
+      if (e.classList.contains('card-dark') == false) e.classList.add('card-dark');
+    });
+    localStorage.setItem('darkmode', true);
+
+  }
+
+  function darkmodeOFF() {
+    localStorage.setItem('darkmode', false);
+    let nav = document.getElementsByTagName('nav')[0];
+    if (nav.classList.contains('navbar-dark')) nav.classList.remove('navbar-dark');
+    document.body.classList.remove('body-dark');
+    document.getElementsByClassName('card').forEach(e => {
+      e.classList.remove('card-dark');
+    });
+
+  }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
