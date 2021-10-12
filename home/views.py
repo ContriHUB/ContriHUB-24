@@ -21,6 +21,7 @@ from .forms import ContactForm
 import smtplib
 import re
 
+from django.http import JsonResponse
 
 @complete_profile_required
 def home(request):
@@ -294,3 +295,36 @@ def contact_form(request):
     elif request.method == 'GET':
         form = ContactForm()
         return render(request, 'home/contact_form.html', context={'form': form})
+
+
+@login_required
+def handle_vote(request):
+    id = request.POST.get('id')
+    type = request.POST.get('type')
+    id = int(id)
+    type = int(type)
+    issue = Issue.objects.get(pk=id)
+    is_upvoted = request.user in issue.upvotes.all()
+    is_downvoted = request.user in issue.downvotes.all()
+    message=""
+    if (type == 0):
+        message="Upvoted Successfully"
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+        else:
+            issue.upvotes.add(request.user)
+            if is_downvoted:
+                issue.downvotes.remove(request.user)
+    elif type == 1:
+        message="Downvoted Successfully"
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        else:
+            issue.downvotes.add(request.user)
+            if is_upvoted:
+                issue.upvotes.remove(request.user)
+    context = {
+        'issue': issue,
+    }
+    html = render_to_string('home/vote.html', context, request=request)
+    return JsonResponse({'html': html,'message':message})

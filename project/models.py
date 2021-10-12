@@ -59,6 +59,10 @@ class Issue(models.Model):
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 
+    upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
+
+    downvotes = models.ManyToManyField(User, related_name="downvotes", blank=True)
+
     def __str__(self):
         return self.title
 

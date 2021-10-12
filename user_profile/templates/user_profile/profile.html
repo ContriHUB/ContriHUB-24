@@ -21,6 +21,7 @@
 
 {% block content %}
     {% include "user_profile/navbar-profile.html" %}
+    
     <div style="position: fixed; top: 0; right: 0; z-index:1;">
         <div class="">
             <div class="toast bg-warning" id="warnToast">
@@ -431,26 +432,20 @@
         $(document).ready(function () {
             $("#form").on('submit', function (event) {
                 event.preventDefault();
-                var the_post = $(this).serialize();
-                $("#warnToast").toast("show");
+                let the_post = $(this).serialize();
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'post',
                     data: the_post,
-                    success(data) {
-                        $("#ps_update").toast("show");
-                    }
-                    ,
-                    error: function (data) {
-                        $("#errorToast").toast("show");
-                    }
+                    success(data) {},
+                    error: function (data) {}
                 })
             })
         })
     </script>
     <script type="text/javascript">
         function validateEmail(value) {
-            var input = document.createElement('input');
+            let input = document.createElement('input');
 
             input.type = 'email';
             input.required = true;
@@ -461,8 +456,8 @@
 
         jQuery(document).ready(function (event) {
             $(document).on('click', '#ms_edit', function (event) {
-                event.preventDefault()
-                var ms_id = $('#ms_field').val();
+                event.preventDefault();
+                let ms_id = $('#ms_field').val();
                 if (validateEmail(ms_id)) {
                     $.ajax({
                         url: '{% url "change_msid" %}',
@@ -472,15 +467,11 @@
                             ms_id: ms_id,
                         },
                         success: function (data) {
-                            $("#ms_update").toast("show");
                             $("#ms_field").attr('disabled', 'disabled');
                         },
-                        error: function (data) {
-                            $("#errorToast").toast("show");
-                        }
+                        error: function (data) {}
                     })
                 } else {
-                    $("#emailErrorToast").toast("show");
                 }
             })
         })
@@ -488,7 +479,7 @@
     <script>
         $(document).ready(function () {
             $('#toggle_ms').click(function () {
-                var disabled = $("#ms_field").attr('disabled');
+                let disabled = $("#ms_field").attr('disabled');
                 if (disabled === undefined) {
                     $("#ms_field").attr('disabled', 'disabled');
                 } else {
