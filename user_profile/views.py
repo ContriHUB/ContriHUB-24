@@ -9,6 +9,7 @@ from project.forms import PRSubmissionForm
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.contrib import messages
 from home.helpers import send_email
 User = get_user_model()
 
@@ -107,6 +108,8 @@ def complete(request):
         existing_profile = form.save(commit=False)
         existing_profile.is_complete = True
         existing_profile.save()
+    else:
+        return HttpResponse('Something went wrong!!!')
     return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
 
 
@@ -156,6 +159,18 @@ def change_msid(request):
         if user_pro.ms_teams_id != new_id:
          user_pro.ms_teams_id=new_id
          user_pro.save()
+        return JsonResponse({'status': 'success'})
+    else:
+        return HttpResponse("Something Went Wrong")
+
+@login_required
+def change_whatsapp_no(request):
+    if request.is_ajax():
+        new_whatsapp_no = request.POST.get('whatsapp_no')
+        user_pro = UserProfile.objects.get(user=request.user)
+        if user_pro.whatsapp_no != new_whatsapp_no:
+            user_pro.whatsapp_no = new_whatsapp_no
+            user_pro.save()
         return JsonResponse({'status': 'success'})
     else:
         return HttpResponse("Something Went Wrong")

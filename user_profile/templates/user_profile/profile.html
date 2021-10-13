@@ -394,6 +394,19 @@
         })
     </script>
     <script type="text/javascript">
+        function validateWhatsappNo(value){
+            let input = document.createElement('input') ;
+            console.log(value) ;
+            console.log(input) ;
+            input.type = 'tel';
+            input.required = true ;
+            input.value = value ;
+            var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im ;
+            if(value.match(phoneno)){
+                return true ;
+            }
+            return false  ;
+        }
         function validateEmail(value) {
             let input = document.createElement('input');
 
@@ -424,6 +437,25 @@
                 } else {
                 }
             })
+            $(document).on('click', '#whatsapp_edit', function (event) {
+                event.preventDefault();
+                let whatsapp_no = $('#whatsapp_no').val();
+                if (validateWhatsappNo(whatsapp_no)) {
+                    $.ajax({
+                        url: '{% url "change_whatsapp_no" %}',
+                        type: 'post',
+                        data: {
+                            csrfmiddlewaretoken: "{{csrf_token}}",
+                            whatsapp_no: whatsapp_no,
+                        },
+                        success: function (data) {
+                            $("#whatsapp_no").attr('disabled', 'disabled');
+                        },
+                        error: function (data) {}
+                    })
+                } else {
+                }
+            })
         })
     </script>
     <script>
@@ -434,6 +466,14 @@
                     $("#ms_field").attr('disabled', 'disabled');
                 } else {
                     $("#ms_field").removeAttr('disabled');
+                }
+            })
+            $('#toggle_whatsapp').click(function () {
+                let disabled = $("#whatsapp_no").attr('disabled');
+                if (disabled === undefined) {
+                    $("#whatsapp_no").attr('disabled', 'disabled');
+                } else {
+                    $("#whatsapp_no").removeAttr('disabled');
                 }
             })
         });
