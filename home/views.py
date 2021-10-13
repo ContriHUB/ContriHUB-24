@@ -14,7 +14,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
-# TODO:ISSUE: Make a Custom Http404 Page
+# TODO:ISSUE: Make a Custom Http404 Page        
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
 from .forms import ContactForm
