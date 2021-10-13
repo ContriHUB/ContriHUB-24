@@ -21,6 +21,8 @@
 
 {% block content %}
     {% include "user_profile/navbar-profile.html" %}
+    
+
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
 
@@ -28,6 +30,17 @@
             In Django templates you can use the "get_FOO_display()" method, that will return the readable alias
             for the field, where 'FOO' is the name of the field.
         {% endcomment %}
+
+
+        <div class="myToast">
+            <div class="toast bg-danger" id="invalidPR">
+                <div class="toast-body">
+                    Invalid PR Link...!!
+                    <button onclick="removeToast()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
@@ -72,14 +85,14 @@
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
-                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
-                                            <a class="btn btn-primary" data-mdb-toggle="tooltip"
+                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}" onsubmit=" return validate_pr(event)">
+                                            <a class="btn btn-primary" data-mdb-toggle="tooltip" id="pr_link"
                                                title="Enter PR Link">{{ pr_form.pr_link }}</a>
                                             <button class="btn btn-rounded btn-success" type="submit">Submit</button>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         {% endfor %}
                     </div>
                 </div>
@@ -425,4 +438,25 @@
             })
         });
     </script>
+
+    <script>
+        function validate_pr(event)
+        {
+            let submitted_link = event.target.elements.pr_link.value;
+            let regex = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
+            let check=regex.test(submitted_link);
+            if(check==true)
+            return true;
+            
+            $('#invalidPR').toast('show');
+            return false;
+        }
+
+        function removeToast()
+        {
+            $("#invalidPR").toast('hide');
+        }
+
+    </script>
+
 {% endblock %}
