@@ -1,48 +1,49 @@
-{% extends 'base.html' %}
-{% comment %}
-    context = {
-        'form': form
-    }
-{% endcomment %}
-{% block title %}
-    Complete Profile
-{% endblock %}
+{% extends 'base.html' %} {% comment %} context = { 'form': form } {% endcomment %} {% block title %} Complete Profile {% endblock %} {% block content %} {# TODO: ISSUE: Implement Front-end for this Form #} {% load static %}
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
 
-{% block content %}
-    {#  TODO: ISSUE: Implement Front-end for this Form #}
-    <div class="text-center text-white">
-        <h1 class="display-6 text-white">Enter Following Information</h1>
-        <form method="post" action="{% url 'complete_profile' %}">
-            {% csrf_token %}
-            <table class="d-inline-flex justify-content-center" border="2" cellspacing="5" cellpadding="10">
-                {{ form.as_table }}
-            </table>
-            <br>
-            {# TODO: Frontend Check on Registration Number ISSUE #}
-            <input id="id_self_declaration" type="checkbox" onchange="toggleSubmitButton();">
-            <label for="id_self_declaration" class="text-white">
+    </div>
+    <div class="toast-body">
+        Invalid Registration Number
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+</div>
+</div>
+<div class="text-center text-white">
+    <h1 class="display-6 text-white">Enter Following Information</h1>
+    <form method="post" action="{% url 'complete_profile' %}" onsubmit="return checkForm()">
+        {% csrf_token %}
+        <table class="d-inline-flex justify-content-center" border="2" cellspacing="5" cellpadding="10">
+            {{ form.as_table }}
+        </table>
+        <br> {# TODO: Frontend Check on Registration Number ISSUE #}
+        <input id="id_self_declaration" type="checkbox" onchange="toggleSubmitButton();">
+        <label for="id_self_declaration" class="text-white">
                 I verify that information provided by me is best to my knowledge.
                 If any discrepancy is found, I can be debarred from the event.
             </label>
-            <br> <br>
-            <button id="id_submit" type="submit" disabled="disabled">
+        <br> <br>
+        <button id="id_submit" type="submit" disabled="disabled">
                 <h3 id="id_submit_btn_content" class="text-white">Submit</h3>
             </button>
-        </form>
-    </div>
-{% endblock %}
+    </form>
+</div>
 
-{% block javascript %}
-    <script>
-        function toggleSubmitButton() {
-            let checkBox = document.getElementById('id_self_declaration');
-            if(checkBox.checked === true){
-                document.getElementById("id_submit").removeAttribute("disabled");
-                document.getElementById("id_submit_btn_content").setAttribute("class", "text-black");
-            } else {
-                document.getElementById("id_submit").setAttribute("disabled", "disabled");
-                document.getElementById("id_submit_btn_content").setAttribute("class", "text-white");
-            }
+{% endblock %} {% block javascript %}
+<script src="{% static 'js/check.js' %}"></script>
+<script>
+    function toggleSubmitButton() {
+        let checkBox = document.getElementById('id_self_declaration');
+        if (checkBox.checked === true) {
+            document.getElementById("id_submit").removeAttribute("disabled");
+            document.getElementById("id_submit_btn_content").setAttribute("class", "text-black");
+        } else {
+            document.getElementById("id_submit").setAttribute("disabled", "disabled");
+            document.getElementById("id_submit_btn_content").setAttribute("class", "text-white");
         }
-    </script>
+    }
+</script>
+
 {% endblock %}
