@@ -21,7 +21,8 @@
 
 {% block content %}
     {% include "user_profile/navbar-profile.html" %}
-    
+
+    {%  include 'user_profile/remark_modal.html' %}
 
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
@@ -33,7 +34,7 @@
 
 
         <div class="myToast">
-            <div class="toast bg-danger" id="invalidPR">
+            <div class="toast bg-danger fade hide" id="invalidPR">
                 <div class="toast-body">
                     Invalid PR Link...!!
                     <button onclick="removeToast()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -183,10 +184,46 @@
 
                                     </div>
                                     <div class="card-footer text-muted">
+
+                                        <!--Review PR Modal-->
+                                        <div class="modal fade" id="id_pr_reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content" style="background-color: #e9e8f3;">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Review PR</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table class="table table-bordered" cellpadding="10" cellspacing="5">
+                                                            <tr>
+                                                                <th>Remark</th>
+                                                                <th>Bonus</th>
+                                                                <th>Penalty</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th id="id_review_field">{{pr.remark}}</th>
+                                                                <th id="id_bonus_field">{{pr.bonus}}</th>
+                                                                <th id="id_penalty_field">{{pr.penalty}}</th>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                         {% if pr.state == pr.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
+                                            <button class="btn btn-rounded btn-warning mt-0" data-toggle="modal" data-target="#id_pr_reviewModal">
+                                                Review
+                                            </button>
                                         {% elif pr.state == pr.REJECTED %}
                                             <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
+                                            <button class="btn btn-rounded btn-warning mt-0" data-toggle="modal" data-target="#id_pr_reviewModal">
+                                                Review
+                                            </button>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
                                         {% endif %}
@@ -243,18 +280,18 @@
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
                                             <button class="btn btn-success mt-0" data-toggle="modal" 
-                                                    onclick="setAcceptURL(`{{pr.pk}}`)" data-target="#remarkModal">
+                                                    onclick="setAcceptURL(`{{pr.pk}}`)" data-target="#id_remarkModal">
                                                 Accept
                                             </button>
                                             <button class="btn btn-danger mt-0" data-toggle="modal"
-                                                    onclick="setRejectURL(`{{pr.pk}}`)"  data-target="#remarkModal">
+                                                    onclick="setRejectURL(`{{pr.pk}}`)"  data-target="#id_remarkModal">
                                                 Reject
                                             </button>
 
+                                            {% endif %}
                                             <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
                                                 <a class="text-white" href="{{ pr.pr_link }}"><i class="fas fa-eye"></i></a>
                                             </button>
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -308,6 +345,7 @@
                                                 <a class="text-white"
                                                    href="{% url 'accept_issue_request' request.pk %}">
                                                 Accept
+                                                </a>
                                             </button>
                                             <button class="btn btn-danger mt-0">
                                                 <a class="text-white"
@@ -374,9 +412,14 @@
             Hello, Anon. You need to Authorize with Github First.
         </div>
     {% endif %}
+
 {% endblock %}
 
+
 {% block javascript %}
+
+
+
     <script type="text/javascript">
         $(document).ready(function () {
             $("#form").on('submit', function (event) {
@@ -447,7 +490,7 @@
             if(check==true)
             return true;
             
-            $('#invalidPR').toast('show');
+            $("#invalidPR").toast('show');
             return false;
         }
 
@@ -459,45 +502,22 @@
         function setAcceptURL(id)
         {
             let url="/accept_pr/"+id+"/";
-            $("#remarkForm").attr('action',url);
+            $("#id_remarkForm").attr('action',url);
         }
         function setRejectURL(id)
         {
             let url="/reject_pr/"+id+"/";
-            $("#remarkForm").attr('action',url);
+            $("#id_remarkForm").attr('action',url);
+        }
+
+        function setReviewAttributes(remark,bonus,penalty)
+        {
+            console.log(remark);
+            $("#id_review_field").value=remark;
+            $("#id_bonus_field").value=bonus;
+            $("#id_penalty_field").value=penalty;
         }
 
     </script>
-
-
-<<div class="modal fade" id="remarkModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                    <div class="modal-header text-center">
-                                                        <h4 class="modal-title w-100 font-weight-bold">PR Remarks</h4>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <form action="" id="remarkForm">
-                                                        {% csrf_token %}
-                                                        <div class="modal-body mx-3">
-                                                            <div class="p-2">
-                                                                <input name="remark" placeholder="Remark" type="text" class="form-control validate">
-                                                            </div> 
-                                                            <div style="float:left" class="p-2">
-                                                                Bonus : <input type="radio" value="bonus" name="type">
-                                                                Penalty : <input type="radio" value="penalty" name="type">
-                                                            </div>
-                                                            <div class="p-2">
-                                                                <input name="points" placeholder="Bonus/Penalty Points" type="number" class="form-control validate">
-                                                            </div>
-                                                            <div class="d-flex justify-content-center">
-                                                                <button type="submit" class="btn btn-deep-orange">Submit</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>>
 
 {% endblock %}

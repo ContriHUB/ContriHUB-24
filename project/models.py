@@ -129,6 +129,7 @@ class Issue(models.Model):
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
+    BONUS, PENALTY = "bonus","penalty"
     STATES = (
         (ACCEPTED, "Accepted"),
         (REJECTED, "Rejected"),
@@ -157,7 +158,7 @@ class PullRequest(models.Model):
     class Meta:
         ordering=['-state','submitted_at']
 
-    def accept(self, bonus, penalty):
+    def accept(self, bonus, penalty,remark):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -169,6 +170,7 @@ class PullRequest(models.Model):
         self.state = self.ACCEPTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating related Issue
@@ -180,7 +182,7 @@ class PullRequest(models.Model):
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += (int(self.issue.points)+int(bonus)+int(penalty))
+        contributor_profile.total_points += (int(self.issue.points)+int(bonus)-int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.issues_solved = accepted_pr_count
@@ -195,7 +197,7 @@ class PullRequest(models.Model):
         # except AttributeError:
         #     pass
 
-    def reject(self, bonus, penalty):
+    def reject(self, bonus, penalty,remark):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -207,11 +209,12 @@ class PullRequest(models.Model):
         self.state = self.REJECTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark=remark
         self.save()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += (int(bonus)+int(penalty))
+        contributor_profile.total_points += (int(bonus)-int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
