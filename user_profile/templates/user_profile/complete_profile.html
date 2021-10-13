@@ -1,4 +1,21 @@
 {% extends 'base.html' %} {% comment %} context = { 'form': form } {% endcomment %} {% block title %} Complete Profile {% endblock %} {% block content %} {# TODO: ISSUE: Implement Front-end for this Form #} {% load static %}
+<!-- <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;"> -->
+
+<!-- Then put toasts within -->
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" hidden='true'>
+    <div class="toast-header">
+        <img src="..." class="rounded mr-2" alt="...">
+        <strong class="mr-auto">Bootstrap</strong>
+        <small>hahaha</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Invalid Registration Number
+    </div>
+</div>
+</div>
 <div class="text-center text-white">
     <h1 class="display-6 text-white">Enter Following Information</h1>
     <form method="post" action="{% url 'complete_profile' %}" onsubmit="return checkForm()">
@@ -33,4 +50,5 @@
         }
     }
 </script>
+
 {% endblock %}

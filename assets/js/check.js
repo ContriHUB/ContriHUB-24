@@ -1,11 +1,11 @@
 // check registration number
 const course_name = document.getElementById('id_course')
 const reg_holder = document.getElementById('id_registration_no')
-const phd = new RegExp("\\b(1|2)\\d{3}(R|r)[a-zA-Z]{2}\\d{2}\\b")
-const mtech = new RegExp("\\b(1|2)\\d{3}[a-zA-z]{2}\\d{2}\\b")
-const msc = new RegExp("\\b(1|2)\\d{3}(MSC|msc)\\d{2}\\b")
-const mca = new RegExp("\\b(1|2)\\d{3}(ca|CA)\\d{2}\\b")
-const btech = new RegExp("\\b(1|2)\\d{7}\\b");
+const phd = new RegExp("\\b(2)\\d{3}(R|r)[a-zA-Z]{2}\\d{2}\\b") //2019RBT01,2019Rbt02 are accepted
+const mtech = new RegExp("\\b(2)\\d{3}[a-zA-z]{2}\\d{2}\\b") // 2019CC01,2021BT02 are some examples
+const msc = new RegExp("\\b(2)\\d{3}(MSC|msc)\\d{2}\\b") // 2019(msc/MSC)01,2020(msc/MSC)01 are some examples 
+const mca = new RegExp("\\b(2)\\d{3}(ca|CA)\\d{2}\\b") //2019ca01,2021CA01 types are accepted
+const btech = new RegExp("\\b(2)\\d{7}\\b"); // 20214188,20194156accepts all valid regno starting with 2 and of length 8
 const reg_ex = [btech, mca, mtech, msc, phd]
 let sel_course = course_name.options[course_name.options.selectedIndex]
 let reg_no = "";
@@ -13,7 +13,8 @@ let reg_no = "";
 function checkForm() {
     const flag = isValidRegNum();
     if (!flag) {
-        alert("Invalid Registration Number");
+        $('.toast').toast('show');
+        // alert("Invalid Registration Number");
     }
     // return isValidRegNum();
     return flag;
