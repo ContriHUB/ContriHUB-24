@@ -1,3 +1,5 @@
+from datetime import date
+from os import write
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.core.mail import EmailMessage
 from home.helpers import send_email
@@ -19,10 +21,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from user_profile.models import UserProfile
 from .forms import ContactForm
 import smtplib
-import re
-
+import re,threading
+import time
 from django.http import JsonResponse
-
+from datetime import datetime
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
@@ -71,6 +73,21 @@ def authorize(request):
 def logout_(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))
+isESLAvailable = True;
+class EmailThread(threading.Thread):
+    def __init__(self,email_context,template_path,*args):
+        self.email_context = email_context
+        self.template_path = template_path
+        self.args = args
+        print(args)
+        threading.Thread.__init__(self)
+    def run(self):
+        try:
+            send_email(template_path=self.template_path,email_context=self.email_context)
+        except Exception as e:
+            str = self.args[0]+f": Sending mail to {self.args[1]} Failed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n"
+            f=open('EMAIL_STATUS_LOGS.txt','a')
+            f.write(str)
 
 
 @login_required
@@ -94,19 +111,15 @@ def request_issue_assignment(request, issue_pk):
             'host': request.get_host(),
             'subject': "Request for Issue Assignment under ContriHUB-21.",
         }
-        try:
-            send_email(template_path=template_path, email_context=email_context)
-            # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-            return HttpResponse(
-                f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
-        except mail.BadHeaderError:
-            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-            return HttpResponse(
-                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
-        except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-            return HttpResponse(
-                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
+        start_time = time.time()
+        email_thread = EmailThread(email_context,template_path,["ISSUE_ASSIGNMENT_REQUEST",issue.mentor.username])
+        email_thread.start()
+        str = f"ISSUE_ASSIGNMENT_REQUEST: Sending mail to {issue.mentor.username} Succeded at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n Time Taken: {round(time.time()-start_time,2)}\n"
+        f=open('EMAIL_STATUS_LOGS.txt','a')
+        f.write(str)
+        # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
+        return HttpResponse(
+            f"Issue Requested Successfully")
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
     return HttpResponse(message)
@@ -187,18 +200,15 @@ def submit_pr_request(request, active_issue_pk):
                     'host': request.get_host(),
                     'subject': "Request for Approval of PR on an issue under ContriHUB-21.",
                 }
-                try:
-                    send_email(template_path=template_path, email_context=email_context)
-                    message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                except mail.BadHeaderError:
-                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
-                except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
+                
+                start_time = time.time()
+                email_thread = EmailThread(email_context,template_path,["PR_VERIFICATION_REQUEST",issue.mentor.username])
+                email_thread.start()
+                str = f"PR_VERIFICATION_REQUEST: Sending mail to {issue.mentor.username} Succeded at {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n Time Taken: {round(time.time()-start_time,2)}\n"
+                f=open('EMAIL_STATUS_LOGS.txt','a')
+                f.write(str)
+                message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
                 return HttpResponse(message)
             else:
                 message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
