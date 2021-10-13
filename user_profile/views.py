@@ -152,24 +152,16 @@ def edit_profile(request):
         return HttpResponse("Something went wrong")
 
 @login_required
-def change_msid(request):
+def change_contact_info(request):
     if request.is_ajax():
         new_id=request.POST.get('ms_id')
+        new_whatsapp_no = request.POST.get('whatsapp_no')
         user_pro=UserProfile.objects.get(user=request.user)
         if user_pro.ms_teams_id != new_id:
-         user_pro.ms_teams_id=new_id
-         user_pro.save()
-        return JsonResponse({'status': 'success'})
-    else:
-        return HttpResponse("Something Went Wrong")
-
-@login_required
-def change_whatsapp_no(request):
-    if request.is_ajax():
-        new_whatsapp_no = request.POST.get('whatsapp_no')
-        user_pro = UserProfile.objects.get(user=request.user)
+            user_pro.ms_teams_id=new_id
+            user_pro.save()
         if user_pro.whatsapp_no != new_whatsapp_no:
-            user_pro.whatsapp_no = new_whatsapp_no
+            user_pro.whatsapp_no=new_whatsapp_no
             user_pro.save()
         return JsonResponse({'status': 'success'})
     else:

@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
-<section class="vh-150">
-    <div class="container py-5 h-100">
+<section class="vh-130">
+    <div class="container py-5 h-80">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col col-lg-6 mb-4 mb-lg-0">
                 <div class="card mb-3" style="border-radius: .5rem;">
@@ -51,20 +51,11 @@
                                     <div class="row pt-1">
                                         <div class="col-12 mb-3 mt-3">
                                             <h6><b>Whatsapp Number</b></h6>
-                                            <div class="container">
+                                            <div class="container mb-2">
                                                 <input type="tel" id="whatsapp_no" name="whatsapp"
                                                        value="{{ native_profile.whatsapp_no }}" disabled
                                                        style="text-align:center; width: 100%;">
-                                            {% if user.username == native_profile.user.username %}
                                             </div>
-                                                <button class="btn btn-primary" id="toggle_whatsapp">Edit</button>
-                                                <button class="btn btn-primary" id="whatsapp_edit" type="submit">Save</button>
-                                            </div>
-                                            {% endif %}
-                                    </div>
-                                    {% endif %}
-                                    <div class="row pt-1">
-                                        <div class="col-12 mb-3">
                                             <h6><b>MS Teams ID</b></h6>
                                             <div class="container">
                                                 <input type="email" id="ms_field" name="name"
@@ -72,11 +63,14 @@
                                                        style="text-align:center; width: 100%;">
                                             </div>
                                             {% if user.username == native_profile.user.username %}
-                                                <button class="btn btn-primary" id="toggle_ms">Edit</button>
-                                                <button class="btn btn-primary" id="ms_edit" type="submit">Save</button>
+                                            <div>
+                                                <button class="btn btn-primary" id="toggle_contact_info">Edit</button>
+                                                <button class="btn btn-primary" id="contact_info_edit" type="submit">Save</button>
+                                            </div>
                                             {% endif %}
-                                        </div>
                                     </div>
+                                    </div>
+                                    {% endif %}
 
                                 {% if native_profile.role == native_profile.STUDENT %}
                                     <h6><b>#Respect</b></h6>
