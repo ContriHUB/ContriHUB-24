@@ -79,16 +79,16 @@ class EmailThread(threading.Thread):
         self.email_context = email_context
         self.template_path = template_path
         self.args = args
-        print(args)
+       
         threading.Thread.__init__(self)
     def run(self):
         try:
             send_email(template_path=self.template_path,email_context=self.email_context)
         except Exception as e:
-            str = self.args[0]+f": Sending mail to {self.args[1]} Failed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n"
+            str = f"{(self.args)[0][0]}: Sending mail to {(self.args)[0][1]} Failed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n"
             f=open('EMAIL_STATUS_LOGS.txt','a')
             f.write(str)
-
+            f.close()
 
 @login_required
 @complete_profile_required
@@ -98,7 +98,7 @@ def request_issue_assignment(request, issue_pk):
     requester = request.user
 
     if issue.is_assignable(requester=requester):
-        IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
+        # IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
 
@@ -117,6 +117,7 @@ def request_issue_assignment(request, issue_pk):
         str = f"ISSUE_ASSIGNMENT_REQUEST: Sending mail to {issue.mentor.username} Succeded at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n Time Taken: {round(time.time()-start_time,2)}\n"
         f=open('EMAIL_STATUS_LOGS.txt','a')
         f.write(str)
+        f.close()
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
         return HttpResponse(
             f"Issue Requested Successfully")
@@ -207,6 +208,7 @@ def submit_pr_request(request, active_issue_pk):
                 str = f"PR_VERIFICATION_REQUEST: Sending mail to {issue.mentor.username} Succeded at {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n Time Taken: {round(time.time()-start_time,2)}\n"
                 f=open('EMAIL_STATUS_LOGS.txt','a')
                 f.write(str)
+                f.close()
                 message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
                 return HttpResponse(message)
