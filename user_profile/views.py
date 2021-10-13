@@ -104,11 +104,11 @@ def complete(request):
 
     form = UserProfileForm(request.POST, instance=existing_profile)
     if form.is_valid():
-        phd = r'\b(1|2)\d{3}(R|r)[a-zA-Z]{2}\d{2}\b'
-        mtech = r'\b(1|2)\d{3}[a-zA-z]{2}\d{2}\b'
-        msc = r'\b(1|2)\d{3}(MSC|msc)\d{2}\b'
-        mca = r'\b(1|2)\d{3}(ca|CA)\d{2}\b'
-        btech = r'\b(1|2)\d{7}\b'
+        phd = r'\b(2)\d{3}(R|r)[a-zA-Z]{2}\d{2}\b'
+        mtech = r'\b(2)\d{3}[a-zA-z]{2}\d{2}\b'
+        msc = r'\b(2)\d{3}(MSC|msc)\d{2}\b'
+        mca = r'\b(2)\d{3}(ca|CA)\d{2}\b'
+        btech = r'\b(2)\d{7}\b'
         reg_ex = [btech, mca, mtech, msc, phd]
         reg_no =request.POST.get('registration_no')
         course = int(request.POST.get('course'))
