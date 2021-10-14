@@ -18,3 +18,4 @@ Add your name in the given format.
 * [Sudhanshu Kumar](https://contrihub21.herokuapp.com/profile/user/sudhanshu1221/)
  *[Sri Haritha kancharla](https://contrihub21.herokuapp.com/profile/user/haritha8333/)
 * [Vishwas Vaish](https://contrihub21.herokuapp.com/profile/user/VVV007)
+* [Swati Jindal](https://contrihub21.herokuapp.com/profile/user/Swatijindal08/)
