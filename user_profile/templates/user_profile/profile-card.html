@@ -48,7 +48,15 @@
                                     </button>
                                 {% endif %}
                                     <div class="row pt-1">
-                                        <div class="col-12 mb-3">
+                                        <div class="col-12 mb-3 mt-3">
+                                         {% if user.username == native_profile.user.username or user.userprofile.role == user.userprofile.MENTOR or user.userprofile.role == user.userprofile.ADMIN %}
+                                            <h6><b>Whatsapp Number</b></h6>
+                                            <div class="container mb-2">
+                                                <input type="tel" id="whatsapp_no" name="whatsapp"
+                                                       value="{{ native_profile.whatsapp_no }}" disabled
+                                                       style="text-align:center; width: 100%;">
+                                            </div>
+                                         {% endif %}
                                             <h6><b>MS Teams ID</b></h6>
                                             <div class="container">
                                                 <input type="email" id="ms_field" name="name"
@@ -56,10 +64,12 @@
                                                        style="text-align:center; width: 100%;">
                                             </div>
                                             {% if user.username == native_profile.user.username %}
-                                                <button class="btn btn-primary" id="toggle_ms">Edit</button>
-                                                <button class="btn btn-primary" id="ms_edit" type="submit">Save</button>
+                                            <div>
+                                                <button class="btn btn-primary" id="toggle_contact_info">Edit Contact Info</button>
+                                                <button class="btn btn-primary" id="contact_info_edit" type="submit">Save Contact Info</button>
+                                            </div>
                                             {% endif %}
-                                        </div>
+                                    </div>
                                     </div>
 
                                 {% if native_profile.role == native_profile.STUDENT %}
