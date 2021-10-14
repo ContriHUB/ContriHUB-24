@@ -186,7 +186,7 @@
                                     <div class="card-footer text-muted">
 
                                         <!--Review PR Modal-->
-                                        {%  include 'user_profile/pr_review.html' %}
+                                        {%  include 'user_profile/pr_review_modal.html' %}
 
                                         {% if pr.state == pr.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
