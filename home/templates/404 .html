@@ -1,8 +1,4 @@
-{% for message in messages %}
-Hint: {{message}}{% endfor %}
-
-{% include "/assets/css/404 .css" %}
-
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +8,7 @@ Hint: {{message}}{% endfor %}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error 404 </title>
-    <link rel="stylesheet" href="/assets/css/404 .css">
+    <link rel="stylesheet" href="{% static '/assets/css/404.css' %}">
 </head>
 
 <body>
@@ -20,9 +16,9 @@ Hint: {{message}}{% endfor %}
         <h2>Oops! Page Not Found</h2>
         <h1>404</h1>
         <p>We can't find the page you're looking for.</p>
-        <a href="#">Go Back Home</a>
+        {% for message in messages %}
+        <a href="{% URL 'home' %}">Go Back Home</a>
     </div>
-
 </body>
 
 </html>
