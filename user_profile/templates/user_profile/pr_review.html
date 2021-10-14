@@ -1,0 +1,28 @@
+
+
+<div class="modal fade" id="id_pr_reviewModal_{{pr.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #e9e8f3;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Review PR</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" cellpadding="10" cellspacing="5">
+                    <tr>
+                        <th>Remark</th>
+                        <th>Bonus</th>
+                        <th>Penalty</th>
+                    </tr>
+                    <tr>
+                        <th id="id_review_field">{{pr.remark}}</th>
+                        <th id="id_bonus_field">{{pr.bonus}}</th>
+                        <th id="id_penalty_field">{{pr.penalty}}</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
