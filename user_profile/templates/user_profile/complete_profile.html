@@ -17,11 +17,19 @@
             <table class="d-inline-flex justify-content-center" border="2" cellspacing="5" cellpadding="10">
                 {{ form.as_table }}
             </table>
+            <div class="row g-0 d-flex justify-content-center align-items-center">
+                <div class="col-6 mt-2">
+                    <div class="alert alert-warning" role="alert">
+                        Your Whatsapp Number will be kept confidential and will only be visible to Mentors and Admins.
+                    </div>
+                </div>
+            </div>
+
             <br>
             {# TODO: Frontend Check on Registration Number ISSUE #}
             <input id="id_self_declaration" type="checkbox" onchange="toggleSubmitButton();">
             <label for="id_self_declaration" class="text-white">
-                I verify that information provided by me is best to my knowledge.
+                I agree to provide my information and I verify that it is best to my knowledge.
                 If any discrepancy is found, I can be debarred from the event.
             </label>
             <br> <br>
@@ -34,6 +42,8 @@
 
 {% block javascript %}
     <script>
+        $('.alert').alert()
+
         function toggleSubmitButton() {
             let checkBox = document.getElementById('id_self_declaration');
             if(checkBox.checked === true){

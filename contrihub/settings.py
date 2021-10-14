@@ -32,11 +32,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'phonenumber_field',
     
     # 3rd Party Libraries
     'social_django',  # Social Media Login
     'crispy_forms',  # Crispy Form for django
+    'phonenumber_field',  # phone number field for whatsapp number
 ]
 
 MIDDLEWARE = [
