@@ -16,7 +16,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
-# TODO:ISSUE: Make a Custom Http404 Page
+# TODO:ISSUE: Make a Custom Http404 Page        
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
 from .forms import ContactForm
@@ -109,11 +109,11 @@ class EmailThread(threading.Thread):
 def request_issue_assignment(request, issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
-
-    if issue.is_assignable(requester=requester):
+    check, msg = issue.is_assignable(requester=requester)
+    if check:
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
-                  f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
+                  f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully."
 
         template_path = "home/mail_template_request_issue_assignment.html"
         email_context = {
@@ -124,6 +124,7 @@ def request_issue_assignment(request, issue_pk):
             'host': request.get_host(),
             'subject': "Request for Issue Assignment under ContriHUB-21.",
         }
+
         context = {'used_for':"ISSUE ASSIGNMENT REQUEST",
                     'issue':issue,}                           
         email_thread = EmailThread(email_context,template_path,kwargs=context)
@@ -132,8 +133,9 @@ def request_issue_assignment(request, issue_pk):
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
         return HttpResponse(    
             f"Issue Requested Successfully")
+
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
-              f"{issue.project.name}</a> cannot be made by you currently."
+              f"{issue.project.name}</a> Failed.\n<h3>Cause:</h3>{msg}"
     return HttpResponse(message)
 
 
@@ -252,9 +254,34 @@ def accept_pr(request, pk):
 
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                pr.accept()
+                context={}
+                # Getting remark form data
+                remark = request.GET.get('remark')
+                score_type = request.GET.get('type')
+                points = request.GET.get('points')
+
+                bonus=0
+                penalty=0
+                if score_type==PullRequest.BONUS:
+                    bonus=points
+                elif score_type==PullRequest.PENALTY:
+                    penalty=points
+
+                pr.accept(bonus,penalty,remark)
                 message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                context['issue']=issue
+                context['pr']=pr
+                context['contributor']=contributor
+                context['mentor']=mentor
+                context['action']='Accepted'
+                subject='PR ACCEPTED'
+                e_message=render_to_string('home/mail_template_pr_action.html',context=context)
+                email = EmailMessage(
+                    subject, e_message, to=[contributor.email]
+                )
+                email.content_subtype = "html"
+                email.send()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -280,9 +307,34 @@ def reject_pr(request, pk):
             contributor = pr.contributor
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                pr.reject()
+                context={}
+                # Getting remark form data
+                remark = request.GET.get('remark')
+                score_type = request.GET.get('type')
+                points = request.GET.get('points')
+
+                bonus=0
+                penalty=0
+                if score_type==PullRequest.BONUS:
+                    bonus=points
+                elif score_type==PullRequest.PENALTY:
+                    penalty=points
+
+                pr.reject(bonus,penalty,remark)
                 message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                context['issue'] = issue
+                context['pr'] = pr
+                context['contributor'] = contributor
+                context['mentor'] = mentor
+                context['action'] = 'Rejected'
+                subject = 'PR REJECTED'
+                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
+                email = EmailMessage(
+                    subject, e_message, to=[contributor.email]
+                )
+                email.content_subtype = "html"
+                email.send()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -311,6 +363,7 @@ def contact_form(request):
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
+        email.content_subtype = "html"
         email.send()
         return redirect('home')
     elif request.method == 'GET':

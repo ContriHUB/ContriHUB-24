@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from home.helpers import send_email
+import re
 User = get_user_model()
 
 # TODO:ISSUE: Implement feature where User can see how many Issues they have solved Level Wise
@@ -103,11 +104,30 @@ def complete(request):
 
     form = UserProfileForm(request.POST, instance=existing_profile)
     if form.is_valid():
-        # TODO:ISSUE Backend Check on Registration Number
-        existing_profile = form.save(commit=False)
-        existing_profile.is_complete = True
-        existing_profile.save()
-    return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+        phd = r'\b(2)\d{3}(R|r)[a-zA-Z]{2}\d{2}\b'
+        mtech = r'\b(2)\d{3}[a-zA-z]{2}\d{2}\b'
+        msc = r'\b(2)\d{3}(MSC|msc)\d{2}\b'
+        mca = r'\b(2)\d{3}(ca|CA)\d{2}\b'
+        btech = r'\b(2)\d{7}\b'
+        reg_ex = [btech, mca, mtech, msc, phd]
+        reg_no =request.POST.get('registration_no')
+        course = int(request.POST.get('course'))
+        flag = False
+        if(re.match(reg_ex[course-1],reg_no)):
+            flag=True
+            if(course==3):
+                if re.match(reg_ex[course-1],reg_no) and re.match(reg_ex[course-2],reg_no):
+                    flag=False
+        if flag:
+            existing_profile = form.save(commit=False)
+            existing_profile.is_complete = True
+            existing_profile.save()
+            return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+        else:
+            return HttpResponse('Something Went wrong.!!!')
+        return HttpResponseRedirect(reverse('complete_profile'))
+        
+    
 
 
     # TODO:ISSUE Edit Profile Functionality
@@ -149,13 +169,17 @@ def edit_profile(request):
         return HttpResponse("Something went wrong")
 
 @login_required
-def change_msid(request):
+def change_contact_info(request):
     if request.is_ajax():
         new_id=request.POST.get('ms_id')
+        new_whatsapp_no = request.POST.get('whatsapp_no')
         user_pro=UserProfile.objects.get(user=request.user)
         if user_pro.ms_teams_id != new_id:
-         user_pro.ms_teams_id=new_id
-         user_pro.save()
+            user_pro.ms_teams_id=new_id
+            user_pro.save()
+        if user_pro.whatsapp_no != new_whatsapp_no:
+            user_pro.whatsapp_no=new_whatsapp_no
+            user_pro.save()
         return JsonResponse({'status': 'success'})
     else:
         return HttpResponse("Something Went Wrong")
