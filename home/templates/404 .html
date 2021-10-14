@@ -17,6 +17,8 @@
         <h1>404</h1>
         <p>We can't find the page you're looking for.</p>
         {% for message in messages %}
+            <p>{{ message }}<p>
+        {% endfor %}
         <a href="{% URL 'home' %}">Go Back Home</a>
     </div>
 </body>
