@@ -231,9 +231,22 @@ def accept_pr(request, pk):
 
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
+                context={}
                 pr.accept()
                 message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                context['issue']=issue
+                context['pr']=pr
+                context['contributor']=contributor
+                context['mentor']=mentor
+                context['action']='Accepted'
+                subject='PR ACCEPTED'
+                e_message=render_to_string('home/mail_template_pr_action.html',context=context)
+                email = EmailMessage(
+                    subject, e_message, to=[contributor.email]
+                )
+                email.content_subtype = "html"
+                email.send()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -259,9 +272,22 @@ def reject_pr(request, pk):
             contributor = pr.contributor
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
+                context={}
                 pr.reject()
                 message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                context['issue'] = issue
+                context['pr'] = pr
+                context['contributor'] = contributor
+                context['mentor'] = mentor
+                context['action'] = 'Rejected'
+                subject = 'PR REJECTED'
+                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
+                email = EmailMessage(
+                    subject, e_message, to=[contributor.email]
+                )
+                email.content_subtype = "html"
+                email.send()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -290,6 +316,7 @@ def contact_form(request):
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
+        email.content_subtype = "html"
         email.send()
         return redirect('home')
     elif request.method == 'GET':
