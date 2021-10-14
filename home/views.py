@@ -231,7 +231,20 @@ def accept_pr(request, pk):
 
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                pr.accept()
+                
+                # Getting remark form data
+                remark = request.GET.get('remark')
+                score_type = request.GET.get('type')
+                points = request.GET.get('points')
+
+                bonus=0
+                penalty=0
+                if score_type==PullRequest.BONUS:
+                    bonus=points
+                elif score_type==PullRequest.PENALTY:
+                    penalty=points
+
+                pr.accept(bonus,penalty,remark)
                 message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:
@@ -259,7 +272,20 @@ def reject_pr(request, pk):
             contributor = pr.contributor
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                pr.reject()
+
+                # Getting remark form data
+                remark = request.GET.get('remark')
+                score_type = request.GET.get('type')
+                points = request.GET.get('points')
+
+                bonus=0
+                penalty=0
+                if score_type==PullRequest.BONUS:
+                    bonus=points
+                elif score_type==PullRequest.PENALTY:
+                    penalty=points
+
+                pr.reject(bonus,penalty,remark)
                 message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
             else:

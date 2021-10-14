@@ -129,6 +129,7 @@ class Issue(models.Model):
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
+    BONUS, PENALTY = "bonus","penalty"
     STATES = (
         (ACCEPTED, "Accepted"),
         (REJECTED, "Rejected"),
@@ -138,6 +139,8 @@ class PullRequest(models.Model):
     pr_link = models.URLField(verbose_name="PR Link")
 
     contributor = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    remark = models.CharField(max_length=50,blank=True)
 
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
@@ -155,7 +158,7 @@ class PullRequest(models.Model):
     class Meta:
         ordering=['-state','submitted_at']
 
-    def accept(self, bonus=0, penalty=0):
+    def accept(self, bonus, penalty,remark):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -167,6 +170,7 @@ class PullRequest(models.Model):
         self.state = self.ACCEPTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating related Issue
@@ -178,7 +182,7 @@ class PullRequest(models.Model):
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += int(self.issue.points)
+        contributor_profile.total_points += (int(self.issue.points)+int(bonus)-int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.issues_solved = accepted_pr_count
@@ -193,7 +197,7 @@ class PullRequest(models.Model):
         # except AttributeError:
         #     pass
 
-    def reject(self, bonus=0, penalty=0):
+    def reject(self, bonus, penalty,remark):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -205,10 +209,12 @@ class PullRequest(models.Model):
         self.state = self.REJECTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark=remark
         self.save()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
+        contributor_profile.total_points += (int(bonus)-int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
