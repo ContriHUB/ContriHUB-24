@@ -1,0 +1,17 @@
+.card m-3{
+    border-radius: 15px
+}
+
+.card m-3 text-center{
+    border-radius: 15px
+}
+
+.loading container{
+    display: none
+}
+
+.loading container img{
+    display:block;
+    margin-left:auto;
+    margin-right:auto
+}
