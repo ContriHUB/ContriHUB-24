@@ -40,6 +40,22 @@
                 </div>
             </div>
         </div>
+        <div class="myToast">
+            <div class="toast bg-danger" id="invalidWhatsappNo">
+                <div class="toast-body">
+                    Invalid Whatsapp No...!!
+                    <button onclick="removeToastForWhatsappNo()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="myToast">
+            <div class="toast bg-danger" id="invalidMSID">
+                <div class="toast-body">
+                    Invalid MS ID...!!
+                    <button onclick="removeToastForMSID()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
 
 
         {% if user.username == native_profile.user.username %}
@@ -394,49 +410,83 @@
         })
     </script>
     <script type="text/javascript">
+        function validateWhatsappNo(value){
+            let input = document.createElement('input') ;
+            console.log(value) ;
+            console.log(input) ;
+            input.type = 'tel';
+            input.required = true ;
+            input.value = value ;
+            var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im ;
+            if(value.match(phoneno)){
+                return true ;
+            }
+            $('#invalidWhatsappNo').toast('show');
+            return false  ;
+        }
         function validateEmail(value) {
             let input = document.createElement('input');
 
             input.type = 'email';
             input.required = true;
             input.value = value;
-
-            return typeof input.checkValidity === 'function' ? input.checkValidity() : /\S+@\S+\.\S+/.test(value);
+            if (typeof input.checkValidity === 'function' ? input.checkValidity() : /\S+@\S+\.\S+/.test(value))
+                return true ;
+            $('#invalidMSID').toast('show');
+            return false ;
         }
 
         jQuery(document).ready(function (event) {
-            $(document).on('click', '#ms_edit', function (event) {
+            $(document).on('click', '#contact_info_edit', function (event) {
                 event.preventDefault();
                 let ms_id = $('#ms_field').val();
-                if (validateEmail(ms_id)) {
+                let whatsapp_no = $('#whatsapp_no').val();
+                if (validateEmail(ms_id)&&validateWhatsappNo(whatsapp_no)) {
                     $.ajax({
-                        url: '{% url "change_msid" %}',
+                        url: '{% url "change_contact_info" %}',
                         type: 'post',
                         data: {
                             csrfmiddlewaretoken: "{{csrf_token}}",
                             ms_id: ms_id,
+                            whatsapp_no: whatsapp_no,
                         },
                         success: function (data) {
                             $("#ms_field").attr('disabled', 'disabled');
+                            $("#whatsapp_no").attr('disabled', 'disabled');
                         },
                         error: function (data) {}
                     })
-                } else {
+                }
+                else {
                 }
             })
         })
     </script>
     <script>
         $(document).ready(function () {
-            $('#toggle_ms').click(function () {
-                let disabled = $("#ms_field").attr('disabled');
-                if (disabled === undefined) {
+            $('#toggle_contact_info').click(function () {
+                let disabled1 = $("#ms_field").attr('disabled');
+                let disabled2 = $("#whatsapp_no").attr('disabled');
+                if (disabled1 === undefined  ) {
                     $("#ms_field").attr('disabled', 'disabled');
                 } else {
                     $("#ms_field").removeAttr('disabled');
                 }
+                if (disabled2 === undefined) {
+                    $("#whatsapp_no").attr('disabled', 'disabled');
+                } else {
+                    $("#whatsapp_no").removeAttr('disabled');
+                }
             })
         });
+        function removeToastForWhatsappNo()
+        {
+            $("#invalidWhatsappNo").toast('hide');
+        }
+        function removeToastForMSID()
+        {
+            $("#invalidMSID").toast('hide');
+        }
     </script>
 
     <script>
