@@ -87,20 +87,20 @@ class EmailThread(threading.Thread):
             send_email(template_path=self.template_path, email_context=self.email_context)
             end_time = time.time()
             entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f: # Use
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f: # Use
             # Context-Manager as it is best-practice
                 f.write(entry_string)
         except mail.BadHeaderError as e:
             entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f:
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
                 f.write(entry_string)
         except smtplib.SMTPSenderRefused as e: # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
             entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f:
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
                 f.write(entry_string)
         except Exception as e:
             entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f:
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
                 f.write(entry_string)
 
 @login_required
