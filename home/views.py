@@ -22,7 +22,8 @@ from user_profile.models import UserProfile
 from .forms import ContactForm
 import smtplib
 import re,threading
-import time
+import time,os
+from contrihub import settings
 from django.http import JsonResponse
 from datetime import datetime
 @complete_profile_required
@@ -73,22 +74,34 @@ def authorize(request):
 def logout_(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))
-isESLAvailable = True;
 class EmailThread(threading.Thread):
-    def __init__(self,email_context,template_path,*args):
+    def __init__(self,email_context,template_path,*args,kwargs):
         self.email_context = email_context
         self.template_path = template_path
-        self.args = args
-       
+        self.issue = kwargs['issue']
+        self.used_for = kwargs['used_for']
         threading.Thread.__init__(self)
     def run(self):
+        start_time = time.time()
         try:
-            send_email(template_path=self.template_path,email_context=self.email_context)
+            send_email(template_path=self.template_path, email_context=self.email_context)
+            end_time = time.time()
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f: # Use
+            # Context-Manager as it is best-practice
+                f.write(entry_string)
+        except mail.BadHeaderError as e:
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f:
+                f.write(entry_string)
+        except smtplib.SMTPSenderRefused as e: # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f:
+                f.write(entry_string)
         except Exception as e:
-            str = f"{(self.args)[0][0]}: Sending mail to {(self.args)[0][1]} Failed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n"
-            f=open('EMAIL_STATUS_LOGS.txt','a')
-            f.write(str)
-            f.close()
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.log"), 'a') as f:
+                f.write(entry_string)
 
 @login_required
 @complete_profile_required
@@ -98,7 +111,7 @@ def request_issue_assignment(request, issue_pk):
     requester = request.user
 
     if issue.is_assignable(requester=requester):
-        IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
+        # IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
 
@@ -111,15 +124,13 @@ def request_issue_assignment(request, issue_pk):
             'host': request.get_host(),
             'subject': "Request for Issue Assignment under ContriHUB-21.",
         }
-        start_time = time.time()
-        email_thread = EmailThread(email_context,template_path,["ISSUE_ASSIGNMENT_REQUEST",issue.mentor.username])
+        context = {'used_for':"ISSUE ASSIGNMENT REQUEST",
+                    'issue':issue,}                           
+        email_thread = EmailThread(email_context,template_path,kwargs=context)
         email_thread.start()
-        str = f"ISSUE_ASSIGNMENT_REQUEST: Sending mail to {issue.mentor.username} Succeded at {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n Time Taken: {round(time.time()-start_time,2)}\n"
-        f=open('EMAIL_STATUS_LOGS.txt','a')
-        f.write(str)
-        f.close()
+
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-        return HttpResponse(
+        return HttpResponse(    
             f"Issue Requested Successfully")
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
@@ -203,12 +214,10 @@ def submit_pr_request(request, active_issue_pk):
                 }
                 
                 start_time = time.time()
-                email_thread = EmailThread(email_context,template_path,["PR_VERIFICATION_REQUEST",issue.mentor.username])
+                context = {'used_for':"PR Verification Request",
+                    'issue':issue,}    
+                email_thread = EmailThread(email_context,template_path,kwargs=context)
                 email_thread.start()
-                str = f"PR_VERIFICATION_REQUEST: Sending mail to {issue.mentor.username} Succeded at {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n Time Taken: {round(time.time()-start_time,2)}\n"
-                f=open('EMAIL_STATUS_LOGS.txt','a')
-                f.write(str)
-                f.close()
                 message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
                 return HttpResponse(message)
