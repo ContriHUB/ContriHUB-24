@@ -86,7 +86,7 @@
                         </div>
                     </div>
                 </div>
-            {% if native_profile.role == native_profile.STUDENT %}
+            {% if native_profile.role == native_profile.STUDENT or user.userprofile.role == user.userprofile.ADMIN %}
             <div class="text-center"><h1 class="display-6 text-white"><b>Issues Solved</b></h1></div>
             <div class="card mb-5 text-center " style="border-radius: 15px;">
                 <div class="col text-center">
