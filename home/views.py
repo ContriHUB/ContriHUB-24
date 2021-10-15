@@ -111,7 +111,7 @@ def request_issue_assignment(request, issue_pk):
     requester = request.user
     check, msg = issue.is_assignable(requester=requester)
     if check:
-        IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
+        # IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully."
 
