@@ -1,5 +1,7 @@
-{% extends 'base.html' %}
 {% load static %}
+{% extends 'base.html' %}
+{% static '/assets/css/index.css' %}
+
 {% comment %}
     context = {
         'projects': project_qs,
@@ -24,7 +26,7 @@
     <div class="container-flow p-3">
         <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
+                    <div class="card m-3"">
                         <div class="card-header text-center">
                             <h6>Announcements!</h6>
                         </div>
@@ -47,21 +49,24 @@
 {#                                <li class="animated bounceInLeft">#}
 {#                                    <b class="text-danger">️HOT ISSUE:</b> #13. <b>Project:</b> ContriHUB-21, is currently assigned to <span class="text-success"><a href="{% url 'user_profile' "shobhit2002" %}">@shobhit2002</a></span>#}
 {#                                </li>#}
-                                <li>
-                                    <div class="animated flash infinite">
-                                        <b><span class="text-danger">Latest HOT ISSUE:</span></b>
+{#                                <li>#}
+{#                                    <div class="animated flash infinite">#}
+{#                                        <b><span class="text-danger">Latest HOT ISSUE:</span></b>#}
 {#                                        <ol>#}
 {#                                            <li>#}
-                                                <span class="text-info"><a href="https://github.com/ContriHUB/ContriHUB-21/issues/38">Filter Issues by Level and Project Name from Nav-Bar. #38</a></span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span> 😋️
+{#                                                <span class="text-info"><a href="https://github.com/ContriHUB/ContriHUB-21/issues/38">Filter Issues by Level and Project Name from Nav-Bar. #38</a></span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span> 😋️#}
 {#                                            </li>#}
 {#                                        </ol>#}
+{#                                    </div>#}
+{#                                </li>#}
+                                <li>
+                                    <div class="animated bounce infinite">
+                                        <b class="text-success">New FIX:</b> Now you will get to know the <b>Cause</b> behind the failure of making the Request for Issue Assignment.
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="animated">
-                                        <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests. It was due to a missing equality(=) sign.
-                                        <span>Youtube developers once made a similar mistake which led to an interesting <span class="text-success">fun fact.</span></span>
-                                        <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
+                                    <div class="animated pulse">
+                                        <b class="text-success">New FIX:</b> If a issue was rejected for you and you find that it is open again, then you can request for it again.
                                     </div>
                                 </li>
                                 <li>
@@ -79,7 +84,7 @@
                                     <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
                                     <ol>
                                         <li>
-                                            Some other person has <b>already-requested/already-solving</b> the same issue.
+                                            Some other person has <b>already-requested</b>/<b>already-solving</b> the same issue.
                                         </li>
                                         <li>
                                             The issue is still locked. <b>So Check the Description of Issue on GitHub first
@@ -103,18 +108,18 @@
         <div class="row row-cols-1 row-cols-md-2 infinite-container">
             {% for issue in issues %}
                 <div class="col infinite-item">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
+                    <div class="card m-3 text-center">
                         <div class="card-header">
                             Issue #{{ issue.number }} - {{ issue.project.domain }}
                         </div>
                         <div class="card-body">
 
                             <h5 class="card-title">
-                                <a href="{{ issue.html_url }}">{{ issue.title }}</a>
+                                <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
                             </h5>
                             <h6 class="">
                                 <a data-mdb-toggle="tooltip" title="Project"
-                                   href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
+                                   href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
                             </h6>
 
                             <p class="card-text">
@@ -167,9 +172,8 @@
             <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
         {% endif %}
 
-        <div class="loading container" style="display: none;">
-            <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
-                 style="display:block;margin-left:auto;margin-right:auto;">
+        <div class="loading container">
+            <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px">
         </div>
     </div>
 
