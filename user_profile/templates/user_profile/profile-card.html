@@ -86,35 +86,35 @@
                         </div>
                     </div>
                 </div>
-            {% if native_profile.role == native_profile.STUDENT or user.userprofile.role == user.userprofile.ADMIN %}
+            {% if native_profile.role == native_profile.STUDENT %}
             <div class="text-center"><h1 class="display-6 text-white"><b>Issues Solved</b></h1></div>
             <div class="card mb-5 text-center " style="border-radius: 15px;">
-                <div class="col text-center">
-                 <hr style="border: 1px solid Slateblue;border-radius: 2px;">
-                 <table class="table table-hover table-dark">
-                     <thead>
-                        <tr>
+                 <div class="col text-center">
+                     <hr style="border: 1px solid Slateblue;border-radius: 2px;">
+                     <table class="table table-hover table-dark">
+                       <thead>
+                         <tr>
 {#                          <th scope="col">#Free</th>#}
                             <th scope="col">#Very Easy</th>
                             <th scope="col">#Easy</th>
                             <th scope="col">#Medium</th>
                             <th scope="col">#Hard</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
+                         </tr>
+                       </thead>
+                       <tbody>
+                         <tr>
 {#                          <td>{{ free_issues_solved }}</td>#}
                             <td>{{ v_easy_issues_solved }}</td>
                             <td>{{ easy_issues_solved }}</td>
                             <td>{{ medium_issues_solved }}</td>
                             <td>{{ hard_issues_solved }}</td>
-                        </tr>
-                     </tbody>
-                 </table>
-                 <hr style="border: 1px solid Slateblue;border-radius: 2px;">
-                </div>
+                         </tr>
+                       </tbody>
+                     </table>
+                     <hr style="border: 1px solid Slateblue;border-radius: 2px;">
+                 </div>
             </div>
-        {% endif %}
+            {% endif %}
             </div>
         </div>
     </div>

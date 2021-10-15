@@ -369,20 +369,20 @@ def handle_vote(request):
     message = ""
     if (type == 0):
         message = "Upvoted Successfully"
-        if is_upvoted:
-            issue.upvotes.remove(request.user)
-        else:
-            issue.upvotes.add(request.user)
-            if is_downvoted:
-                issue.downvotes.remove(request.user)
-    elif type == 1:
-        message = "Downvoted Successfully"
+        issue.upvotes.add(request.user)
         if is_downvoted:
             issue.downvotes.remove(request.user)
-        else:
-            issue.downvotes.add(request.user)
-            if is_upvoted:
-                issue.upvotes.remove(request.user)
+    elif type == 1 :
+        message = "Downvoted Successfully"
+        issue.downvotes.add(request.user)
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+    elif type == 2 :
+        message = "Vote Revoked Successfully"
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
     context = {
         'issue': issue,
     }
