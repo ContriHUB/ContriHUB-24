@@ -20,15 +20,20 @@ from user_profile.models import UserProfile
 from .forms import ContactForm
 import smtplib
 import re
-
 from django.http import JsonResponse
+
+
+def page_not_found_view(request, exception):
+    """ Custom 404 handler """
+    return render(request, '404.html', status=404)
+
 
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.all().order_by('-id')
 
-    #get all active issues
+    # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
     all_active_issues = []
 
@@ -38,9 +43,9 @@ def home(request):
 
         if active_issue:
             all_active_issues.append(issue)
-            active_issue=active_issue[0]
-            issue.contributor=active_issue.contributor    # set contributor for that active issue
-            
+            active_issue = active_issue[0]
+            issue.contributor = active_issue.contributor  # set contributor for that active issue
+
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
@@ -49,7 +54,7 @@ def home(request):
         issue_p = paginator.page(1)
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
-        
+
     context = {
         'projects': project_qs,
         'issues': issue_p,
@@ -79,11 +84,11 @@ def logout_(request):
 def request_issue_assignment(request, issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
-
-    if issue.is_assignable(requester=requester):
+    check, msg = issue.is_assignable(requester=requester)
+    if check:
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
-                  f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
+                  f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully."
 
         template_path = "home/mail_template_request_issue_assignment.html"
         email_context = {
@@ -98,17 +103,21 @@ def request_issue_assignment(request, issue_pk):
             send_email(template_path=template_path, email_context=email_context)
             # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
             return HttpResponse(
-                f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
+                f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.\n<h3>Hurrah!" \
+                f":</h3> Hang tight and Wait for the Approval by the mentor.")
         except mail.BadHeaderError:
             ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
             return HttpResponse(
-                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})\n<h3>Hurrah!" \
+                f":</h3> Hang tight and Wait for the Approval by the mentor.")
         except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
             ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
             return HttpResponse(
-                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
+                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})\n<h3>Hurrah!" \
+                f":</h3> Hang tight and Wait for the Approval by the mentor. ")
+
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
-              f"{issue.project.name}</a> cannot be made by you currently."
+              f"{issue.project.name}</a> Failed.\n<h3>Cause:</h3>{msg}"
     return HttpResponse(message)
 
 
@@ -167,7 +176,7 @@ def submit_pr_request(request, active_issue_pk):
                 # checking if pr link is valid or not
                 pr_url = pr.pr_link
                 regex = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
-                if not re.match(regex,pr_url):
+                if not re.match(regex, pr_url):
                     return HttpResponse("Invalid PR Link...!!")
 
                 pr.issue = issue
@@ -231,22 +240,34 @@ def accept_pr(request, pk):
 
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                
+                context = {}
                 # Getting remark form data
                 remark = request.GET.get('remark')
                 score_type = request.GET.get('type')
                 points = request.GET.get('points')
 
-                bonus=0
-                penalty=0
-                if score_type==PullRequest.BONUS:
-                    bonus=points
-                elif score_type==PullRequest.PENALTY:
-                    penalty=points
+                bonus = 0
+                penalty = 0
+                if score_type == PullRequest.BONUS:
+                    bonus = points
+                elif score_type == PullRequest.PENALTY:
+                    penalty = points
 
-                pr.accept(bonus,penalty,remark)
+                pr.accept(bonus, penalty, remark)
                 message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                context['issue'] = issue
+                context['pr'] = pr
+                context['contributor'] = contributor
+                context['mentor'] = mentor
+                context['action'] = 'Accepted'
+                subject = 'PR ACCEPTED'
+                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
+                email = EmailMessage(
+                    subject, e_message, to=[contributor.email]
+                )
+                email.content_subtype = "html"
+                email.send()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -272,22 +293,34 @@ def reject_pr(request, pk):
             contributor = pr.contributor
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-
+                context = {}
                 # Getting remark form data
                 remark = request.GET.get('remark')
                 score_type = request.GET.get('type')
                 points = request.GET.get('points')
 
-                bonus=0
-                penalty=0
-                if score_type==PullRequest.BONUS:
-                    bonus=points
-                elif score_type==PullRequest.PENALTY:
-                    penalty=points
+                bonus = 0
+                penalty = 0
+                if score_type == PullRequest.BONUS:
+                    bonus = points
+                elif score_type == PullRequest.PENALTY:
+                    penalty = points
 
-                pr.reject(bonus,penalty,remark)
+                pr.reject(bonus, penalty, remark)
                 message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                context['issue'] = issue
+                context['pr'] = pr
+                context['contributor'] = contributor
+                context['mentor'] = mentor
+                context['action'] = 'Rejected'
+                subject = 'PR REJECTED'
+                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
+                email = EmailMessage(
+                    subject, e_message, to=[contributor.email]
+                )
+                email.content_subtype = "html"
+                email.send()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -316,6 +349,7 @@ def contact_form(request):
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
+        email.content_subtype = "html"
         email.send()
         return redirect('home')
     elif request.method == 'GET':
@@ -332,9 +366,9 @@ def handle_vote(request):
     issue = Issue.objects.get(pk=id)
     is_upvoted = request.user in issue.upvotes.all()
     is_downvoted = request.user in issue.downvotes.all()
-    message=""
+    message = ""
     if (type == 0):
-        message="Upvoted Successfully"
+        message = "Upvoted Successfully"
         if is_upvoted:
             issue.upvotes.remove(request.user)
         else:
@@ -342,7 +376,7 @@ def handle_vote(request):
             if is_downvoted:
                 issue.downvotes.remove(request.user)
     elif type == 1:
-        message="Downvoted Successfully"
+        message = "Downvoted Successfully"
         if is_downvoted:
             issue.downvotes.remove(request.user)
         else:
@@ -353,4 +387,4 @@ def handle_vote(request):
         'issue': issue,
     }
     html = render_to_string('home/vote.html', context, request=request)
-    return JsonResponse({'html': html,'message':message})
+    return JsonResponse({'html': html, 'message': message})
