@@ -1,5 +1,6 @@
 from datetime import date
 from os import write
+from django.core.mail.message import EmailMultiAlternatives
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.core.mail import EmailMessage
 from home.helpers import send_email
@@ -84,60 +85,44 @@ def logout_(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))
 class EmailThread(threading.Thread):
-    def __init__(self,email_context,template_path,*args,kwargs):
-        self.email_context = email_context
-        self.template_path = template_path
-        self.issue = kwargs['issue']
+    def __init__(self,kwargs=None,email_context=None,template_path=None,email=None,*args):
         self.used_for = kwargs['used_for']
-        threading.Thread.__init__(self)
-    def run(self):
-        start_time = time.time()
-        try:
-            send_email(template_path=self.template_path, email_context=self.email_context)
-            end_time = time.time()
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f: # Use
-            # Context-Manager as it is best-practice
-                f.write(entry_string)
-        except mail.BadHeaderError as e:
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
-        except smtplib.SMTPSenderRefused as e: # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
-        except Exception as e:
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
-class EmailThread2(threading.Thread):
-    def __init__(self,email,*args,kwargs):
         self.email = email
-        self.contributor = kwargs['contributor']
-        self.used_for = kwargs['used_for']
-        threading.Thread.__init__(self)
+        
+        if email is None:
+            self.email_context = email_context
+            self.template_path = template_path
+            self.username = kwargs['issue'].mentor.username
+            threading.Thread.__init__(self)
+        else:
+            self.email = email
+            self.username = kwargs['contributor'].username
+            threading.Thread.__init__(self)
+        
     def run(self):
         start_time = time.time()
         try:
-            self.email.send()
+            if self.email is None:
+                send_email(template_path=self.template_path, email_context=self.email_context)
+            else:
+                self.email.send()
             end_time = time.time()
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
             with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f: # Use
             # Context-Manager as it is best-practice
                 f.write(entry_string)
         except mail.BadHeaderError as e:
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
             with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
                 f.write(entry_string)
         except smtplib.SMTPSenderRefused as e: # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
             with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
                 f.write(entry_string)
         except Exception as e:
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
+                entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+                with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                    f.write(entry_string)
 @login_required
 @complete_profile_required
 @check_issue_time_limit
@@ -162,7 +147,7 @@ def request_issue_assignment(request, issue_pk):
 
         context = {'used_for':"ISSUE ASSIGNMENT REQUEST",
                     'issue':issue,}                           
-        email_thread = EmailThread(email_context,template_path,kwargs=context)
+        email_thread = EmailThread(email_context=email_context,template_path=template_path,kwargs=context)
         email_thread.start()
 
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
@@ -253,7 +238,7 @@ def submit_pr_request(request, active_issue_pk):
                 start_time = time.time()
                 context = {'used_for':"PR Verification Request",
                     'issue':issue,}    
-                email_thread = EmailThread(email_context,template_path,kwargs=context)
+                email_thread = EmailThread(email_context=email_context,template_path=template_path,kwargs=context)
                 email_thread.start()
                 message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                               f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
@@ -319,7 +304,7 @@ def accept_pr(request, pk):
                     'contributor' : contributor,
                     'used_for':"PR ACCEPTED"
                 }
-                EmailThread2(email,kwargs=context).start()
+                EmailThread(email=email,kwargs=context).start()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -376,7 +361,7 @@ def reject_pr(request, pk):
                     'contributor' : contributor,
                     'used_for':"PR REJECTED"
                 }
-                EmailThread2(email,kwargs=context).start()
+                EmailThread(email=email,kwargs=context).start()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."

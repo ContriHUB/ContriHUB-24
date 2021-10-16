@@ -1,2 +1,114 @@
 
 
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:28:44.98
+	Cause:
+		'NoneType' object has no attribute 'BadHeaderError'
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:30:20.71
+	Cause:
+		'NoneType' object has no attribute 'BadHeaderError'
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:32:00.39
+	Cause:
+		'NoneType' object has no attribute 'BadHeaderError'
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:32:19.05
+	Cause:
+		'NoneType' object has no attribute 'BadHeaderError'
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:33:38.14
+	Cause:
+		'NoneType' object has no attribute 'BadHeaderError'
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:34:05.73
+	Cause:
+		'NoneType' object has no attribute 'BadHeaderError'
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Succeeded at:
+		2021-10-16 22:35:12.33
+	Time Taken:
+		3.58 seconds
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Succeeded at:
+		2021-10-16 22:36:23.24
+	Time Taken:
+		3.21 seconds
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		paraggupta027
+	Succeeded at:
+		2021-10-16 22:38:35.55
+	Time Taken:
+		3.66 seconds
+
+PR Verification Request:
+	Sending mail to:
+		paraggupta027
+	Succeeded at:
+		2021-10-16 22:51:41.11
+	Time Taken:
+		3.32 seconds
+
+PR ACCEPTED:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:52:27.90
+	Cause:
+		'EmailThread' object has no attribute 'email_context'
+
+PR ACCEPTED:
+	Sending mail to:
+		paraggupta027
+	Failed at:
+		2021-10-16 22:53:33.65
+	Cause:
+		'EmailThread' object has no attribute 'email_context'
+
+PR ACCEPTED:
+	Sending mail to:
+		paraggupta027
+	Succeeded at:
+		2021-10-16 22:54:20.72
+	Time Taken:
+		3.38 seconds
+
+PR REJECTED:
+	Sending mail to:
+		paraggupta027
+	Succeeded at:
+		2021-10-16 22:55:22.85
+	Time Taken:
+		3.26 seconds
+
