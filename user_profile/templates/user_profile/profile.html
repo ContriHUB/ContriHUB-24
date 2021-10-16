@@ -57,7 +57,14 @@
                 </div>
             </div>
         </div>
-
+        <div class="myToast">
+            <div class="toast bg-success fade hide" id="updaterequest">
+                <div class="toast-body">
+                    You Request is Made Successfully For updation. Wait and check later ! ;)
+                    <button onclick="removeToastForUpdateRequest()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
@@ -497,6 +504,9 @@
                     $("#whatsapp_no").removeAttr('disabled');
                 }
             })
+            $('#pr_edit').click(function () {
+                $("#updaterequest").toast("show");
+            })
         });
         function removeToastForWhatsappNo()
         {
@@ -505,6 +515,10 @@
         function removeToastForMSID()
         {
             $("#invalidMSID").toast('hide');
+        }
+        function removeToastForUpdateRequest()
+        {
+            $("#updaterequest").toast('hide');
         }
     </script>
 
