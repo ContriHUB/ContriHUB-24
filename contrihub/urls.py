@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
@@ -26,3 +27,5 @@ urlpatterns = [
     # this url is handled by social_django app under social-auth-app-django python library
     url(r'^oauth/', include('social_django.urls', namespace='social')),
 ]
+
+handler404 = "home.views.page_not_found_view"

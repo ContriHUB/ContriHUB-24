@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 404 </title>
+
+    <style>
+        /* CSS FOR 404 PAGE ERROR */
+
+        *{
+            padding: 0;
+            margin: 0;
+        }
+
+        body{
+            margin: 0;
+            padding: 0;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            min-height: 100vh;
+            background-image: linear-gradient(12deg,#48b583,#8d88d5);
+        }
+
+        .container{
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+            color: #343434;
+        }
+
+        .container h1{
+            font-size: 160px;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: 20px;
+        }
+
+        .container a{
+            text-decoration: none;
+            background: #e55039aa;
+            color: #fff;
+            padding: 15px 34px;
+            display: inline-block;
+            border-radius: 25px;
+            margin: 18px 6px;
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: 0.4s;
+        }
+         .container a:hover{
+             background: #e55039;
+         }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Oops! Page Not Found</h2>
+        <h1>404</h1>
+        <p>We can't find the page you're looking for.</p>
+        {% for message in messages %}
+            <p>{{ message }}<p>
+        {% endfor %}
+        <a href="{% url 'home' %}">Go Back Home</a>
+    </div>
+</body>
+
+</html>

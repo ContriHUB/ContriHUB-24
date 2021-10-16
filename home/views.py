@@ -26,12 +26,21 @@ import time,os
 from contrihub import settings
 from django.http import JsonResponse
 from datetime import datetime
+import re
+from django.http import JsonResponse
+
+
+def page_not_found_view(request, exception):
+    """ Custom 404 handler """
+    return render(request, '404.html', status=404)
+
+
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.all().order_by('-id')
 
-    #get all active issues
+    # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
     all_active_issues = []
 
@@ -41,9 +50,9 @@ def home(request):
 
         if active_issue:
             all_active_issues.append(issue)
-            active_issue=active_issue[0]
-            issue.contributor=active_issue.contributor    # set contributor for that active issue
-            
+            active_issue = active_issue[0]
+            issue.contributor = active_issue.contributor  # set contributor for that active issue
+
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
@@ -52,7 +61,7 @@ def home(request):
         issue_p = paginator.page(1)
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
-        
+
     context = {
         'projects': project_qs,
         'issues': issue_p,
@@ -102,7 +111,33 @@ class EmailThread(threading.Thread):
             entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.issue.mentor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
             with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
                 f.write(entry_string)
-
+class EmailThread2(threading.Thread):
+    def __init__(self,email,*args,kwargs):
+        self.email = email
+        self.contributor = kwargs['contributor']
+        self.used_for = kwargs['used_for']
+        threading.Thread.__init__(self)
+    def run(self):
+        start_time = time.time()
+        try:
+            self.email.send()
+            end_time = time.time()
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f: # Use
+            # Context-Manager as it is best-practice
+                f.write(entry_string)
+        except mail.BadHeaderError as e:
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                f.write(entry_string)
+        except smtplib.SMTPSenderRefused as e: # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                f.write(entry_string)
+        except Exception as e:
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.contributor.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                f.write(entry_string)
 @login_required
 @complete_profile_required
 @check_issue_time_limit
@@ -111,7 +146,7 @@ def request_issue_assignment(request, issue_pk):
     requester = request.user
     check, msg = issue.is_assignable(requester=requester)
     if check:
-        # IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
+        IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully."
 
@@ -194,7 +229,7 @@ def submit_pr_request(request, active_issue_pk):
                 # checking if pr link is valid or not
                 pr_url = pr.pr_link
                 regex = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
-                if not re.match(regex,pr_url):
+                if not re.match(regex, pr_url):
                     return HttpResponse("Invalid PR Link...!!")
 
                 pr.issue = issue
@@ -254,34 +289,37 @@ def accept_pr(request, pk):
 
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                context={}
+                context = {}
                 # Getting remark form data
                 remark = request.GET.get('remark')
                 score_type = request.GET.get('type')
                 points = request.GET.get('points')
 
-                bonus=0
-                penalty=0
-                if score_type==PullRequest.BONUS:
-                    bonus=points
-                elif score_type==PullRequest.PENALTY:
-                    penalty=points
+                bonus = 0
+                penalty = 0
+                if score_type == PullRequest.BONUS:
+                    bonus = points
+                elif score_type == PullRequest.PENALTY:
+                    penalty = points
 
-                pr.accept(bonus,penalty,remark)
+                pr.accept(bonus, penalty, remark)
                 message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                context['issue']=issue
-                context['pr']=pr
-                context['contributor']=contributor
-                context['mentor']=mentor
-                context['action']='Accepted'
-                subject='PR ACCEPTED'
-                e_message=render_to_string('home/mail_template_pr_action.html',context=context)
+                context['issue'] = issue
+                context['pr'] = pr
+                context['contributor'] = contributor
+                context['mentor'] = mentor
+                context['action'] = 'Accepted'
+                subject = 'PR ACCEPTED'
+                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
                 email = EmailMessage(
                     subject, e_message, to=[contributor.email]
                 )
-                email.content_subtype = "html"
-                email.send()
+                context = {
+                    'contributor' : contributor,
+                    'used_for':"PR ACCEPTED"
+                }
+                EmailThread2(email,kwargs=context).start()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -307,20 +345,20 @@ def reject_pr(request, pk):
             contributor = pr.contributor
             pr = PullRequest.objects.get(issue=issue, contributor=contributor)
             if pr.state == PullRequest.PENDING_VERIFICATION:
-                context={}
+                context = {}
                 # Getting remark form data
                 remark = request.GET.get('remark')
                 score_type = request.GET.get('type')
                 points = request.GET.get('points')
 
-                bonus=0
-                penalty=0
-                if score_type==PullRequest.BONUS:
-                    bonus=points
-                elif score_type==PullRequest.PENALTY:
-                    penalty=points
+                bonus = 0
+                penalty = 0
+                if score_type == PullRequest.BONUS:
+                    bonus = points
+                elif score_type == PullRequest.PENALTY:
+                    penalty = points
 
-                pr.reject(bonus,penalty,remark)
+                pr.reject(bonus, penalty, remark)
                 message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
                 context['issue'] = issue
@@ -334,7 +372,11 @@ def reject_pr(request, pk):
                     subject, e_message, to=[contributor.email]
                 )
                 email.content_subtype = "html"
-                email.send()
+                context = {
+                    'contributor' : contributor,
+                    'used_for':"PR REJECTED"
+                }
+                EmailThread2(email,kwargs=context).start()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -380,9 +422,9 @@ def handle_vote(request):
     issue = Issue.objects.get(pk=id)
     is_upvoted = request.user in issue.upvotes.all()
     is_downvoted = request.user in issue.downvotes.all()
-    message=""
+    message = ""
     if (type == 0):
-        message="Upvoted Successfully"
+        message = "Upvoted Successfully"
         if is_upvoted:
             issue.upvotes.remove(request.user)
         else:
@@ -390,7 +432,7 @@ def handle_vote(request):
             if is_downvoted:
                 issue.downvotes.remove(request.user)
     elif type == 1:
-        message="Downvoted Successfully"
+        message = "Downvoted Successfully"
         if is_downvoted:
             issue.downvotes.remove(request.user)
         else:
