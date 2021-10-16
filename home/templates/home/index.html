@@ -45,6 +45,14 @@
                 </div>
             </div>
         </div>
+    <div class="myToast">
+            <div class="toast bg-danger fade hide" id="loginfirst">
+                <div class="toast-body">
+                    Login First ! Redirecting To Authorizing page...
+                    <button onclick="removeToastForLoginFirst()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
     <div class="container-flow p-3">
         <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
@@ -228,6 +236,12 @@
                 else if(type == 2){
                     $("#voteremoved").toast("show");
                 }
+                else if(type == 3){
+                    $("#loginfirst").toast("show");
+                    window.setTimeout(function(){
+                        window.location.href = {% url 'authorize' %};
+                        }, 1000);
+                }
                 var iid = $(this).attr('iid');
                 console.log(iid);
                 $.ajax({
@@ -260,6 +274,9 @@
         }
         function removeToastForVoteRemoved(){
             $("#voteremoved").toast('hide');
+        }
+        function removeToastForLoginFirst(){
+            $("#loginfirst").toast('hide');
         }
     </script>
 
