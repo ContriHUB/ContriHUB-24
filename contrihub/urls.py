@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path, include
+from project import views as pro_views
 
 
 urlpatterns = [
@@ -23,7 +24,8 @@ urlpatterns = [
     path('', include('home.urls')),
     path('profile/', include('user_profile.urls')),
     path('project/', include('project.urls')),
-
+    path('api/projects/',pro_views.project_list_view),
+    path('api/projects/<project_id>/',pro_views.project_detail_view),
     # this url is handled by social_django app under social-auth-app-django python library
     url(r'^oauth/', include('social_django.urls', namespace='social')),
 ]

@@ -6,6 +6,9 @@ from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import complete_profile_required, fetch_all_issues
 from config import APIS, URIS
+from .serializers import ProjectSerializer
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
 User = get_user_model()
 
 
@@ -145,3 +148,19 @@ def parse_points(points):
         return int(float(points))
 
     return 0  # Default FallBack
+
+@api_view(['GET'])
+def project_list_view(request, *args, **kwargs):
+    qs = Project.objects.all()
+    serializer = ProjectSerializer(qs, many=True)
+    return Response(serializer.data, status=200)
+
+
+@api_view(['GET'])
+def project_detail_view(request, project_id, *args, **kwargs):
+    qs = Project.objects.filter(id=project_id)
+    if not qs.exists():
+        return Response({}, status=404)
+    obj = qs.first()
+    serializer = ProjectSerializer(obj)
+    return Response(serializer.data, status=200)
