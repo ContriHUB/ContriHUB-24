@@ -175,7 +175,7 @@ def submit_pr_request(request, active_issue_pk):
 
                 # checking if pr link is valid or not
                 pr_url = pr.pr_link
-                regex = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
+                regex = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]{2,3}\#issue\-[0-9]+$"
                 if not re.match(regex, pr_url):
                     return HttpResponse("Invalid PR Link...!!")
 
@@ -369,20 +369,20 @@ def handle_vote(request):
     message = ""
     if (type == 0):
         message = "Upvoted Successfully"
-        if is_upvoted:
-            issue.upvotes.remove(request.user)
-        else:
-            issue.upvotes.add(request.user)
-            if is_downvoted:
-                issue.downvotes.remove(request.user)
-    elif type == 1:
-        message = "Downvoted Successfully"
+        issue.upvotes.add(request.user)
         if is_downvoted:
             issue.downvotes.remove(request.user)
-        else:
-            issue.downvotes.add(request.user)
-            if is_upvoted:
-                issue.upvotes.remove(request.user)
+    elif type == 1 :
+        message = "Downvoted Successfully"
+        issue.downvotes.add(request.user)
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+    elif type == 2 :
+        message = "Vote Revoked Successfully"
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
     context = {
         'issue': issue,
     }
