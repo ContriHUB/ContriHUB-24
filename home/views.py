@@ -31,7 +31,7 @@ def page_not_found_view(request, exception):
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all().order_by('-id')
+    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
 
     # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
