@@ -23,7 +23,7 @@ urlpatterns = [
     path('', include('home.urls')),
     path('profile/', include('user_profile.urls')),
     path('project/', include('project.urls')),
-    path('api/project/', pro_views.project_list_view),
+    path('api/projects/', pro_views.project_list_view),
     path('api/project/<project_id>/', pro_views.project_detail_view),
     path('api/project/<project_id>/issues/', pro_views.issue_list_view),
     path('api/project/<project_id>/issue/<issue_id>/', pro_views.issue_detail_view),
