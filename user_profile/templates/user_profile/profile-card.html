@@ -129,12 +129,12 @@
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method='POST' action="{% url 'edit_profile' %}" id="form">
+                    <form method='POST' action="{% url 'edit_profile' %}" id="edit_profile_form">
                         {% csrf_token %}
                         {{ pe_form|crispy }}
                         <div class="row p-3">
                             <div class="offset-5">
-                                <button class='btn btn-primary' id="pr_edit" data-bs-dismiss="modal" type='Submit'>
+                                <button class='btn btn-primary' id="profile_edit" data-bs-dismiss="modal" type='Submit'>
                                     Submit
                                 </button>
                             </div>
