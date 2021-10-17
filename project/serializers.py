@@ -15,3 +15,4 @@ class PullRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model=PullRequest
         fields='__all__'
+

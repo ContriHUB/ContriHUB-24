@@ -219,3 +219,4 @@ def user_contrib_list_view(request, github_user_name,*args, **kwargs):
     qs = PullRequest.objects.filter(contributor=user)
     serializer = PullRequestSerializer(qs, many=True)
     return Response(serializer.data, status=200)
+
