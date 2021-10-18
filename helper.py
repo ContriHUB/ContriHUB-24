@@ -2,7 +2,8 @@ import requests
 import json
 
 from django.http import HttpResponse
-from django.shortcuts import HttpResponseRedirect, reverse
+from django.shortcuts import HttpResponseRedirect, reverse, redirect
+from django.contrib import messages
 from django.utils import timezone
 from project.models import ActiveIssue
 
@@ -102,7 +103,8 @@ def check_issue_time_limit(func):
                         active_issue.delete()
                         # TODO: ISSUE: set a message i.e. "Dead Crossed" here and redirect to user profile and show this
                         #  message
-                        return HttpResponse("Deadline Crossed")
+                        messages.warning(request, 'Deadline Crossed')
+                        return redirect("/profile/user/"+username+"/")
                     else:
                         return func(*args, **kwargs)
                 else:

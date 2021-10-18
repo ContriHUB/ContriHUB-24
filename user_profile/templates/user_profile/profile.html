@@ -24,6 +24,15 @@
 
     {%  include 'user_profile/remark_modal.html' %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <script type=text/javascript>
+                toastr.options.positionClass = 'toast-bottom-right';
+                toastr.{{ message.tags }}('{{ message }}')
+            </script>
+        {% endfor %}
+    {% endif %}
+
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
 
