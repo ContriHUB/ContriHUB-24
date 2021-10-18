@@ -16,14 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path, include
-
+from project import views as pro_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
     path('profile/', include('user_profile.urls')),
     path('project/', include('project.urls')),
-
+    path('api/projects/', pro_views.project_list_view),
+    path('api/project/<project_id>/', pro_views.project_detail_view),
+    path('api/project/<project_id>/issues/', pro_views.issue_list_view),
+    path('api/project/<project_id>/issue/<issue_id>/', pro_views.issue_detail_view),
+    path('api/project/<project_id>/pulls/', pro_views.pullrequest_list_view),
+    path('api/project/<project_id>/pull/<pull_id>/', pro_views.pullrequest_detail_view),
+    path('api/project/<project_id>/contributors/',pro_views.contributors_list_view),
+    path('api/user/contributor/<github_user_name>/projects/',pro_views.user_contrib_list_view),
     # this url is handled by social_django app under social-auth-app-django python library
     url(r'^oauth/', include('social_django.urls', namespace='social')),
 ]

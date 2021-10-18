@@ -3,9 +3,14 @@ from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LA
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, DEFAULT_HARD_POINTS
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
-from .models import Project, Issue
+from .models import Project, Issue,PullRequest
+from user_profile.models import UserProfile
 from helper import complete_profile_required, fetch_all_issues
 from config import APIS, URIS
+from .serializers import ProjectSerializer,IssueSerializer,PullRequestSerializer
+from user_profile.serializers import UserSerializer,UserProfileSerializer
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
 User = get_user_model()
 
 
@@ -145,3 +150,73 @@ def parse_points(points):
         return int(float(points))
 
     return 0  # Default FallBack
+
+@api_view(['GET'])
+def project_list_view(request, *args, **kwargs):
+    qs = Project.objects.all()
+    serializer = ProjectSerializer(qs, many=True)
+    return Response(serializer.data, status=200)
+
+
+@api_view(['GET'])
+def project_detail_view(request, project_id, *args, **kwargs):
+    qs = Project.objects.filter(id=project_id)
+    if not qs.exists():
+        return Response({}, status=404)
+    obj = qs.first()
+    serializer = ProjectSerializer(obj)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def issue_list_view(request, project_id,*args, **kwargs):
+    qs = Issue.objects.filter(project_id=project_id)
+    serializer = IssueSerializer(qs, many=True)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def issue_detail_view(request,project_id,issue_id, *args, **kwargs):
+    qs = Issue.objects.filter(project_id=project_id).filter(id=issue_id)
+    if not qs.exists():
+        return Response({}, status=404)
+    obj = qs.first()
+    serializer = IssueSerializer(obj)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def pullrequest_list_view(request, project_id,*args, **kwargs):
+    qs = PullRequest.objects.filter(project_id=project_id)
+    serializer = PullRequestSerializer(qs, many=True)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def pullrequest_detail_view(request,project_id,pull_id, *args, **kwargs):
+    qs = PullRequest.objects.filter(project_id=project_id).filter(id=pull_id)
+    if not qs.exists():
+        return Response({}, status=404)
+    obj = qs.first()
+    serializer = PullRequestSerializer(obj)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def contributors_list_view(request, project_id,*args, **kwargs):
+    project=Project.objects.filter(id=project_id)
+    if not project.exists():
+        return Response({}, status=404)
+    project=project.first()
+    issue=Issue.objects.filter(project=project)
+    qs = PullRequest.objects.filter(issue__in=issue)
+    us = User.objects.filter(contributor__in=qs)
+    usp= UserProfile.objects.filter(user__in=us)
+    serializer = UserProfileSerializer(usp, many=True)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def user_contrib_list_view(request, github_user_name,*args, **kwargs):
+    user=User.objects.filter(username=github_user_name)
+    if not user.exists():
+        return Response({}, status=404)
+    user=user.first()
+    qs = PullRequest.objects.filter(contributor=user)
+    serializer = PullRequestSerializer(qs, many=True)
+    return Response(serializer.data, status=200)
+

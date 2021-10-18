@@ -1,7 +1,6 @@
 from decouple import config
 from pathlib import Path
 import dj_database_url
-import django_heroku
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +36,7 @@ INSTALLED_APPS = [
     'social_django',  # Social Media Login
     'crispy_forms',  # Crispy Form for django
     'phonenumber_field',  # phone number field for whatsapp number
+    'rest_framework', #django rest framework
 ]
 
 MIDDLEWARE = [

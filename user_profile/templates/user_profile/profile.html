@@ -57,7 +57,14 @@
                 </div>
             </div>
         </div>
-
+        <div class="myToast">
+            <div class="toast bg-success fade hide" id="updateprofilerequest">
+                <div class="toast-body">
+                    You Request is Made Successfully For updation. Wait and check later ! ;)
+                    <button onclick="removeToastForUpdateProfileRequest()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
@@ -415,7 +422,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#form").on('submit', function (event) {
+            $("#edit_profile_form").on('submit', function (event) {
                 event.preventDefault();
                 let the_post = $(this).serialize();
                 $.ajax({
@@ -497,6 +504,9 @@
                     $("#whatsapp_no").removeAttr('disabled');
                 }
             })
+            $('#profile_edit').click(function () {
+                $("#updateprofilerequest").toast("show");
+            })
         });
         function removeToastForWhatsappNo()
         {
@@ -505,6 +515,10 @@
         function removeToastForMSID()
         {
             $("#invalidMSID").toast('hide');
+        }
+        function removeToastForUpdateProfileRequest()
+        {
+            $("#updateprofilerequest").toast('hide');
         }
     </script>
 

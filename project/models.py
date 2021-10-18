@@ -166,7 +166,7 @@ class PullRequest(models.Model):
 
     pr_link = models.URLField(verbose_name="PR Link")
 
-    contributor = models.ForeignKey(User, on_delete=models.CASCADE)
+    contributor = models.ForeignKey(User, on_delete=models.CASCADE,related_query_name='contributor')
 
     remark = models.CharField(max_length=50,blank=True)
 
