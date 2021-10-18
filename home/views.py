@@ -70,11 +70,11 @@ def home(request):
         if len(subdomain) > 0:
             allIssues = allIssues.filter(project__subdomain1__in=subdomain).distinct()
             l=l-1
-        if(l>0):
-            allIssues = allIssues.filter(project__subdomain2__in=subdomain).distinct()
-            l=l-1
-        if l>0:
-            allIssues = allIssues.filter(project__subdomain3__in=subdomain).distinct()
+            if(l>0):
+                allIssues = allIssues.filter(project__subdomain2__in=subdomain).distinct()
+                l=l-1
+                if l>0:
+                    allIssues = allIssues.filter(project__subdomain3__in=subdomain).distinct()
         print(len(allIssues))
         if(len(allIssues)==0):
             return JsonResponse({'context':'1'})
