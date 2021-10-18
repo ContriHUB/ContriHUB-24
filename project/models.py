@@ -69,50 +69,46 @@ class Issue(models.Model):
     def is_assignable(self, requester):
 
         if self.state == self.CLOSED:
-            return False
+            return False, "The Issue is Closed Already."
 
         is_active = ActiveIssue.objects.filter(issue=self)
 
         if is_active:  # If this issue is already assigned to someone currently
-            return False
+            return False, "This issue is already assigned to someone else currently"
 
-        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, requester=requester)
+        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, state=IssueAssignmentRequest.PENDING_VERIFICATION)
 
-        if is_already_requested:  # Current requester has already requested it.
-            return False
+        if is_already_requested:  # Current requester has already requested it and is pending.
+            return False, f"This issue has been already requested by @{is_already_requested.first().requester}"
 
         # TEST: Start
         requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester, state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
         requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
         if requester_requests_count + requester_active_issue_count >= MAX_SIMULTANEOUS_ISSUE:
-            return False
+            return False, f"Your Max-Simultaneous-Issue-Engagement-Count(2) Reached. Total Pending Requests:- {requester_active_issue_count}, Total Active Issues Count:- {requester_active_issue_count}"
         # TEST: End
 
         profile = requester.userprofile
 
         if profile.role != profile.STUDENT:  # Issues can be assigned to Student Role only
-            return False
+            return False, f"Whoa! You are not a Student."
 
         if profile.current_year == profile.FINAL:  # Final Year Students not allowed
-            return False
+            return False, f"Hehe! Have a chill pill, vro. It's Final year"
 
         if self.is_restricted or self.level == self.VERY_EASY:
             if profile.course in (profile.M_TECH, profile.M_SC, profile.PHD):
-                return False
+                return False, f"Sorry! M.Tech, M.Sc and Phd Student not allowed."
 
             if profile.course == profile.B_TECH:
                 if profile.current_year in (profile.THIRD, profile.FINAL):
-                    return False
+                    return False, f"Sorry! B.Tech Third Year Student cannot take this issue."
 
             if profile.course == profile.MCA:
                 if profile.current_year in (profile.THIRD, profile.FINAL):
-                    print("Cant be Assigned")
-                    return False
+                    return False, f"Sorry! MCA Final Year Student cannot take this issue."
 
-        if requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
-            return False
-
-        return True
+        return True, f"Success."
 
     def get_issue_days_limit(self):
         if self.level == self.FREE:
@@ -129,6 +125,7 @@ class Issue(models.Model):
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
+    BONUS, PENALTY = "bonus","penalty"
     STATES = (
         (ACCEPTED, "Accepted"),
         (REJECTED, "Rejected"),
@@ -137,7 +134,9 @@ class PullRequest(models.Model):
 
     pr_link = models.URLField(verbose_name="PR Link")
 
-    contributor = models.ForeignKey(User, on_delete=models.CASCADE)
+    contributor = models.ForeignKey(User, on_delete=models.CASCADE,related_query_name='contributor')
+
+    remark = models.CharField(max_length=50,blank=True)
 
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
@@ -155,7 +154,7 @@ class PullRequest(models.Model):
     class Meta:
         ordering=['-state','submitted_at']
 
-    def accept(self, bonus=0, penalty=0):
+    def accept(self, bonus, penalty,remark):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -167,6 +166,7 @@ class PullRequest(models.Model):
         self.state = self.ACCEPTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating related Issue
@@ -178,7 +178,7 @@ class PullRequest(models.Model):
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += int(self.issue.points)
+        contributor_profile.total_points += (int(self.issue.points)+int(bonus)-int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.issues_solved = accepted_pr_count
@@ -193,7 +193,7 @@ class PullRequest(models.Model):
         # except AttributeError:
         #     pass
 
-    def reject(self, bonus=0, penalty=0):
+    def reject(self, bonus, penalty,remark):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -205,10 +205,12 @@ class PullRequest(models.Model):
         self.state = self.REJECTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark=remark
         self.save()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
+        contributor_profile.total_points += (int(bonus)-int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
