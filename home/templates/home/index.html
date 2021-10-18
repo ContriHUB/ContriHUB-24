@@ -21,6 +21,30 @@
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
 
 {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
+    <div class="myToast">
+            <div class="toast bg-success fade hide" id="upvote">
+                <div class="toast-body">
+                    Up Voted successfully !
+                    <button onclick="removeToastForUpvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
+            <div class="toast bg-danger fade hide" id="downvote">
+                <div class="toast-body">
+                    Down Voted successfully !
+                    <button onclick="removeToastForDownvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
+            <div class="toast bg-warning fade hide" id="voteremoved">
+                <div class="toast-body">
+                    Vote revoked successfully !
+                    <button onclick="removeToastForVoteRemoved()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
     <div class="container-flow p-3">
         <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
@@ -47,46 +71,59 @@
 {#                                <li class="animated bounceInLeft">#}
 {#                                    <b class="text-danger">️HOT ISSUE:</b> #13. <b>Project:</b> ContriHUB-21, is currently assigned to <span class="text-success"><a href="{% url 'user_profile' "shobhit2002" %}">@shobhit2002</a></span>#}
 {#                                </li>#}
-                                <li>
-                                    <div class="animated flash infinite">
-                                        <b><span class="text-danger">Latest HOT ISSUE:</span></b>
+{#                                <li>#}
+{#                                    <div class="animated flash infinite">#}
+{#                                        <b><span class="text-danger">Latest HOT ISSUE:</span></b>#}
 {#                                        <ol>#}
 {#                                            <li>#}
-                                                <span class="text-info"><a href="https://github.com/ContriHUB/ContriHUB-21/issues/38">Filter Issues by Level and Project Name from Nav-Bar. #38</a></span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span> 😋️
+{#                                                <span class="text-info"><a href="https://github.com/ContriHUB/ContriHUB-21/issues/38">Filter Issues by Level and Project Name from Nav-Bar. #38</a></span> <b>Project</b>: <span class="text-secondary">ContriHub-21</span> 😋️#}
 {#                                            </li>#}
 {#                                        </ol>#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                                <li>#}
+{#                                    <div class="animated bounce">#}
+{#                                        <b class="text-primary">Just For Fun:</b><img class="img-fluid"  src="{% static "images/memes/pain_real_pain.png" %}"/>#}
+{#                                    </div>#}
+{#                                </li>#}
+                                <li>
+                                    <div class="animated bounceInLeft">
+                                        <b class="text-success">IMPORTANT:</b> Please fill the <a href="https://forms.gle/tw7gxiak1xm27T2r5">Feedback Form</a> ASAP. You dont want us to put 5 minutes reminder right? :P
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="animated">
-                                        <b>FIX:</b> Some of you were able to make 3 simultaneous Issue Assignment Requests. It was due to a missing equality(=) sign.
-                                        <span>Youtube developers once made a similar mistake which led to an interesting <span class="text-success">fun fact.</span></span>
-                                        <a href="https://www.youtube.com/watch?v=oIkhgagvrjI" target="_blank">Know More</a>
+                                    <div class="animated bounceInRight">
+                                        <b class="text-success">New FIX:</b> Now you will get to know the <b>Cause</b> behind the failure of making the Request for Issue Assignment.
                                     </div>
                                 </li>
-                                <li>
-                                    <div>
-                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
-                                    </div>
-                                </li>
+{#                                <li>#}
+{#                                    <div class="animated">#}
+{#                                        <b class="text-success">New FIX:</b> If a issue was rejected for you and you find that it is open again, then you can request for it again.#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                                <li>#}
+{#                                    <div>#}
+{#                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.#}
+{#                                    </div>#}
+{#                                </li>#}
 {#                                <li>#}
 {#                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.#}
 {#                                </li>#}
                                 <li>
                                     Some issues are <b>locked</b> and will be unlocked only after you solve the once which are <b>mentioned in the description</b> of a locked Issues.
                                 </li>
-                                <li>
-                                    <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because
-                                    <ol>
-                                        <li>
-                                            Some other person has <b>already-requested/already-solving</b> the same issue.
-                                        </li>
-                                        <li>
-                                            The issue is still locked. <b>So Check the Description of Issue on GitHub first
-                                            then Request it.</b>
-                                        </li>
-                                    </ol>
-                                </li>
+{#                                <li>#}
+{#                                    <b>NOTE:- </b>If your Issue Assignment is rejected, it is most probably because#}
+{#                                    <ol>#}
+{#                                        <li>#}
+{#                                            Some other person has <b>already-requested</b>/<b>already-solving</b> the same issue.#}
+{#                                        </li>#}
+{#                                        <li>#}
+{#                                            The issue is still locked. <b>So Check the Description of Issue on GitHub first#}
+{#                                            then Request it.</b>#}
+{#                                        </li>#}
+{#                                    </ol>#}
+{#                                </li>#}
                                 <li>
                                     <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
                                     Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
@@ -110,11 +147,11 @@
                         <div class="card-body">
 
                             <h5 class="card-title">
-                                <a href="{{ issue.html_url }}">{{ issue.title }}</a>
+                                <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
                             </h5>
                             <h6 class="">
                                 <a data-mdb-toggle="tooltip" title="Project"
-                                   href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
+                                   href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
                             </h6>
 
                             <p class="card-text">
@@ -192,6 +229,15 @@
             $(document).on('click', '#votebtn', function (event) {
                 event.preventDefault()
                 var type = $(this).attr('type');
+                if(type == 0){
+                    $("#upvote").toast("show");
+                }
+                else if(type == 1){
+                    $("#downvote").toast("show");
+                }
+                else if(type == 2){
+                    $("#voteremoved").toast("show");
+                }
                 var iid = $(this).attr('iid');
                 console.log(iid);
                 $.ajax({
@@ -213,6 +259,18 @@
                 })
             })
         })
+
+        function removeToastForUpvote()
+        {
+            $("#upvote").toast('hide');
+        }
+        function removeToastForDownvote()
+        {
+            $("#downvote").toast('hide');
+        }
+        function removeToastForVoteRemoved(){
+            $("#voteremoved").toast('hide');
+        }
     </script>
 
 {% endblock %}
