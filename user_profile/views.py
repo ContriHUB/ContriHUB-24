@@ -30,9 +30,27 @@ def profile(request, username):
     if native_profile_qs:  # Checking if profile exists
 
         native_profile = native_profile_qs.first()
+        n_user = UserProfile.objects.get(user=native_profile.user)
+        prRequestByNativeProfile = PullRequest.objects.filter(contributor=n_user.user)
+        free_issues_solved = 0
+        v_easy_issues_solved = 0
+        easy_issues_solved = 0
+        medium_issues_solved = 0
+        hard_issues_solved = 0
+
+        for pr in prRequestByNativeProfile:
+            if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.FREE:
+                free_issues_solved += 1
+            if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.VERY_EASY:
+                v_easy_issues_solved += 1
+            if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.EASY:
+                easy_issues_solved += 1
+            if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.MEDIUM:
+                medium_issues_solved += 1
+            if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.HARD:
+                hard_issues_solved += 1
 
         if username == user.username:
-            # TODO: ISSUE Fetch User's Avatar's URL from Github API and display it in profile
             pr_requests_by_student = PullRequest.objects.filter(contributor=user)
             assignment_requests_by_student = IssueAssignmentRequest.objects.filter(requester=user)
             active_issues = ActiveIssue.objects.filter(contributor=user)
@@ -42,24 +60,6 @@ def profile(request, username):
             pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
 
             pr_form = PRSubmissionForm()
-
-            free_issues_solved = 0
-            v_easy_issues_solved = 0
-            easy_issues_solved = 0
-            medium_issues_solved = 0
-            hard_issues_solved = 0
-
-            for pr in pr_requests_by_student:
-                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.FREE:
-                    free_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.VERY_EASY:
-                    v_easy_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.EASY:
-                    easy_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.MEDIUM:
-                    medium_issues_solved += 1
-                if pr.state == pr.ACCEPTED and pr.issue.level == pr.issue.HARD:
-                    hard_issues_solved += 1
 
             pe_form = EditProfileForm(instance=request.user.userprofile)
             context = {
@@ -82,6 +82,11 @@ def profile(request, username):
         else:
             context = {
                 "native_profile": native_profile,
+                "free_issues_solved": free_issues_solved,
+                "v_easy_issues_solved": v_easy_issues_solved,
+                "easy_issues_solved": easy_issues_solved,
+                "medium_issues_solved": medium_issues_solved,
+                "hard_issues_solved": hard_issues_solved,
             }
             return render(request, 'user_profile/profile.html', context=context)
     return HttpResponse("Profile not found!")
@@ -107,17 +112,14 @@ def complete(request):
         phd = r'\b(2)\d{3}(R|r)[a-zA-Z]{2}\d{2}\b'
         mtech = r'\b(2)\d{3}[a-zA-z]{2}\d{2}\b'
         msc = r'\b(2)\d{3}(MSC|msc)\d{2}\b'
-        mca = r'\b(2)\d{3}(ca|CA)\d{2}\b'
+        mca = r'\b(2)\d{3}(ca|CA)\d{3}\b'
         btech = r'\b(2)\d{7}\b'
         reg_ex = [btech, mca, mtech, msc, phd]
-        reg_no =request.POST.get('registration_no')
+        reg_no = request.POST.get('registration_no')
         course = int(request.POST.get('course'))
         flag = False
         if(re.match(reg_ex[course-1],reg_no)):
             flag=True
-            if(course==3):
-                if re.match(reg_ex[course-1],reg_no) and re.match(reg_ex[course-2],reg_no):
-                    flag=False
         if flag:
             existing_profile = form.save(commit=False)
             existing_profile.is_complete = True

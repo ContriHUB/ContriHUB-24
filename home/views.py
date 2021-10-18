@@ -1,26 +1,32 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
-from django.core.mail import EmailMessage
-from home.helpers import send_email
-from django.core import mail
-from django.template.loader import render_to_string
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
+import os
+import re
+import smtplib
+import threading
+import time
+from datetime import datetime
+
+from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from helper import complete_profile_required, check_issue_time_limit
-from project.forms import PRSubmissionForm
-from django.utils import timezone
+from django.core import mail
+from django.core.mail import EmailMessage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
+from django.template.loader import render_to_string
+from django.utils import timezone
+
+from helper import complete_profile_required, check_issue_time_limit
+from home.helpers import send_email
+from project.forms import PRSubmissionForm
+from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
-# TODO:ISSUE: Make a Custom Http404 Page        
+# TODO:ISSUE: Make a Custom Http404 Page
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
-from user_profile.models import UserProfile
 from .forms import ContactForm
-import smtplib
-import re
-from django.http import JsonResponse
 
 
 def page_not_found_view(request, exception):
@@ -31,7 +37,7 @@ def page_not_found_view(request, exception):
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all().order_by('-id')
+    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
 
     # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
@@ -78,6 +84,47 @@ def logout_(request):
     return HttpResponseRedirect(reverse('home'))
 
 
+class EmailThread(threading.Thread):
+    def __init__(self, kwargs=None, email_context=None, template_path=None, email=None, *args):
+        self.used_for = kwargs['used_for']
+        self.email = email
+
+        if email is None:
+            self.email_context = email_context
+            self.template_path = template_path
+            self.username = kwargs['issue'].mentor.username
+            threading.Thread.__init__(self)
+        else:
+            self.email = email
+            self.username = kwargs['contributor'].username
+            threading.Thread.__init__(self)
+
+    def run(self):
+        start_time = time.time()
+        try:
+            if self.email is None:
+                send_email(template_path=self.template_path, email_context=self.email_context)
+            else:
+                self.email.send()
+            end_time = time.time()
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:  # Use
+                # Context-Manager as it is best-practice
+                f.write(entry_string)
+        except mail.BadHeaderError as e:
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                f.write(entry_string)
+        except smtplib.SMTPSenderRefused as e:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                f.write(entry_string)
+        except Exception as e:
+            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
+            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
+                f.write(entry_string)
+
+
 @login_required
 @complete_profile_required
 @check_issue_time_limit
@@ -99,22 +146,15 @@ def request_issue_assignment(request, issue_pk):
             'host': request.get_host(),
             'subject': "Request for Issue Assignment under ContriHUB-21.",
         }
-        try:
-            send_email(template_path=template_path, email_context=email_context)
-            # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-            return HttpResponse(
-                f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.\n<h3>Hurrah!" \
-                f":</h3> Hang tight and Wait for the Approval by the mentor.")
-        except mail.BadHeaderError:
-            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-            return HttpResponse(
-                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})\n<h3>Hurrah!" \
-                f":</h3> Hang tight and Wait for the Approval by the mentor.")
-        except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-            return HttpResponse(
-                f"Issue Requested Successfully, but there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})\n<h3>Hurrah!" \
-                f":</h3> Hang tight and Wait for the Approval by the mentor. ")
+
+        context = {'used_for': "ISSUE ASSIGNMENT REQUEST",
+                   'issue': issue, }
+        email_thread = EmailThread(email_context=email_context, template_path=template_path, kwargs=context)
+        email_thread.start()
+
+        # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
+        return HttpResponse(
+            f"Issue Requested Successfully")
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> Failed.\n<h3>Cause:</h3>{msg}"
@@ -175,8 +215,9 @@ def submit_pr_request(request, active_issue_pk):
 
                 # checking if pr link is valid or not
                 pr_url = pr.pr_link
-                regex = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
-                if not re.match(regex, pr_url):
+                regex1 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$"
+                regex2 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
+                if not (re.match(regex2, pr_url) or re.match(regex1, pr_url)):
                     return HttpResponse("Invalid PR Link...!!")
 
                 pr.issue = issue
@@ -196,18 +237,14 @@ def submit_pr_request(request, active_issue_pk):
                     'host': request.get_host(),
                     'subject': "Request for Approval of PR on an issue under ContriHUB-21.",
                 }
-                try:
-                    send_email(template_path=template_path, email_context=email_context)
-                    message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                except mail.BadHeaderError:
-                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
-                except smtplib.SMTPSenderRefused:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
-                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>. But there was some problem sending email to the mentor({issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
+
+                start_time = time.time()
+                context = {'used_for': "PR Verification Request",
+                           'issue': issue, }
+                email_thread = EmailThread(email_context=email_context, template_path=template_path, kwargs=context)
+                email_thread.start()
+                message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
                 return HttpResponse(message)
             else:
                 message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
@@ -266,8 +303,11 @@ def accept_pr(request, pk):
                 email = EmailMessage(
                     subject, e_message, to=[contributor.email]
                 )
-                email.content_subtype = "html"
-                email.send()
+                context = {
+                    'contributor': contributor,
+                    'used_for': "PR ACCEPTED"
+                }
+                EmailThread(email=email, kwargs=context).start()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -320,7 +360,11 @@ def reject_pr(request, pk):
                     subject, e_message, to=[contributor.email]
                 )
                 email.content_subtype = "html"
-                email.send()
+                context = {
+                    'contributor': contributor,
+                    'used_for': "PR REJECTED"
+                }
+                EmailThread(email=email, kwargs=context).start()
             else:
                 message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                           f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
@@ -369,20 +413,20 @@ def handle_vote(request):
     message = ""
     if (type == 0):
         message = "Upvoted Successfully"
-        if is_upvoted:
-            issue.upvotes.remove(request.user)
-        else:
-            issue.upvotes.add(request.user)
-            if is_downvoted:
-                issue.downvotes.remove(request.user)
-    elif type == 1:
-        message = "Downvoted Successfully"
+        issue.upvotes.add(request.user)
         if is_downvoted:
             issue.downvotes.remove(request.user)
-        else:
-            issue.downvotes.add(request.user)
-            if is_upvoted:
-                issue.upvotes.remove(request.user)
+    elif type == 1:
+        message = "Downvoted Successfully"
+        issue.downvotes.add(request.user)
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
+    elif type == 2:
+        message = "Vote Revoked Successfully"
+        if is_downvoted:
+            issue.downvotes.remove(request.user)
+        if is_upvoted:
+            issue.upvotes.remove(request.user)
     context = {
         'issue': issue,
     }
