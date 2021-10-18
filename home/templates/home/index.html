@@ -12,8 +12,6 @@
 {% endblock %}
 
 {% block content %}
-    {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
-    {# TODO:ISSUE Display who is currently working on this issue #}
     {# TODO:ISSUE Make Link open in new tab #}
 
     {% include "home/navbar.html" %}
@@ -109,7 +107,7 @@
 {#                                </li>#}
                                 <li>
                                     <div class="animated bounce">
-                                        <b class="text-primary">Just For Fun:</b><img class="img-fluid"  src="{% static "images/memes/pain_real_pain.png" %}"/>
+                                        <b class="text-primary">Just For Fun:</b><img class="img-fluid"  src="{% static "images/memes/pain_real_pain.png" %}" alt=""/>
                                     </div>
                                 </li>
                                 <li>
@@ -148,7 +146,7 @@
                                 <li>
                                     <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
                                     Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
-                                    Add your name, and create a Pull Request. These PR will not fetch you any points.</span>
+                                    Add your name, and create a Pull Request. These PR will not fetch you any points.
                                 </li>
                         </ol>
                     </div>
@@ -171,7 +169,7 @@
 				<div class="list-group list-group-flush">
                     {% for domain in project_domain %}
 					<li class="list-group-item">
-						<input class="filter-checkbox" value="{{ domain.id }}" data-filter="domain" type="checkbox" />&nbsp;
+						<input aria-label="" class="filter-checkbox" value="{{ domain.id }}" data-filter="domain" type="checkbox" />&nbsp;
                         {{ domain }}
 					</li>
                     {% endfor %}
@@ -183,7 +181,7 @@
 				<div class="list-group list-group-flush">
                     {% for subdomain in project_subdomain %}
 					<li class="list-group-item">
-						<input class="filter-checkbox" value="{{ subdomain.id }}" data-filter="subdomain" type="checkbox" />&nbsp;
+						<input aria-label="" class="filter-checkbox" value="{{ subdomain.id }}" data-filter="subdomain" type="checkbox" />&nbsp;
                         {{ subdomain }}
 					</li>
                     {% endfor %}
@@ -267,41 +265,42 @@
                  style="display:block;margin-left:auto;margin-right:auto;">
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
     <script type="text/javascript">
-        var infinite = new Waypoint.Infinite({
+        let infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0],
             onBeforePageLoad: function () {
                 $('.loading').show();
             },
-            onAfterPageLoad: function ($items) {
+            onAfterPageLoad: function () {
                 $('.loading').hide();
             }
         });
 
         // For Voting and Downvoting
-        jQuery(document).ready(function (event) {
+        jQuery(document).ready(function () {
             $(document).on('click', '#votebtn', function (event) {
                 event.preventDefault()
-                var type = $(this).attr('type');
-                if(type == 0){
+                let type = $(this).attr('type');
+                if(type === 0){
                     $("#upvote").toast("show");
                 }
-                else if(type == 1){
+                else if(type === 1){
                     $("#downvote").toast("show");
                 }
-                else if(type == 2){
+                else if(type === 2){
                     $("#voteremoved").toast("show");
                 }
-                else if(type == 3){
+                else if(type === 3){
                     $("#loginfirst").toast("show");
                     window.setTimeout(function(){
                         window.location.href = {% url 'authorize' %};
                         }, 1000);
                 }
-                var iid = $(this).attr('iid');
+                let iid = $(this).attr('iid');
                 console.log(iid);
                 $.ajax({
                     url: '{% url "handle_vote" %}',
@@ -316,7 +315,7 @@
                         $("#voteToast").children(".toast-body").text(data['message']);
                         $("#voteToast").toast("show");
                     },
-                    error: function (data) {
+                    error: function () {
                         $("#errorToast").toast("show");
                     }
                 })
@@ -349,10 +348,9 @@
     $(document).ready(function() {
         $(".ajaxLoader").hide() ;
         $(".filter-checkbox").on('click', function () {
-            var _filterObj = {};
-            $(".filter-checkbox").each(function (index, ele) {
-                var _filterVal = $(this).val();
-                var _filterKey = $(this).data('filter');
+            let _filterObj = {};
+            $(".filter-checkbox").each(function () {
+                let _filterKey = $(this).data('filter');
                 _filterObj[_filterKey] = Array.from(document.querySelectorAll('input[data-filter=' + _filterKey + ']:checked')).map(function (el) {
                     return el.value;
                 });
@@ -369,7 +367,7 @@
                 },
                 success:function(res){
                     console.log(res) ;
-                    if(res.context=='1'){
+                    if(res.context==='1'){
                         $("#noneissuefound").toast("show");
                     }
                     else{
