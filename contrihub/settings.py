@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'social_django',  # Social Media Login
     'crispy_forms',  # Crispy Form for django
     'phonenumber_field',  # phone number field for whatsapp number
+    'rest_framework', #django rest framework
 ]
 
 MIDDLEWARE = [
