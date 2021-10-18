@@ -5,7 +5,7 @@ from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveI
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'domain', 'html_url')
+    list_display = ('id', 'name', 'domain','subdomain1','subdomain2','subdomain3','html_url')
 
 
 class IssueAdmin(admin.ModelAdmin):
