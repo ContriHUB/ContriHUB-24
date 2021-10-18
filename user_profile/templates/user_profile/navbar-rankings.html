@@ -1,35 +1,47 @@
 <!-- Navbar -->
-{% load static %}
-{# TODO:ISSUE Rankings Navbar is not Collapsible. Fix It #}
+{% load static %} {# TODO:ISSUE Rankings Navbar is not Collapsible. Fix It #}
 <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
   <!-- Container wrapper -->
   <div class="container-fluid">
     <!-- Toggle button -->
     <button
-            class="navbar-toggler"
-            type="button"
-            data-mdb-toggle="collapse"
-            data-mdb-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
     >
-        <i class="fas fa-bars"></i>
+      <i class="fas fa-bars"></i>
     </button>
     <!-- Collapsible wrapper -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Navbar brand -->
       <a class="navbar-brand mt-2 mt-lg-0" href="#">
-        <img src="{% static 'images/logo/ch.png' %}" height="45" alt="" loading="lazy" />
+        <img
+          src="{% static 'images/logo/logo.png' %}"
+          height="45"
+          alt=""
+          loading="lazy"
+        />
       </a>
-      <a style="color: #39FF14" class="navbar-brand mt-2 mt-lg-0" href="{% url 'home' %}">
+      <a
+        style="color: #39ff14"
+        class="navbar-brand mt-2 mt-lg-0"
+        href="{% url 'home' %}"
+      >
         <b>ContriHub</b>
       </a>
       <!-- Left links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="{% url 'home' %}">
-            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+            <button
+              type="button"
+              class="btn btn-primary btn-rounded"
+              data-mdb-ripple-color="dark"
+            >
               Home
             </button>
           </a>
@@ -37,7 +49,11 @@
         {% if user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'user_profile' user.username %}">
-            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
+            <button
+              type="button"
+              class="btn btn-primary btn-rounded"
+              data-mdb-ripple-color="dark"
+            >
               User Profile
             </button>
           </a>
@@ -46,7 +62,12 @@
       </ul>
       <div class="form-check form-switch">
         <label class="form-check-label text-light">Dark Mode</label>
-        <input class="form-check-input" type="checkbox" id="theme-control" onchange="darkmodetoggle(this.checked);" />
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="theme-control"
+          onchange="darkmodetoggle(this.checked);"
+        />
       </div>
     </div>
     <!-- Collapsible wrapper -->
@@ -55,7 +76,11 @@
     {% if user.is_authenticated %}
     <div class="d-flex align-items-center">
       <a class="nav-link" href="{% url 'logout' %}">
-        <button type="button" class="btn btn-danger btn-rounded" data-mdb-ripple-color="dark">
+        <button
+          type="button"
+          class="btn btn-danger btn-rounded"
+          data-mdb-ripple-color="dark"
+        >
           Logout
         </button>
       </a>
@@ -63,7 +88,11 @@
     {% else %}
     <div class="d-flex align-items-center">
       <a class="nav-link" href="{% url 'authorize' %}">
-        <button type="button" class="btn btn-success btn-rounded" data-mdb-ripple-color="dark">
+        <button
+          type="button"
+          class="btn btn-success btn-rounded"
+          data-mdb-ripple-color="dark"
+        >
           Authorize
         </button>
       </a>
