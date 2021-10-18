@@ -19,7 +19,7 @@ from django.utils import timezone
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
 from project.forms import PRSubmissionForm
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
+from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain, SubDomain_Project_Model
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -39,9 +39,8 @@ def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
 
-    project_domain = (Project.WEB_READ,Project.PYTHON_READ,Project.ANDROID_READ,Project.JAVA_READ,Project.ML_READ,Project.FLUTTER_READ,Project.PHASER_3_READ)
-    project_subdomain = (Project.HTML_READ, Project.PYTHON_READ, Project.OPENCV_READ, Project.JAVA_READ, Project.NODE_READ, Project.SWING_READ, Project.REACT_READ, Project.DJANGO_READ, Project.JAVASCRIPT_READ, Project.CSS_READ)
-
+    project_domain = Domain.objects.all()
+    project_subdomain = SubDomain.objects.all()
     # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
     all_active_issues = []
@@ -72,15 +71,11 @@ def home(request):
         l = len(subdomain)
         allIssues = Issue.objects.all().order_by('-id').distinct()
         if len(domain) > 0:
-            allIssues = allIssues.filter(project__domain__in=domain).distinct()
+            for d in domain:
+                allIssues = allIssues.filter(project__domain_id=d).distinct()
         if len(subdomain) > 0:
-            allIssues = allIssues.filter(project__subdomain1__in=subdomain).distinct()
-            l=l-1
-            if(l>0):
-                allIssues = allIssues.filter(project__subdomain2__in=subdomain).distinct()
-                l=l-1
-                if l>0:
-                    allIssues = allIssues.filter(project__subdomain3__in=subdomain).distinct()
+            for sd in subdomain:
+                allIssues = allIssues.filter(project__subdomain_project_model__sub_domain_id=sd).distinct()
         print(len(allIssues))
         if(len(allIssues)==0):
             return JsonResponse({'context':'1'})

@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.contrib.admin import display
 
-from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
+from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain, SubDomain_Project_Model
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'domain','subdomain1','subdomain2','subdomain3','html_url')
+    list_display = ('id', 'name', 'domain','html_url')
 
 
 class IssueAdmin(admin.ModelAdmin):
@@ -62,3 +62,7 @@ admin.site.register(Issue, IssueAdmin)
 admin.site.register(PullRequest, PullRequestAdmin)
 admin.site.register(IssueAssignmentRequest, IssueAssignmentRequestAdmin)
 admin.site.register(ActiveIssue, ActiveIssueAdmin)
+admin.site.register(Domain)
+admin.site.register(SubDomain)
+admin.site.register(SubDomain_Project_Model)
+

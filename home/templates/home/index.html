@@ -169,78 +169,24 @@
 			<div class="card mb-4">
 				<h6 class="card-header"><b>By Domain</b></h6>
 				<div class="list-group list-group-flush">
+                    {% for domain in project_domain %}
 					<li class="list-group-item">
-						<input class="filter-checkbox" value="1" data-filter="domain" type="checkbox" />&nbsp;
-                        Web
+						<input class="filter-checkbox" value="{{ domain.id }}" data-filter="domain" type="checkbox" />&nbsp;
+                        {{ domain }}
 					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="2" data-filter="domain" type="checkbox" />&nbsp;
-                        Python
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="3" data-filter="domain" type="checkbox" />&nbsp;
-                        Android
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="4" data-filter="domain" type="checkbox" />&nbsp;
-                        Java
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="5" data-filter="domain" type="checkbox" />&nbsp;
-                        ML
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="6" data-filter="domain" type="checkbox" />&nbsp;
-                        Flutter
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="7" data-filter="domain" type="checkbox" />&nbsp;
-                        Phaser 3
-					</li>
+                    {% endfor %}
 				</div>
 			</div>
 			<!-- Filter 2 -->
 			<div class="card mb-4">
                 <h6 class="card-header"><b>By Sub Domain</b></h6>
 				<div class="list-group list-group-flush">
+                    {% for subdomain in project_subdomain %}
 					<li class="list-group-item">
-						<input class="filter-checkbox" value="1" data-filter="subdomain" type="checkbox" />&nbsp;
-						HTML
+						<input class="filter-checkbox" value="{{ subdomain.id }}" data-filter="subdomain" type="checkbox" />&nbsp;
+                        {{ subdomain }}
 					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="2" data-filter="subdomain" type="checkbox" />&nbsp;
-						Python
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="3" data-filter="subdomain" type="checkbox" />&nbsp;
-						OpenCV
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="4" data-filter="subdomain" type="checkbox" />&nbsp;
-						Java
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="5" data-filter="subdomain" type="checkbox" />&nbsp;
-						Node JS
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="6" data-filter="subdomain" type="checkbox" />&nbsp;
-						Swing
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="7" data-filter="subdomain" type="checkbox" />&nbsp;
-						Django
-					</li>
-                    <li class="list-group-item">
-						<input class="filter-checkbox" value="8" data-filter="subdomain" type="checkbox" />&nbsp;
-						Javascript
-					</li><li class="list-group-item">
-						<input class="filter-checkbox" value="9" data-filter="subdomain" type="checkbox" />&nbsp;
-						CSS
-					</li><li class="list-group-item">
-						<input class="filter-checkbox" value="10" data-filter="subdomain" type="checkbox" />&nbsp;
-						React JS
-					</li>
+                    {% endfor %}
 				</div>
 			</div>
     </div>

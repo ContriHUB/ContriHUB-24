@@ -1,3 +1,11 @@
+{% if not user.is_authenticated %}
+<p class="card-text">
+    <button class="btn btn-success" id="votebtn" type="3" iid="{{ issue.pk }}"><i class="fas fa-thumbs-up"></i></button>
+    <a class="btn btn-rounded btn-success" data-mdb-toggle="tooltip" title="Votes">{{ issue.upvotes.all.count }}</a>
+    <button class="btn btn-danger" id="votebtn" type="3" iid="{{ issue.pk }}"><i class="fas fa-thumbs-down"></i></button>
+    <a class="btn btn-rounded btn-danger" data-mdb-toggle="tooltip" title="Votes">{{ issue.downvotes.all.count }}</a>
+</p>
+{% else %}
 <p class="card-text">
     {% if request.user in issue.upvotes.all %}
         <button class="btn btn-success" id="votebtn" type="2" iid="{{ issue.pk }}"><i class="fas fa-thumbs-up"></i></button>
@@ -12,4 +20,6 @@
     {% endif %}
     <a class="btn btn-rounded btn-danger" data-mdb-toggle="tooltip" title="Votes">{{ issue.downvotes.all.count }}</a>
 </p>
+{% endif %}
+
 <br>
