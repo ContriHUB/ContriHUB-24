@@ -106,6 +106,7 @@ def check_issue_time_limit(func):
                     else:
                         return func(*args, **kwargs)
                 else:
+                    raise Http404
                     # TODO: ISSUE: Redirect to 404 page
                     return HttpResponse("That's a 404")
         else:
