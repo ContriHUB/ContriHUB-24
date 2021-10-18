@@ -31,7 +31,7 @@ def page_not_found_view(request, exception):
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all().order_by('-id')
+    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
 
     project_domain = (Project.WEB_READ,Project.PYTHON_READ,Project.ANDROID_READ,Project.JAVA_READ,Project.ML_READ,Project.FLUTTER_READ,Project.PHASER_3_READ)
     project_subdomain = (Project.HTML_READ, Project.PYTHON_READ, Project.OPENCV_READ, Project.JAVA_READ, Project.NODE_READ, Project.SWING_READ, Project.REACT_READ, Project.DJANGO_READ, Project.JAVASCRIPT_READ, Project.CSS_READ)
