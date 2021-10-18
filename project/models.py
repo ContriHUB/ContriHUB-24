@@ -7,14 +7,46 @@ User = get_user_model()
 
 
 class Project(models.Model):
+    WEB, PYTHON, ANDROID, JAVA, ML, FLUTTER, PHASER_3 = 1, 2, 3, 4, 5, 6, 7
+    WEB_READ, PYTHON_READ, ANDROID_READ, JAVA_READ, ML_READ, FLUTTER_READ, PHASER_3_READ = 'Web', 'Python', 'Android', 'Java', 'ML', 'Flutter', 'Phaser 3'
+    DOMAIN = (
+        (WEB, WEB_READ),
+        (PYTHON, PYTHON_READ),
+        (ANDROID, ANDROID_READ),
+        (JAVA, JAVA_READ),
+        (ML, ML_READ),
+        (FLUTTER, FLUTTER_READ),
+        (PHASER_3, PHASER_3_READ),
+    )
+
+    HTML, OPENCV, NODE, SWING, DJANGO, JAVASCRIPT, CSS, REACT = 1, 3, 5, 6, 7, 8, 9, 10
+    HTML_READ, OPENCV_READ, NODE_READ, SWING_READ, REACT_READ, DJANGO_READ, JAVASCRIPT_READ, CSS_READ = 'HTML', 'OpenCV', 'Node', 'Swing', 'React', 'Django', 'Javascript', 'CSS'
+    SUBDOMAIN = (
+        (HTML, HTML_READ),
+        (PYTHON, PYTHON_READ),
+        (OPENCV, OPENCV_READ),
+        (JAVA, JAVA_READ),
+        (NODE, NODE_READ),
+        (SWING, SWING_READ),
+        (DJANGO, DJANGO_READ),
+        (JAVASCRIPT, JAVASCRIPT_READ),
+        (CSS,CSS_READ),
+        (REACT, REACT_READ),
+    )
+
     name = models.CharField(verbose_name="Name", max_length=200)
 
     api_url = models.URLField(verbose_name="API URL")
 
     html_url = models.URLField(verbose_name="HTML URL")
 
-    domain = models.CharField(verbose_name="Domain", max_length=100, null=True, blank=True)
+    domain = models.PositiveSmallIntegerField(verbose_name='Domain', choices=DOMAIN, blank=True, null=True)
 
+    subdomain1 = models.PositiveSmallIntegerField(verbose_name='Sub Domain 1', choices=SUBDOMAIN, blank=True, null=True)
+
+    subdomain2 = models.PositiveSmallIntegerField(verbose_name='Sub Domain 2', choices=SUBDOMAIN, blank=True, null=True)
+
+    subdomain3 = models.PositiveSmallIntegerField(verbose_name='Sub Domain 3', choices=SUBDOMAIN, blank=True, null=True)
     def __str__(self):
         return self.name
 

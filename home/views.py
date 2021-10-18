@@ -33,9 +33,13 @@ def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
 
+    project_domain = (Project.WEB_READ,Project.PYTHON_READ,Project.ANDROID_READ,Project.JAVA_READ,Project.ML_READ,Project.FLUTTER_READ,Project.PHASER_3_READ)
+    project_subdomain = (Project.HTML_READ, Project.PYTHON_READ, Project.OPENCV_READ, Project.JAVA_READ, Project.NODE_READ, Project.SWING_READ, Project.REACT_READ, Project.DJANGO_READ, Project.JAVASCRIPT_READ, Project.CSS_READ)
+
     # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
     all_active_issues = []
+    # domain = Project.DOMAIN.
 
     for issue in issues_qs:
 
@@ -55,10 +59,34 @@ def home(request):
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
 
+    if request.is_ajax():
+        domain = request.GET.getlist('domain[]')
+        subdomain = request.GET.getlist('subdomain[]')
+        print(subdomain)
+        l = len(subdomain)
+        allIssues = Issue.objects.all().order_by('-id').distinct()
+        if len(domain) > 0:
+            allIssues = allIssues.filter(project__domain__in=domain).distinct()
+        if len(subdomain) > 0:
+            allIssues = allIssues.filter(project__subdomain1__in=subdomain).distinct()
+            l=l-1
+        if(l>0):
+            allIssues = allIssues.filter(project__subdomain2__in=subdomain).distinct()
+            l=l-1
+        if l>0:
+            allIssues = allIssues.filter(project__subdomain3__in=subdomain).distinct()
+        print(len(allIssues))
+        if(len(allIssues)==0):
+            return JsonResponse({'context':'1'})
+        t = render_to_string('home/filtered_issue_list.html', {'issues': allIssues,})
+        return JsonResponse({'context': t})
+
     context = {
         'projects': project_qs,
         'issues': issue_p,
-        'all_active_issues': all_active_issues
+        'all_active_issues': all_active_issues,
+        'project_domain':project_domain,
+        'project_subdomain':project_subdomain
     }
     return render(request, 'home/index.html', context=context)
 
@@ -389,3 +417,17 @@ def handle_vote(request):
     }
     html = render_to_string('home/vote.html', context, request=request)
     return JsonResponse({'html': html, 'message': message})
+
+
+# def multiplefilter(request):
+#     if request.method == "POST" :
+#         domain = request.POST.get('domain')
+#         subdomain = request.POST.get('subdomain')
+#         issues = Issue.objects.raw('select * from Issues where domain="'+domain+'" or subdomain="'+subdomain+'"')
+#         print(issues)
+#         return HttpResponse('In Progress(if part)')
+#     else:
+#         issues = Issue.objects.all()
+#         print(issues)
+#         return HttpResponse('In Progress(else part)')
+
