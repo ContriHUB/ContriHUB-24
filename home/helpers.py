@@ -28,7 +28,6 @@ def send_email(template_path, email_context):
 
     from_email = "noreply@contriHUB-21"
     to = str(email_context['mentor'].email)
-
     try:
         mail.send_mail(email_context['subject'], plain_message, from_email, [to], html_message=html_message, fail_silently=False)
     except mail.BadHeaderError:

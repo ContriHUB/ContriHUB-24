@@ -19,3 +19,6 @@ Add your name in the given format.
  *[Sri Haritha kancharla](https://contrihub21.herokuapp.com/profile/user/haritha8333/)
 * [Vishwas Vaish](https://contrihub21.herokuapp.com/profile/user/VVV007)
 * [Yashika Jain](https://contrihub21.herokuapp.com/profile/user/Yashikaj14/)
+* [Priyanshu Gaur](https://contrihub21.herokuapp.com/profile/user/priyanshu785/) 
+* [Kunal Chahal](https://contrihub21.herokuapp.com/profile/user/KunaAl22/)
+* [Karimulla Mohammad](https://contrihub21.herokuapp.com/profile/user/rdx-rockstar/)
