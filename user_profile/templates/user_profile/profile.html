@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="myToast">
-            <div class="toast bg-danger" id="invalidWhatsappNo">
+            <div class="toast bg-danger fade hide" id="invalidWhatsappNo">
                 <div class="toast-body">
                     Invalid Whatsapp No...!!
                     <button onclick="removeToastForWhatsappNo()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -50,14 +50,21 @@
             </div>
         </div>
         <div class="myToast">
-            <div class="toast bg-danger" id="invalidMSID">
+            <div class="toast bg-danger fade hide" id="invalidMSID">
                 <div class="toast-body">
                     Invalid MS ID...!!
                     <button onclick="removeToastForMSID()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
-
+        <div class="myToast">
+            <div class="toast bg-success fade hide" id="updateprofilerequest">
+                <div class="toast-body">
+                    You Request is Made Successfully For updation. Wait and check later ! ;)
+                    <button onclick="removeToastForUpdateProfileRequest()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
@@ -415,7 +422,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#form").on('submit', function (event) {
+            $("#edit_profile_form").on('submit', function (event) {
                 event.preventDefault();
                 let the_post = $(this).serialize();
                 $.ajax({
@@ -497,6 +504,9 @@
                     $("#whatsapp_no").removeAttr('disabled');
                 }
             })
+            $('#profile_edit').click(function () {
+                $("#updateprofilerequest").toast("show");
+            })
         });
         function removeToastForWhatsappNo()
         {
@@ -506,16 +516,22 @@
         {
             $("#invalidMSID").toast('hide');
         }
+        function removeToastForUpdateProfileRequest()
+        {
+            $("#updateprofilerequest").toast('hide');
+        }
     </script>
 
     <script>
         function validate_pr(event)
         {
             let submitted_link = event.target.elements.pr_link.value;
-            let regex = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
-            let check=regex.test(submitted_link);
-            if(check==true)
-            return true;
+            let regex1 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$/;
+            let regex2 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
+            let check1 = regex1.test(submitted_link);
+            let check2 = regex2.test(submitted_link);
+            if(check1 == true || check2==true)
+                return true;
             
             $("#invalidPR").toast('show');
             return false;
