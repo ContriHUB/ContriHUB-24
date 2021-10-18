@@ -456,16 +456,3 @@ def handle_vote(request):
     html = render_to_string('home/vote.html', context, request=request)
     return JsonResponse({'html': html, 'message': message})
 
-
-# def multiplefilter(request):
-#     if request.method == "POST" :
-#         domain = request.POST.get('domain')
-#         subdomain = request.POST.get('subdomain')
-#         issues = Issue.objects.raw('select * from Issues where domain="'+domain+'" or subdomain="'+subdomain+'"')
-#         print(issues)
-#         return HttpResponse('In Progress(if part)')
-#     else:
-#         issues = Issue.objects.all()
-#         print(issues)
-#         return HttpResponse('In Progress(else part)')
-
