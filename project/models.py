@@ -87,7 +87,9 @@ class Issue(models.Model):
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 
-    have_bonus=models.BooleanField(verbose_name='Have Bonus', default=False)
+    bonus_value = models.CharField(verbose_name="Bonus Value", max_length=200, default="0")
+
+    bonus_description = models.CharField(verbose_name="Bonus Description", max_length=200, default=" ");
 
     upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
 

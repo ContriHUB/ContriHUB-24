@@ -4,7 +4,7 @@
     left: -10px;
     top: -10px;
 }
-#star12 {
+.star12 {
     background: red;
     width: 30px;
     height: 30px;
@@ -14,8 +14,8 @@
     -ms-transform: rotate(30deg);
     -o-transform: rotate(30deg);
 }
-#star12:before, #star12:after {
-    content: "+5";
+.star12:before, .star12:after {
+    content: "";
     color: white;
     font-weight: bolder;
     position: absolute;
@@ -25,12 +25,12 @@
     width: 30px;
     background: red;
 }
-#star12:before {
+.star12:before {
     -webkit-transform: rotate(30deg);
     -moz-transform: rotate(30deg);
     -ms-transform: rotate(30deg);
     -o-transform: rotate(30deg);
 }
-#star12:after {
+.star12:after {
     -webkit-transform: rotate(-30deg);
 }  

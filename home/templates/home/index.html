@@ -145,12 +145,14 @@
             {% for issue in issues %}
                 <div class="col infinite-item">
                     <div class="card m-3 text-center" style="border-radius: 15px;">
-                        {% if issue.have_bonus %}
+                        {% ifnotequal issue.bonus_value "0" %}
                             <div class="bonus">
-                                <a id="star12" data-mdb-toggle="tooltip"
-                                    title="Bonus"></a>
+                                <a class="star12" data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}"></a>
                             </div>
-                        {% endif %}
+                            <div class="bonus" style="font-weight: bolder; color:white;left:-4px;">
+                                {{issue.bonus_value}}
+                            </div>
+                        {% endifnotequal %}
                         <div class="card-header">
                             Issue #{{ issue.number }} - {{ issue.project.domain }}
                         </div>
