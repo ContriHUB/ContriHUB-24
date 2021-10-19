@@ -84,7 +84,7 @@ def home(request):
             for sd in subdomain:
                 all_issues = all_issues.filter(project__subdomainproject__sub_domain_id=sd).distinct()
 
-        print(len(all_issues))
+        # print(len(all_issues))
 
         if len(all_issues) == 0:
             return JsonResponse({'context': NO_ISSUES_FOUND})
