@@ -31,7 +31,7 @@ class Project(models.Model):
 
     html_url = models.URLField(verbose_name="HTML URL")
 
-    # domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
+    domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
 
     def __str__(self):
         return self.name
