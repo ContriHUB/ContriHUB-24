@@ -93,6 +93,10 @@ def home(request):
         return JsonResponse({'context': rendered_template})
 
     # If request is not AJAX, paginate the issue and render it into index.html template before returning
+
+    # get all active issues and set field contributor as active_issue.contributor
+    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
@@ -101,9 +105,6 @@ def home(request):
         issue_p = paginator.page(1)
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
-
-    # get all active issues and set field contributor as active_issue.contributor
-    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
 
     context = {
         'issues': issue_p,
