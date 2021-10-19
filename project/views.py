@@ -84,7 +84,7 @@ def populate_issues(request):
                     db_issue.level = level
                     db_issue.points = points
                     db_issue.is_restricted = is_restricted
-                    db_issue.have_bonus=have_bonus
+                    db_issue.have_bonus = have_bonus
                 else:  # Else Create New
                     db_issue = Issue(
                         number=number,
