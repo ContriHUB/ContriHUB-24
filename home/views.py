@@ -453,7 +453,7 @@ def handle_vote(request):
         message = "Downvoted Successfully"
         issue.downvotes.add(request.user)
         if is_upvoted:
-            issue.upvotes.remove(request.user)
+            issue.upvotes.remove(request.user) 
     elif type == 2:
         message = "Vote Revoked Successfully"
         if is_downvoted:
