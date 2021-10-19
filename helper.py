@@ -104,7 +104,7 @@ def check_issue_time_limit(func):
                         active_issue.delete()
                         # TODO: ISSUE: set a message i.e. "Dead Crossed" here and redirect to user profile and show this
                         #  message
-                        messages.warning(request, 'Deadline Crossed')
+                        messages.warning(request, f"Deadline Crossed For Issue: {active_issue.issue}")
                         return HttpResponseRedirect(reverse('user_profile',kwargs={'username': username}))
                     else:
                         return func(*args, **kwargs)
