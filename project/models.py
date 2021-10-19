@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
+from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, \
+    DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
 
 User = get_user_model()
@@ -76,13 +77,15 @@ class Issue(models.Model):
         if is_active:  # If this issue is already assigned to someone currently
             return False, "This issue is already assigned to someone else currently"
 
-        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, state=IssueAssignmentRequest.PENDING_VERIFICATION)
+        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self,
+                                                                     state=IssueAssignmentRequest.PENDING_VERIFICATION)
 
         if is_already_requested:  # Current requester has already requested it and is pending.
             return False, f"This issue has been already requested by @{is_already_requested.first().requester}"
 
         # TEST: Start
-        requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester, state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
+        requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester,
+                                                                         state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
         requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
         if requester_requests_count + requester_active_issue_count >= MAX_SIMULTANEOUS_ISSUE:
             return False, f"Your Max-Simultaneous-Issue-Engagement-Count(2) Reached. Total Pending Requests:- {requester_active_issue_count}, Total Active Issues Count:- {requester_active_issue_count}"
@@ -125,7 +128,7 @@ class Issue(models.Model):
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
-    BONUS, PENALTY = "bonus","penalty"
+    BONUS, PENALTY = "bonus", "penalty"
     STATES = (
         (ACCEPTED, "Accepted"),
         (REJECTED, "Rejected"),
@@ -134,9 +137,9 @@ class PullRequest(models.Model):
 
     pr_link = models.URLField(verbose_name="PR Link")
 
-    contributor = models.ForeignKey(User, on_delete=models.CASCADE,related_query_name='contributor')
+    contributor = models.ForeignKey(User, on_delete=models.CASCADE, related_query_name='contributor')
 
-    remark = models.CharField(max_length=50,blank=True)
+    remark = models.CharField(max_length=50, blank=True)
 
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
@@ -152,9 +155,9 @@ class PullRequest(models.Model):
         return f"{self.contributor}_{self.issue}"
 
     class Meta:
-        ordering=['-state','submitted_at']
+        ordering = ['-state', 'submitted_at']
 
-    def accept(self, bonus, penalty,remark):
+    def accept(self, bonus, penalty, remark):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -173,12 +176,12 @@ class PullRequest(models.Model):
         self.issue.state = self.issue.CLOSED
         self.issue.save()
 
-         # Updated accepted pr req. of current user
-        accepted_pr_count = PullRequest.objects.filter(contributor=self.contributor,state=self.ACCEPTED).count()
+        # Updated accepted pr req. of current user
+        accepted_pr_count = PullRequest.objects.filter(contributor=self.contributor, state=self.ACCEPTED).count()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += (int(self.issue.points)+int(bonus)-int(penalty))
+        contributor_profile.total_points += (int(self.issue.points) + int(bonus) - int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.issues_solved = accepted_pr_count
@@ -193,7 +196,7 @@ class PullRequest(models.Model):
         # except AttributeError:
         #     pass
 
-    def reject(self, bonus, penalty,remark):
+    def reject(self, bonus, penalty, remark):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -205,12 +208,12 @@ class PullRequest(models.Model):
         self.state = self.REJECTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
-        self.remark=remark
+        self.remark = remark
         self.save()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += (int(bonus)-int(penalty))
+        contributor_profile.total_points += (int(bonus) - int(penalty))
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
@@ -246,7 +249,7 @@ class IssueAssignmentRequest(models.Model):
         return f"{self.requester}_{self.issue}"
 
     class Meta:
-        ordering=['-state','created_on']
+        ordering = ['-state', 'created_on']
 
     def is_acceptable(self, mentor):
 
@@ -267,7 +270,7 @@ class IssueAssignmentRequest(models.Model):
 
         active_count = ActiveIssue.objects.filter(contributor=requester).count()
 
-        if active_count >= MAX_SIMULTANEOUS_ISSUE: # If this requester is already working on MAX_SIMULTANEOUS_ISSUE
+        if active_count >= MAX_SIMULTANEOUS_ISSUE:  # If this requester is already working on MAX_SIMULTANEOUS_ISSUE
             # issues
             return False
 
@@ -275,7 +278,6 @@ class IssueAssignmentRequest(models.Model):
 
 
 class ActiveIssue(models.Model):
-
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
     contributor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -307,5 +309,3 @@ class ActiveIssue(models.Model):
     #  places.
     def get_remaining_time(self):
         return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
-
-

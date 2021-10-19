@@ -29,8 +29,8 @@ urlpatterns = [
     path('api/project/<project_id>/issue/<issue_id>/', pro_views.issue_detail_view),
     path('api/project/<project_id>/pulls/', pro_views.pullrequest_list_view),
     path('api/project/<project_id>/pull/<pull_id>/', pro_views.pullrequest_detail_view),
-    path('api/project/<project_id>/contributors/',pro_views.contributors_list_view),
-    path('api/user/contributor/<github_user_name>/projects/',pro_views.user_contrib_list_view),
+    path('api/project/<project_id>/contributors/', pro_views.contributors_list_view),
+    path('api/user/contributor/<github_user_name>/projects/', pro_views.user_contrib_list_view),
     # this url is handled by social_django app under social-auth-app-django python library
     url(r'^oauth/', include('social_django.urls', namespace='social')),
 ]
