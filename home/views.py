@@ -66,6 +66,18 @@ def home(request):
     project_domain = Domain.objects.all()
     project_sub_domain = SubDomain.objects.all()
 
+    # get all active issues and set field contributor as active_issue.contributor
+    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+
+    # page = request.GET.get('page', 1)
+    # paginator = Paginator(issues_qs, 20)
+    # try:
+    #     issue_p = paginator.page(page)
+    # except PageNotAnInteger:
+    #     issue_p = paginator.page(1)
+    # except EmptyPage:
+    #     issue_p = paginator.page(paginator.num_pages)
+
     if request.is_ajax():
         domains = request.GET.getlist('domain[]')
         sub_domains = request.GET.getlist('subdomain[]')
@@ -94,20 +106,9 @@ def home(request):
 
     # If request is not AJAX, paginate the issue and render it into index.html template before returning
 
-    # get all active issues and set field contributor as active_issue.contributor
-    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
-
-    page = request.GET.get('page', 1)
-    paginator = Paginator(issues_qs, 20)
-    try:
-        issue_p = paginator.page(page)
-    except PageNotAnInteger:
-        issue_p = paginator.page(1)
-    except EmptyPage:
-        issue_p = paginator.page(paginator.num_pages)
-
+    # CAUTION: Pagination is disabled temporarily
     context = {
-        'issues': issue_p,
+        'issues': issues_qs,  # issue_p,
         'all_active_issues': all_active_issues,
         'projects': project_qs,
         'project_domain': project_domain,
