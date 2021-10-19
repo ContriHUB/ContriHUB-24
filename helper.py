@@ -93,6 +93,7 @@ def check_issue_time_limit(func):
                         active_issue_qs = ActiveIssue.objects.filter(contributor=user)
                         for active_issue in active_issue_qs:
                             if is_deadline_passed(active_issue):  # Deadline Crossed
+                                messages.warning(request, f"Deadline Crossed For Issue: {active_issue.issue}")
                                 active_issue.delete()
                     return func(*args, **kwargs)
             else:
@@ -115,6 +116,7 @@ def check_issue_time_limit(func):
             active_issue_qs = ActiveIssue.objects.filter(issue=issue_pk)
             for active_issue in active_issue_qs:
                 if is_deadline_passed(active_issue):  # Deadline
+                    messages.warning(request, f"Deadline Crossed For Issue: {active_issue.issue}")
                     active_issue.delete()
             return func(*args, **kwargs)
 
