@@ -84,7 +84,7 @@ def home(request):
             for sd in subdomain:
                 all_issues = all_issues.filter(project__subdomainproject__sub_domain_id=sd).distinct()
 
-        print(len(all_issues))
+        # print(len(all_issues))
 
         if len(all_issues) == 0:
             return JsonResponse({'context': NO_ISSUES_FOUND})
@@ -453,7 +453,7 @@ def handle_vote(request):
         message = "Downvoted Successfully"
         issue.downvotes.add(request.user)
         if is_upvoted:
-            issue.upvotes.remove(request.user)
+            issue.upvotes.remove(request.user) 
     elif type == 2:
         message = "Vote Revoked Successfully"
         if is_downvoted:
