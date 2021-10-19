@@ -19,7 +19,8 @@ from django.utils import timezone
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
 from project.forms import PRSubmissionForm
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest
+from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain, \
+    SubDomainProject
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -34,10 +35,16 @@ def page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
 
 
+NO_ISSUES_FOUND = '1'
+
+
 @complete_profile_required
 def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
+
+    project_domain = Domain.objects.all()
+    project_subdomain = SubDomain.objects.all()
 
     # get all active issues
     active_qs_obj = ActiveIssue.objects.all()
@@ -61,10 +68,36 @@ def home(request):
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
 
+    if request.is_ajax():
+        domain = request.GET.getlist('domain[]')
+        subdomain = request.GET.getlist('subdomain[]')
+
+        print(subdomain)
+        # l = len(subdomain)
+        all_issues = Issue.objects.filter(state=Issue.OPEN).order_by('-id').distinct()
+
+        if len(domain) > 0:
+            for d in domain:
+                all_issues = all_issues.filter(project__domain_id=d).distinct()
+
+        if len(subdomain) > 0:
+            for sd in subdomain:
+                all_issues = all_issues.filter(project__subdomainproject__sub_domain_id=sd).distinct()
+
+        print(len(all_issues))
+
+        if len(all_issues) == 0:
+            return JsonResponse({'context': NO_ISSUES_FOUND})
+
+        t = render_to_string('home/filtered_issue_list.html', {'issues': all_issues, })
+        return JsonResponse({'context': t})
+
     context = {
         'projects': project_qs,
         'issues': issue_p,
-        'all_active_issues': all_active_issues
+        'all_active_issues': all_active_issues,
+        'project_domain': project_domain,
+        'project_subdomain': project_subdomain
     }
     return render(request, 'home/index.html', context=context)
 
