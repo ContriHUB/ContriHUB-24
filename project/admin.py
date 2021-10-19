@@ -6,26 +6,26 @@ from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveI
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'domain', 'html_url')
+    list_display = ('name', 'id', 'domain', 'html_url')
 
 
 class IssueAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'title', 'number', 'project', 'mentor', 'level', 'points', 'state', 'get_upvotes_cnt',
-        'get_downvotes_cnt')
+        'title', 'id', 'number', 'project', 'mentor', 'level', 'points', 'state', 'get_up_votes_cnt',
+        'get_down_votes_cnt')
 
     @display(ordering='issue__upvotes', description='Count of Upvotes')
-    def get_upvotes_cnt(self, obj):
+    def get_up_votes_cnt(self, obj):
         return obj.upvotes.all().count()
 
     @display(ordering='issue__downvotes', description='Count of Downvotes')
-    def get_downvotes_cnt(self, obj):
+    def get_down_votes_cnt(self, obj):
         return obj.downvotes.all().count()
 
 
 class PullRequestAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'contributor', 'get_id', 'issue', 'get_project_name', 'pr_link', 'state', 'bonus', 'penalty',
+        'contributor', 'id', 'get_id', 'issue', 'get_project_name', 'pr_link', 'state', 'bonus', 'penalty',
         'submitted_at')
 
     @display(ordering='issue__id', description='Issue_ki_id')
@@ -38,7 +38,7 @@ class PullRequestAdmin(admin.ModelAdmin):
 
 
 class IssueAssignmentRequestAdmin(admin.ModelAdmin):
-    list_display = ('id', 'requester', 'issue', 'state', 'get_id', 'get_project_name', 'created_on')
+    list_display = ('requester', 'id', 'issue', 'state', 'get_id', 'get_project_name', 'created_on')
 
     @display(ordering='issue__id', description='Issue_ki_id')
     def get_id(self, obj):
@@ -50,7 +50,7 @@ class IssueAssignmentRequestAdmin(admin.ModelAdmin):
 
 
 class ActiveIssueAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contributor', 'issue', 'assigned_at', 'get_id', 'get_project_name')
+    list_display = ('contributor', 'id', 'issue', 'assigned_at', 'get_id', 'get_project_name')
 
     @display(ordering='issue__id', description='Issue_ki_id')
     def get_id(self, obj):
