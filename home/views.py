@@ -51,9 +51,9 @@ def get_all_active_issues(issues_qs):
         active_issue = active_qs_obj.filter(issue=issue)
 
         if active_issue:
-            all_active_issues.append(issue)
             active_issue = active_issue[0]
             issue.contributor = active_issue.contributor  # set contributor for that active issue
+            all_active_issues.append(issue)
 
     return all_active_issues
 
@@ -65,9 +65,6 @@ def home(request):
 
     project_domain = Domain.objects.all()
     project_sub_domain = SubDomain.objects.all()
-
-    # get all active issues and set field contributor as active_issue.contributor
-    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
 
     if request.is_ajax():
         domains = request.GET.getlist('domain[]')
@@ -85,6 +82,9 @@ def home(request):
             response = {'context': NO_ISSUES_FOUND}
             return JsonResponse(response)
 
+        # get all active issues and set field contributor as active_issue.contributor
+        all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+
         data = {
             'issues': issues_qs,
             'all_active_issues': all_active_issues,
@@ -101,6 +101,9 @@ def home(request):
         issue_p = paginator.page(1)
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
+
+    # get all active issues and set field contributor as active_issue.contributor
+    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
 
     context = {
         'issues': issue_p,
