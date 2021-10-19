@@ -2,8 +2,11 @@
 {% load static %}
 {% comment %}
     context = {
+        'issues': issue_p,
+        'all_active_issues': all_active_issues,
         'projects': project_qs,
-        'issues': issues_qs
+        'project_domain': project_domain,
+        'project_sub_domain': project_sub_domain
     }
 {% endcomment %}
 
@@ -127,7 +130,7 @@
 			<div class="card mb-4">
                 <h6 class="card-header"><b>By Sub Domain</b></h6>
 				<div class="list-group list-group-flush">
-                    {% for subdomain in project_subdomain %}
+                    {% for subdomain in project_sub_domain %}
 					<li class="list-group-item">
 						<input aria-label="" class="filter-checkbox" value="{{ subdomain.id }}" data-filter="subdomain" type="checkbox" />&nbsp;
                         {{ subdomain }}

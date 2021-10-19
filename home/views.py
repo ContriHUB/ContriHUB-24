@@ -19,8 +19,7 @@ from django.utils import timezone
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
 from project.forms import PRSubmissionForm
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain, \
-    SubDomainProject
+from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -38,18 +37,15 @@ def page_not_found_view(request, exception):
 NO_ISSUES_FOUND = '1'
 
 
-@complete_profile_required
-def home(request):
-    project_qs = Project.objects.all()
-    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
-
-    project_domain = Domain.objects.all()
-    project_subdomain = SubDomain.objects.all()
-
-    # get all active issues
-    active_qs_obj = ActiveIssue.objects.all()
+def get_all_active_issues(issues_qs):
+    """
+    Helper function to return list of all Active Issues (Issues which is Assigned to someone)
+    It also sets a "contributor" field to active_issue.contributor
+    :param issues_qs: QuerySet of Issues
+    :return:
+    """
     all_active_issues = []
-
+    active_qs_obj = ActiveIssue.objects.all()
     for issue in issues_qs:
 
         active_issue = active_qs_obj.filter(issue=issue)
@@ -59,6 +55,44 @@ def home(request):
             active_issue = active_issue[0]
             issue.contributor = active_issue.contributor  # set contributor for that active issue
 
+    return all_active_issues
+
+
+@complete_profile_required
+def home(request):
+    project_qs = Project.objects.all()
+    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
+
+    project_domain = Domain.objects.all()
+    project_sub_domain = SubDomain.objects.all()
+
+    # get all active issues and set field contributor as active_issue.contributor
+    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+
+    if request.is_ajax():
+        domains = request.GET.getlist('domain[]')
+        sub_domains = request.GET.getlist('subdomain[]')
+
+        if len(domains) > 0:
+            for domain_id in domains:
+                issues_qs = issues_qs.filter(project__domain_id=domain_id).distinct()
+
+        if len(sub_domains) > 0:
+            for sub_domain_id in sub_domains:
+                issues_qs = issues_qs.filter(project__subdomainproject__sub_domain_id=sub_domain_id).distinct()
+
+        if len(issues_qs) == 0:
+            response = {'context': NO_ISSUES_FOUND}
+            return JsonResponse(response)
+
+        data = {
+            'issues': issues_qs,
+            'all_active_issues': all_active_issues,
+        }
+        rendered_template = render_to_string('home/filtered_issue_list.html', data)
+        return JsonResponse({'context': rendered_template})
+
+    # If request is not AJAX, paginate the issue and render it into index.html template before returning
     page = request.GET.get('page', 1)
     paginator = Paginator(issues_qs, 20)
     try:
@@ -68,37 +102,14 @@ def home(request):
     except EmptyPage:
         issue_p = paginator.page(paginator.num_pages)
 
-    if request.is_ajax():
-        domain = request.GET.getlist('domain[]')
-        subdomain = request.GET.getlist('subdomain[]')
-
-        print(subdomain)
-        # l = len(subdomain)
-        all_issues = Issue.objects.filter(state=Issue.OPEN).order_by('-id').distinct()
-
-        if len(domain) > 0:
-            for d in domain:
-                all_issues = all_issues.filter(project__domain_id=d).distinct()
-
-        if len(subdomain) > 0:
-            for sd in subdomain:
-                all_issues = all_issues.filter(project__subdomainproject__sub_domain_id=sd).distinct()
-
-        # print(len(all_issues))
-
-        if len(all_issues) == 0:
-            return JsonResponse({'context': NO_ISSUES_FOUND})
-
-        t = render_to_string('home/filtered_issue_list.html', {'issues': all_issues, })
-        return JsonResponse({'context': t})
-
     context = {
-        'projects': project_qs,
         'issues': issue_p,
         'all_active_issues': all_active_issues,
+        'projects': project_qs,
         'project_domain': project_domain,
-        'project_subdomain': project_subdomain
+        'project_sub_domain': project_sub_domain
     }
+
     return render(request, 'home/index.html', context=context)
 
 
@@ -436,25 +447,25 @@ def contact_form(request):
 
 @login_required
 def handle_vote(request):
-    id = request.POST.get('id')
-    type = request.POST.get('type')
-    id = int(id)
-    type = int(type)
-    issue = Issue.objects.get(pk=id)
+    id_ = request.POST.get('id')
+    type_ = request.POST.get('type')
+    id_ = int(id_)
+    type_ = int(type_)
+    issue = Issue.objects.get(pk=id_)
     is_upvoted = request.user in issue.upvotes.all()
     is_downvoted = request.user in issue.downvotes.all()
     message = ""
-    if (type == 0):
+    if type_ == 0:
         message = "Upvoted Successfully"
         issue.upvotes.add(request.user)
         if is_downvoted:
             issue.downvotes.remove(request.user)
-    elif type == 1:
+    elif type_ == 1:
         message = "Downvoted Successfully"
         issue.downvotes.add(request.user)
         if is_upvoted:
             issue.upvotes.remove(request.user) 
-    elif type == 2:
+    elif type_ == 2:
         message = "Vote Revoked Successfully"
         if is_downvoted:
             issue.downvotes.remove(request.user)

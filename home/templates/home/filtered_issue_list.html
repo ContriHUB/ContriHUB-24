@@ -1,3 +1,11 @@
+{% comment %}
+    Incoming data from view -
+    data = {
+        'issues': issues_qs,
+        'all_active_issues': all_active_issues,
+    }
+{% endcomment %}
+
 {% for issue in issues %}
     <div class="col infinite-item">
         <div class="card m-3 text-center" style="border-radius: 15px;">
