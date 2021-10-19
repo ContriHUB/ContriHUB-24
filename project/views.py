@@ -1,8 +1,6 @@
 from django.shortcuts import HttpResponseRedirect, reverse
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, LABEL_BONUS, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, DEFAULT_HARD_POINTS
-    LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
-    DEFAULT_HARD_POINTS
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue, PullRequest
