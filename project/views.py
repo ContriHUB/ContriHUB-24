@@ -1,6 +1,6 @@
 from django.shortcuts import HttpResponseRedirect, reverse
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
-    LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, DEFAULT_HARD_POINTS
+    LABEL_RESTRICTED, LABEL_BONUS, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, DEFAULT_HARD_POINTS
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue,PullRequest
@@ -71,7 +71,7 @@ def populate_issues(request):
                 print("This issue is a actually a PR")
                 continue
             title, number = issue['title'], issue['number']
-            mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
+            mentor_name, level, points, is_restricted, have_bonus = parse_labels(labels=issue['labels'])
 
             if mentor_name and level:  # If mentor name and level labels are present in issue
                 api_url, html_url = issue['url'], issue['html_url']
@@ -83,6 +83,7 @@ def populate_issues(request):
                     db_issue.level = level
                     db_issue.points = points
                     db_issue.is_restricted = is_restricted
+                    db_issue.have_bonus=have_bonus
                 else:  # Else Create New
                     db_issue = Issue(
                         number=number,
@@ -92,7 +93,8 @@ def populate_issues(request):
                         project=project,
                         level=level,
                         points=points,
-                        is_restricted=is_restricted
+                        is_restricted=is_restricted,
+                        have_bonus=have_bonus,
                     )
 
                 # print(db_issue)
@@ -106,9 +108,13 @@ def populate_issues(request):
 
     return HttpResponseRedirect(reverse('home'))
 
+def check_bonus(level,points):
+    if((level=="very easy" and points>2) or(level=="easy" and points>10) or (level=="medium" and points>20) or (level=="hard" and points>30)):
+        return True
+    return False
 
 def parse_labels(labels):
-    mentor, level, points, is_restricted = None, None, 0, False
+    mentor, level, points, is_restricted, have_bonus  = None, None, 0, False, False
     for label in labels:
 
         if str(label["description"]).lower() == LABEL_MENTOR:  # Parsing Mentor
@@ -123,7 +129,13 @@ def parse_labels(labels):
         if str(label["name"]).lower() == LABEL_RESTRICTED:  # Parsing Is Restricted
             is_restricted = True
 
-    return mentor, level, points, is_restricted
+        if str(label["name"]).lower() == LABEL_BONUS:  # Have Bonus Points
+            have_bonus = True
+
+    if(check_bonus(level,points)):
+        have_bonus= True
+
+    return mentor, level, points, is_restricted, have_bonus
 
 
 def parse_level(level):

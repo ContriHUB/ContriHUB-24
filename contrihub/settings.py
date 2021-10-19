@@ -177,6 +177,7 @@ LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")
 LABEL_RESTRICTED = config('LABEL_RESTRICTED', default="restricted")
+LABEL_BONUS = config('LABEL_BONUS', default="+5")
 DEPENDABOT_LOGIN = config('DEPENDABOT_LOGIN', default="dependabot[bot]")
 
 MAX_SIMULTANEOUS_ISSUE = config('MAX_SIMULTANEOUS_ISSUE', default=2, cast=int)
