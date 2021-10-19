@@ -109,7 +109,7 @@ def populate_issues(request):
     return HttpResponseRedirect(reverse('home'))
 
 def check_bonus(level,points):
-    if((level=="very easy" and points>2) or(level=="easy" and points>10) or (level=="medium" and points>20) or (level=="hard" and points>30)):
+    if((level==Issue.VERY_EASY and points>DEFAULT_VERY_EASY_POINTS) or (level==Issue.EASY and points>DEFAULT_EASY_POINTS) or (level==Issue.MEDIUM and points>DEFAULT_MEDIUM_POINTS) or (level==Issue.HARD and points>DEFAULT_HARD_POINTS)):
         return True
     return False
 
