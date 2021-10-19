@@ -3,6 +3,7 @@ from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+
 # email_context = {
 #     'mentor': issue.mentor,
 #     'user': requester,
@@ -29,6 +30,7 @@ def send_email(template_path, email_context):
     from_email = "noreply@contriHUB-21"
     to = str(email_context['mentor'].email)
     try:
-        mail.send_mail(email_context['subject'], plain_message, from_email, [to], html_message=html_message, fail_silently=False)
+        mail.send_mail(email_context['subject'], plain_message, from_email, [to], html_message=html_message,
+                       fail_silently=False)
     except mail.BadHeaderError:
         return mail.BadHeaderError

@@ -4,17 +4,19 @@ from django.contrib.admin import display
 from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain, SubDomain_Project_Model
 
 
+
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'domain','html_url')
 
 
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'number', 'project', 'mentor', 'level', 'points', 'state', 'get_upvotes_cnt', 'get_downvotes_cnt')
+    list_display = (
+        'id', 'title', 'number', 'project', 'mentor', 'level', 'points', 'state', 'get_upvotes_cnt',
+        'get_downvotes_cnt')
 
     @display(ordering='issue__upvotes', description='Count of Upvotes')
     def get_upvotes_cnt(self, obj):
         return obj.upvotes.all().count()
-
 
     @display(ordering='issue__downvotes', description='Count of Downvotes')
     def get_downvotes_cnt(self, obj):
@@ -22,7 +24,9 @@ class IssueAdmin(admin.ModelAdmin):
 
 
 class PullRequestAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contributor', 'get_id', 'issue', 'get_project_name', 'pr_link', 'state', 'bonus', 'penalty', 'submitted_at')
+    list_display = (
+        'id', 'contributor', 'get_id', 'issue', 'get_project_name', 'pr_link', 'state', 'bonus', 'penalty',
+        'submitted_at')
 
     @display(ordering='issue__id', description='Issue_ki_id')
     def get_id(self, obj):
