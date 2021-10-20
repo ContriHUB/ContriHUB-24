@@ -66,7 +66,7 @@ def profile(request, username):
             pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
 
             pr_form = PRSubmissionForm()
-            create_issue = CreateIssueForm()
+            create_issue_form = CreateIssueForm()
             pe_form = EditProfileForm(instance=request.user.userprofile)
             context = {
                 "mentored_issues": mentored_issues,
@@ -77,7 +77,7 @@ def profile(request, username):
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
                 'pe_form': pe_form,
-                'create_issue': create_issue,
+                'create_issue_form': create_issue_form,
                 "native_profile": native_profile,
                 "free_issues_solved": free_issues_solved,
                 "v_easy_issues_solved": v_easy_issues_solved,
@@ -217,10 +217,10 @@ def create_issue(request):
         title = data.get('title')
         desc = data.get('desc')
         project = Project.objects.get(id=project_id)
-        lev = level.get(level_id)
-        ment = UserProfile.objects.get(id=mentor_id).__str__()
+        level = level.get(level_id)
+        mentor = UserProfile.objects.get(id=mentor_id).__str__()
         url = project.api_url
-        label = [ment,lev,points,is_res]
+        label = [mentor,level,points,is_res]
         print(label)
         url += '/issues'
         issue_detail = {'title': title,

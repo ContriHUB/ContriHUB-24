@@ -13,7 +13,7 @@
                 <div class="modal-body">
                     <form method='POST' id="create_issue">
                         {% csrf_token %}
-                        {{ create_issue|crispy }}
+                        {{ create_issue_form|crispy }}
                         <div class="row p-3">
                             <div class="offset-5">
                                 <button class='btn btn-primary' value="SUBMIT" data-bs-dismiss="modal" type='Submit'>
