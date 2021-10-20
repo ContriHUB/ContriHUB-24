@@ -452,25 +452,25 @@ def contact_form(request):
 
 @login_required
 def handle_vote(request):
-    id_ = request.POST.get('id')
-    type_ = request.POST.get('type')
-    id_ = int(id_)
-    type_ = int(type_)
-    issue = Issue.objects.get(pk=id_)
+    issue_id = request.POST.get('id')
+    request_type = request.POST.get('type')
+    issue_id = int(issue_id)
+    request_type = int(request_type)
+    issue = Issue.objects.get(pk=issue_id)
     is_upvoted = request.user in issue.upvotes.all()
     is_downvoted = request.user in issue.downvotes.all()
     message = ""
-    if type_ == 0:
+    if request_type == 0:
         message = "Upvoted Successfully"
         issue.upvotes.add(request.user)
         if is_downvoted:
             issue.downvotes.remove(request.user)
-    elif type_ == 1:
+    elif request_type == 1:
         message = "Downvoted Successfully"
         issue.downvotes.add(request.user)
         if is_upvoted:
             issue.upvotes.remove(request.user) 
-    elif type_ == 2:
+    elif request_type == 2:
         message = "Vote Revoked Successfully"
         if is_downvoted:
             issue.downvotes.remove(request.user)
