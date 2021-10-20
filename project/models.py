@@ -84,6 +84,8 @@ class Issue(models.Model):
     # 1 - Open, 0 - Closed
     state = models.PositiveSmallIntegerField('State', choices=STATES, default=1)
 
+    description = models.TextField(null=True,blank=True)
+
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 

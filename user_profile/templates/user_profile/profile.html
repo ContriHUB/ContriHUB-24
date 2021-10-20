@@ -432,7 +432,41 @@
                     success(data) {},
                     error: function (data) {}
                 })
-            })
+            });
+        })
+        $(document).on('submit','#create_issue', function (event) {
+                event.preventDefault();
+                const title = $('#id_title').val() ;
+                const desc = $('#id_description').val() ;
+                const mentor = $('#id_mentor').val() ;
+                const project = $('#id_project').val();
+                const points = $('#id_points').val() ;
+                const level = $('#id_level').val() ;
+                var is_restricted = 0 ;
+                if($("#id_is_restricted").prop('checked') == true){
+                    is_restricted = 1 ;
+                }
+            $.ajax({
+                url : '{% url 'create_issue' %}',
+                type : 'POST',
+                data: {
+                    project,
+                    level,
+                    mentor,
+                    title,
+                    desc,
+                    points,
+                    is_restricted,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){
+
+                    alert('Issue Created') ;
+                },
+                error:function(data){
+                    alert('Issue Not Created, some problem occured.')
+                }
+            }) ;
         })
     </script>
     <script type="text/javascript">

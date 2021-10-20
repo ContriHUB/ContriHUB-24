@@ -19,8 +19,7 @@ from django.utils import timezone
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
 from project.forms import PRSubmissionForm
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain, \
-    SubDomainProject
+from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain, SubDomainProject
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -72,8 +71,6 @@ def home(request):
         domain = request.GET.getlist('domain[]')
         subdomain = request.GET.getlist('subdomain[]')
 
-        print(subdomain)
-        # l = len(subdomain)
         all_issues = Issue.objects.filter(state=Issue.OPEN).order_by('-id').distinct()
 
         if len(domain) > 0:
@@ -84,12 +81,10 @@ def home(request):
             for sd in subdomain:
                 all_issues = all_issues.filter(project__subdomainproject__sub_domain_id=sd).distinct()
 
-        # print(len(all_issues))
-
         if len(all_issues) == 0:
             return JsonResponse({'context': NO_ISSUES_FOUND})
 
-        t = render_to_string('home/filtered_issue_list.html', {'issues': all_issues, })
+        t = render_to_string('home/filtered_issue_list.html', {'issues': all_issues,'all_active_issues': all_active_issues, })
         return JsonResponse({'context': t})
 
     context = {
