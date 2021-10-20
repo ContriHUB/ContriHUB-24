@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, reverse
 from django.utils import timezone
 from project.models import ActiveIssue
-
+from django.http import Http404 
 SUCCESS, FAILED = 1, 2
 
 
@@ -108,7 +108,7 @@ def check_issue_time_limit(func):
                 else:
                     raise Http404
                     # TODO: ISSUE: Redirect to 404 page
-                    return HttpResponse("That's a 404")
+                    return render_to_response('404.html')
         else:
             # Some operation regarding this issue is taking place
             active_issue_qs = ActiveIssue.objects.filter(issue=issue_pk)
