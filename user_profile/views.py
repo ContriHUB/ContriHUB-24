@@ -2,7 +2,8 @@ from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, Ht
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from project.models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
-from .forms import UserProfileForm, EditProfileForm, CreateIssueForm
+from .forms import UserProfileForm, EditProfileForm
+from project.forms import CreateIssueForm
 from .models import UserProfile
 from project.models import Project, Issue
 from helper import complete_profile_required, check_issue_time_limit
