@@ -15,8 +15,6 @@ import re
 import json
 import requests
 
-
-
 User = get_user_model()
 
 
@@ -221,7 +219,7 @@ def create_issue(request):
         level = level.get(level_id)
         mentor = UserProfile.objects.get(id=mentor_id).__str__()
         url = project.api_url
-        label = [mentor,level,points,is_res]
+        label = [mentor, level, points, is_res]
         print(label)
         url += '/issues'
         issue_detail = {'title': title,
@@ -232,32 +230,31 @@ def create_issue(request):
         social = request.user.social_auth.get(provider='github')
         headers = {
             "Accept": "application/vnd.github.v3+json",
-            "Authorization": f"token {social.extra_data['access_token']}",   # Authentication
+            "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
         }
 
-        r = requests.post( url, data=payload, headers=headers)
+        r = requests.post(url, data=payload, headers=headers)
         det = r.json()
 
         if r.status_code == 201:
 
-            print ('Successfully created Issue "%s"' % title)
+            print('Successfully created Issue "%s"' % title)
             Issue.objects.create(
-                title = ''+det['title'],
-                api_url= ''+det['repository_url'],
-                html_url = ''+det['url'],
-                project = project,
-                mentor = User.objects.get(id=mentor_id),
-                level = level_id,
-                points = points,
-                state = 1 ,
-                description = desc,
-                is_restricted = is_res
+                title='' + det['title'],
+                api_url='' + det['repository_url'],
+                html_url='' + det['url'],
+                project=project,
+                mentor=User.objects.get(id=mentor_id),
+                level=level_id,
+                points=points,
+                state=1,
+                description=desc,
+                is_restricted=is_res
             )
             return JsonResponse({'status': 'success'})
         else:
-            print ('Could not create Issue "%s"' % title)
-            print( 'Response:', r.content)
-            return JsonResponse({'status':'error'})
+            print('Could not create Issue "%s"' % title)
+            print('Response:', r.content)
+            return JsonResponse({'status': 'error'})
     else:
         return HttpResponse("Something Went Wrong")
-
