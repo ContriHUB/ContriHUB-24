@@ -6,22 +6,22 @@ from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 
 class UserProfileForm(forms.ModelForm):
-    whatsapp_no = PhoneNumberField(
+    whats_app_no = PhoneNumberField(
         widget=PhoneNumberPrefixWidget(initial='IN')
     )
+
     class Meta:
         model = UserProfile
-        fields = ('registration_no', 'course', 'current_year', 'ms_teams_id','whatsapp_no')
+        fields = ('registration_no', 'course', 'current_year', 'ms_teams_id', 'whats_app_no')
+
 
 class EditProfileForm(forms.ModelForm):
-
     class Meta:
-        model=UserProfile
-        fields=('registration_no','course','current_year')
+        model = UserProfile
+        fields = ('registration_no', 'course', 'current_year')
 
 
 class CreateIssueForm(forms.ModelForm):
-
     class Meta:
         model = Issue
-        fields = ('title','description','mentor','project','level','points','is_restricted')
+        fields = ('title', 'description', 'mentor', 'project', 'level', 'points', 'is_restricted')
