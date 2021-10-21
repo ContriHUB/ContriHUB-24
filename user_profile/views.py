@@ -6,6 +6,7 @@ from .forms import UserProfileForm, EditProfileForm
 from project.forms import CreateIssueForm
 from .models import UserProfile
 from project.models import Project, Issue
+from project.views import parse_level
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.http import JsonResponse
@@ -204,7 +205,7 @@ def create_issue(request):
         '1': 'easy',
         '2': 'medium',
         '3': 'hard',
-        '4': 'very easy'
+        '4': 'very_easy'
     }
     if request.is_ajax():
         data = request.POST
@@ -212,15 +213,21 @@ def create_issue(request):
         level_id = data.get('level')
         mentor_id = data.get('mentor')
         points = data.get('points')
+        default_points = parse_level(level.get(level_id))
+        if points == '0':
+            points = str(default_points[1])     # refer project.views and settings.py for parse_level and points
+        print(points)
         is_res = data.get('is_restricted')
         title = data.get('title')
         desc = data.get('desc')
         project = Project.objects.get(id=project_id)
         level = level.get(level_id)
-        mentor = UserProfile.objects.get(id=mentor_id).__str__()
+        mentor = User.objects.get(id=mentor_id).__str__()
         url = project.api_url
-        label = [mentor, level, points, is_res]
-        print(label)
+        if is_res == '1':
+            label = [mentor, level, points, 'restricted']
+        else:
+            label = [mentor, level, points]
         url += '/issues'
         issue_detail = {'title': title,
                         'body': desc,
@@ -237,7 +244,9 @@ def create_issue(request):
         det = r.json()
 
         if r.status_code == 201:
-
+            f = False
+            if is_res == '1':
+                f = True
             print('Successfully created Issue "%s"' % title)
             Issue.objects.create(
                 title='' + det['title'],
