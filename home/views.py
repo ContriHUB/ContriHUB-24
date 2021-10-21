@@ -19,7 +19,7 @@ from django.utils import timezone
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
 from project.forms import PRSubmissionForm
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain
+from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain, SubDomainProject
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -57,6 +57,26 @@ def get_all_active_issues(issues_qs):
 
     return all_active_issues
 
+def project_tech(project_id):
+    project_qs = Project.objects.get(id=project_id)
+    domain_w_sub_domain = []
+    tech = ''
+    domain = project_qs.domain.name
+    sub_domain_qs = SubDomainProject.objects.filter(project=project_qs)
+    sd = sub_domain_qs.all()
+    sub_domains=''
+    act_sub_domains=''
+    if(len(sd)>0):
+        for s in sd:
+            sub_domains+=s.sub_domain.name.__str__()+'/'
+        act_sub_domains = sub_domains[:-1]
+        tech = domain+'('+act_sub_domains+')'
+    else:
+        act_sub_domains = sub_domains ;
+        tech =domain
+    domain_w_sub_domain += {tech}
+
+    return domain_w_sub_domain
 
 @complete_profile_required
 def home(request):
@@ -66,9 +86,18 @@ def home(request):
     project_domain = Domain.objects.all()
     project_sub_domain = SubDomain.objects.all()
 
+
+
     # get all active issues and set field contributor as active_issue.contributor
     all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+    for pr in project_qs.iterator():
+        proj = Project.objects.get(id = pr.id)
+        project_dev_tech = project_tech(pr.id)
+        proj.all_tech = project_dev_tech[0]
+        proj.save()
 
+
+    print(project_qs.model.all_tech)
     # page = request.GET.get('page', 1)
     # paginator = Paginator(issues_qs, 20)
     # try:
@@ -112,7 +141,7 @@ def home(request):
         'all_active_issues': all_active_issues,
         'projects': project_qs,
         'project_domain': project_domain,
-        'project_sub_domain': project_sub_domain
+        'project_sub_domain': project_sub_domain,
     }
 
     return render(request, 'home/index.html', context=context)

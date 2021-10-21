@@ -33,6 +33,7 @@ class Project(models.Model):
 
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
 
+    all_tech = models.CharField(max_length=112,blank=True,null=True)
     def __str__(self):
         return self.name
 
