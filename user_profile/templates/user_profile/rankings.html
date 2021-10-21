@@ -1,60 +1,51 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} {% load static %} {% comment %} context = {
+'contributors': contributors, } {% endcomment %} {% block title %} Rankings {%
+endblock %} {% block content %} {% include "user_profile/navbar-rankings.html"
+%}
 
-{% comment %}
-    context = {
-        'contributors': contributors,
-    }
-{% endcomment %}
-
-{% block title %}
-    Rankings
-{% endblock %}
-{% block content %}
-
-    {% include "user_profile/navbar-rankings.html" %}
-
-    <div style="text-align: center"><h1 class="display-6 text-white">Rankings</h1></div>
-    <table class="table table-bordered text-white" style="background-color: rgba(0,0,0, 0.3);" border="2" cellpadding="10" cellspacing="5">
-        <tr>
-            <th>Rank</th>
-            <th>Username</th>
-            <th>Total Points</th>
-            <th>Bonus Points</th>
-            <th>Deducted Points</th>
-            <th>Issues Solved</th>
-
-        </tr>
-        {% for contributor in contributors %}
-            <tr>
-                <td><b>{{ forloop.counter }}</b></td>
-                <td><b>@{{ contributor.user.username }}</b></td>
-                <td>
-                    <span class="badge badge-pill badge-primary">
-                        {{ contributor.total_points }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-pill badge-success">
-                        {{ contributor.bonus_points }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-pill badge-danger">
-                        {{ contributor.deducted_points }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-pill badge-success">
-                        {{ contributor.issues_solved }}
-                    </span>
-                </td>
-            </tr>
-        {% endfor %}
-
-    </table>
-{% endblock %}
-
-{% block javascript %}
-
-{% endblock %}
+<div style="text-align: center">
+  <h1 class="display-6 text-white">Rankings</h1>
+</div>
+<table
+  class="table table-bordered text-white"
+  style="background-color: rgba(0, 0, 0, 0.3)"
+  border="2"
+  cellpadding="10"
+  cellspacing="5"
+>
+  <tr>
+    <th>Rank</th>
+    <th>Username</th>
+    <th>Total Points</th>
+    <th>Bonus Points</th>
+    <th>Deducted Points</th>
+    <th>Issues Solved</th>
+  </tr>
+  {% for contributor in contributors %} {% if contributor.total_points > 0 %}
+  <tr>
+    <td><b>{{ forloop.counter }}</b></td>
+    <td><b>@{{ contributor.user.username }}</b></td>
+    <td>
+      <span class="badge badge-pill badge-primary">
+        {{ contributor.total_points }}
+      </span>
+    </td>
+    <td>
+      <span class="badge badge-pill badge-success">
+        {{ contributor.bonus_points }}
+      </span>
+    </td>
+    <td>
+      <span class="badge badge-pill badge-danger">
+        {{ contributor.deducted_points }}
+      </span>
+    </td>
+    <td>
+      <span class="badge badge-pill badge-success">
+        {{ contributor.issues_solved }}
+      </span>
+    </td>
+  </tr>
+  {% endif %} {% endfor %}
+</table>
+{% endblock %} {% block javascript %} {% endblock %}
