@@ -2,7 +2,6 @@ from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 
-import user_profile.views
 from project.models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm, EditProfileForm
 from project.forms import CreateIssueForm
@@ -284,4 +283,4 @@ def create_issue(request):
             print('Response:', r.content)
             return JsonResponse({'status': 'error'})
     else:
-        return HttpResponseRedirect("Something Went Wrong")
+        return HttpResponse("Something Went Wrong")
