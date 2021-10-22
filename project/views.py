@@ -116,7 +116,7 @@ def parse_bonus(bonus):
 
 
 def parse_labels(labels):
-    mentor, level, points, is_restricted, bonus_value, bonus_description = None, None, 0, False, "0", " "
+    mentor, level, points, is_restricted, bonus_value, bonus_description = None, None, 0, False, "0", ""
     for label in labels:
 
         if str(label["description"]).lower() == LABEL_MENTOR:  # Parsing Mentor
