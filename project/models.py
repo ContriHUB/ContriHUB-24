@@ -41,7 +41,6 @@ class Project(models.Model):
         sub_domains = sub_domains[:-1]  # Removing trailing '/'
         return sub_domains  # all_sub_domains_name_with_/_in_betw,een and removing last '/'
 
-
     def __str__(self):
         return self.name
 
