@@ -1,20 +1,16 @@
 from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from project.models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
+from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm, EditProfileForm
-from project.forms import CreateIssueForm
 from .models import UserProfile
-from project.models import Project, Issue
-from project.views import parse_level
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from home.helpers import send_email
 import re
-import json
-import requests
 
 User = get_user_model()
 
@@ -66,7 +62,7 @@ def profile(request, username):
             pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
 
             pr_form = PRSubmissionForm()
-            create_issue_form = CreateIssueForm()
+
             pe_form = EditProfileForm(instance=request.user.userprofile)
             context = {
                 "mentored_issues": mentored_issues,
@@ -77,7 +73,6 @@ def profile(request, username):
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
                 'pe_form': pe_form,
-                'create_issue_form': create_issue_form,
                 "native_profile": native_profile,
                 "free_issues_solved": free_issues_solved,
                 "v_easy_issues_solved": v_easy_issues_solved,
@@ -165,12 +160,7 @@ def edit_profile(request):
             'year': year,
             'course': course,
         })
-        print({
-            'user': user,
-            'reg_num': reg_num,
-            'year': year,
-            'course': course,
-        })
+
         email = EmailMessage(
             subject, message, to=['contrihub.avishkar@gmail.com']
         )
@@ -194,76 +184,5 @@ def change_contact_info(request):
             user_pro.whatsapp_no = new_whatsapp_no
             user_pro.save()
         return JsonResponse({'status': 'success'})
-    else:
-        return HttpResponse("Something Went Wrong")
-
-
-@login_required
-def create_issue(request):
-    level = {
-        '0': 'free',
-        '1': 'easy',
-        '2': 'medium',
-        '3': 'hard',
-        '4': 'very_easy'
-    }
-    if request.is_ajax():
-        data = request.POST
-        project_id = data.get('project')
-        level_id = data.get('level')
-        mentor_id = data.get('mentor')
-        points = data.get('points')
-        default_points = parse_level(level.get(level_id))
-        if points == '0':
-            points = str(default_points[1])     # refer project.views and settings.py for parse_level and points
-        print(points)
-        is_res = data.get('is_restricted')
-        title = data.get('title')
-        desc = data.get('desc')
-        project = Project.objects.get(id=project_id)
-        level = level.get(level_id)
-        mentor = User.objects.get(id=mentor_id).__str__()
-        url = project.api_url
-        if is_res == '1':
-            label = [mentor, level, points, 'restricted']
-        else:
-            label = [mentor, level, points]
-        url += '/issues'
-        issue_detail = {'title': title,
-                        'body': desc,
-                        'labels': label
-                        }
-        payload = json.dumps(issue_detail)
-        social = request.user.social_auth.get(provider='github')
-        headers = {
-            "Accept": "application/vnd.github.v3+json",
-            "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
-        }
-
-        r = requests.post(url, data=payload, headers=headers)
-        det = r.json()
-
-        if r.status_code == 201:
-            f = False
-            if is_res == '1':
-                f = True
-            print('Successfully created Issue "%s"' % title)
-            Issue.objects.create(
-                title='' + det['title'],
-                api_url='' + det['repository_url'],
-                html_url='' + det['url'],
-                project=project,
-                mentor=User.objects.get(id=mentor_id),
-                level=level_id,
-                points=points,
-                state=1,
-                description=desc,
-                is_restricted=is_res
-            )
-            return JsonResponse({'status': 'success'})
-        else:
-            print('Could not create Issue "%s"' % title)
-            print('Response:', r.content)
-            return JsonResponse({'status': 'error'})
     else:
         return HttpResponse("Something Went Wrong")

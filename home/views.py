@@ -10,7 +10,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core import mail
 from django.core.mail import EmailMessage
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.template.loader import render_to_string
@@ -66,10 +66,9 @@ def home(request):
     project_domain = Domain.objects.all()
     project_sub_domain = SubDomain.objects.all()
 
-
-
     # get all active issues and set field contributor as active_issue.contributor
     all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+
     # page = request.GET.get('page', 1)
     # paginator = Paginator(issues_qs, 20)
     # try:
@@ -113,7 +112,7 @@ def home(request):
         'all_active_issues': all_active_issues,
         'projects': project_qs,
         'project_domain': project_domain,
-        'project_sub_domain': project_sub_domain,
+        'project_sub_domain': project_sub_domain
     }
 
     return render(request, 'home/index.html', context=context)
