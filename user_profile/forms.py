@@ -11,7 +11,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('registration_no', 'course', 'current_year', 'ms_teams_id', 'whats_app_no')
+        fields = ('registration_no', 'course', 'current_year', 'ms_teams_id', 'whatsapp_no')
 
 
 class EditProfileForm(forms.ModelForm):

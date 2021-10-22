@@ -473,7 +473,7 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(data){
-                    if(status === 'success'){
+                    if(data.status === 'success'){
                         alert('Issue Created')  ;
                     }
                     else{
