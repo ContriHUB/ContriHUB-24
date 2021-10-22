@@ -33,19 +33,6 @@ class Project(models.Model):
 
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
 
-    def sub_domains(project_id):
-        sub_domain_qs = SubDomainProject.objects.filter(project=project_id)
-        sd = sub_domain_qs.all()
-        sub_domains = ''
-        act_sub_domains = ''
-        if (len(sd) > 0):
-            for s in sd:
-                sub_domains += s.sub_domain.name.__str__() + '/'
-            act_sub_domains = sub_domains[:-1]
-            return '(' + act_sub_domains + ')'    # ( subdomains )
-        else:
-            return ''
-
     def __str__(self):
         return self.name
 
@@ -96,8 +83,6 @@ class Issue(models.Model):
 
     # 1 - Open, 0 - Closed
     state = models.PositiveSmallIntegerField('State', choices=STATES, default=1)
-
-    description = models.TextField(verbose_name="Description", null=True, blank=True)
 
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
