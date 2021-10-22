@@ -27,4 +27,5 @@ Add your name in the given format.
 * [Kunal Chahal](https://contrihub21.herokuapp.com/profile/user/KunaAl22/)
 * [Karimulla Mohammad](https://contrihub21.herokuapp.com/profile/user/rdx-rockstar/)
 * [Rajdeep Tiwari](https://contrihub21.herokuapp.com/profile/user/tiwarirajdeep/)
+* [Satvik Sinha](https://github.com/Satvik-Sinha)
 * [Pranavi](https://contrihub21.herokuapp.com/profile/user/pranavi79/)
