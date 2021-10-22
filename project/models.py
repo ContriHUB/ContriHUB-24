@@ -37,8 +37,9 @@ class Project(models.Model):
         sub_domains_project_qs = SubDomainProject.objects.filter(project=self)
         sub_domains = ''
         for sd in sub_domains_project_qs:
-            sub_domains += sd.sub_domain.name.__str__() + '/'
-        return  sub_domains[:-1]       # all_sub_domains_name_with_/_in_bw, and removing last '/'
+            sub_domains += str(sd.sub_domain.name) + '/'
+        sub_domains = sub_domains[:-1]  # Removing trailing '/'
+        return sub_domains  # all_sub_domains_name_with_/_in_betw,een and removing last '/'
 
 
     def __str__(self):
