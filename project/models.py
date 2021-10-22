@@ -68,7 +68,10 @@ class Issue(models.Model):
 
     title = models.CharField(verbose_name="Title", max_length=200)
 
-    api_url = models.URLField(verbose_name="API URL")
+    # Issue description
+    description = models.TextField(verbose_name="Description", null=True, blank=True)
+
+    api_url = models.URLField(verbose_name="API URL")  # CAUTION: May contain inconsistent values, do not use this
 
     html_url = models.URLField(verbose_name="HTML URL")
 
