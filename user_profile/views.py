@@ -1,6 +1,8 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+
+import user_profile.views
 from project.models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm, EditProfileForm
 from project.forms import CreateIssueForm
@@ -11,6 +13,7 @@ from project.forms import PRSubmissionForm
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.contrib import messages
 import re
 import json
 import requests
@@ -199,6 +202,9 @@ def change_contact_info(request):
 
 @login_required
 def create_issue(request):
+    if request.user.userprofile.role == UserProfile.STUDENT :
+        messages.error(request,"Students cannot create an issue")
+        return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
     level = {
         '0': 'free',
         '1': 'easy',
@@ -278,4 +284,4 @@ def create_issue(request):
             print('Response:', r.content)
             return JsonResponse({'status': 'error'})
     else:
-        return HttpResponse("Something Went Wrong")
+        return HttpResponseRedirect("Something Went Wrong")
