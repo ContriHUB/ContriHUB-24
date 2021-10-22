@@ -477,11 +477,11 @@
                         alert('Issue Created')  ;
                     }
                     else{
-                        alert('Issue Not Created, some problem occured.')
+                        alert('Issue Not Created, some problem occurred.');
                     }
                 },
                 error:function(data){
-                    alert('Issue Not Created, some problem occured.')
+                    alert('Issue Not Created, some problem occurred.')
                 }
             }) ;
         })
@@ -494,7 +494,7 @@
             input.type = 'tel';
             input.required = true ;
             input.value = value ;
-            var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im ;
+            var phoneno = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im ;
             if(value.match(phoneno)){
                 return true ;
             }

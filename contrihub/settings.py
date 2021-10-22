@@ -149,9 +149,7 @@ SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY', default="")
 SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET', default="")
 SOCIAL_AUTH_GITHUB_SCOPE = [
     'user:email',  # For Reading user's email
-    # 'read:org',  # For Reading Organizations authenticated user is part of
-    # 'repo',  # For pull access to create issues from user's side(role only for mentor, admin)
-    # 'write:org',
+    'public_repo'  # For creating issues by Admins and Mentors
 ]
 
 LOGIN_URL = 'authorize'

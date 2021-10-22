@@ -1,11 +1,10 @@
-from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from project.models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm, EditProfileForm
 from project.forms import CreateIssueForm
 from .models import UserProfile
-from project.models import Project, Issue
 from project.views import parse_level
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
@@ -213,26 +212,41 @@ def create_issue(request):
         level_id = data.get('level')
         mentor_id = data.get('mentor')
         points = data.get('points')
+        is_restricted_str = data.get('is_restricted')
         default_points = parse_level(level.get(level_id))
-        if points == '0':
-            points = str(default_points[1])     # refer project.views and settings.py for parse_level and points
-        print(points)
-        is_res = data.get('is_restricted')
         title = data.get('title')
-        desc = data.get('desc')
+        description = data.get('desc')
+
+        is_default_points_used = False
+        if points == '0':
+            is_default_points_used = True
+            points = str(default_points[1])     # refer project.views and settings.py for parse_level and points
+
+        is_restricted = False
+        if is_restricted_str == '1':
+            is_restricted = True
+
         project = Project.objects.get(id=project_id)
         level = level.get(level_id)
-        mentor = User.objects.get(id=mentor_id).__str__()
+        mentor = User.objects.get(id=mentor_id).username
         url = project.api_url
-        if is_res == '1':
-            label = [mentor, level, points, 'restricted']
-        else:
-            label = [mentor, level, points]
+
+        labels = [mentor, level]
+
+        if not is_default_points_used:
+            labels.append(points)
+
+        if is_restricted:
+            labels.append('restricted')
+
         url += '/issues'
-        issue_detail = {'title': title,
-                        'body': desc,
-                        'labels': label
-                        }
+
+        issue_detail = {
+            'title': title,
+            'body': description,
+            'labels': labels
+        }
+
         payload = json.dumps(issue_detail)
         social = request.user.social_auth.get(provider='github')
         headers = {
@@ -241,24 +255,22 @@ def create_issue(request):
         }
 
         r = requests.post(url, data=payload, headers=headers)
-        det = r.json()
+        response_data = r.json()
 
         if r.status_code == 201:
-            f = False
-            if is_res == '1':
-                f = True
+
             print('Successfully created Issue "%s"' % title)
             Issue.objects.create(
-                title='' + det['title'],
-                api_url='' + det['repository_url'],
-                html_url='' + det['url'],
+                title='' + response_data['title'],
+                api_url='' + response_data['repository_url'],
+                html_url='' + response_data['url'],
                 project=project,
                 mentor=User.objects.get(id=mentor_id),
                 level=level_id,
                 points=points,
                 state=1,
-                description=desc,
-                is_restricted=is_res
+                description=description,
+                is_restricted=is_restricted
             )
             return JsonResponse({'status': 'success'})
         else:
