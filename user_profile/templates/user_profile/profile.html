@@ -473,8 +473,12 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(data){
-
-                    alert('Issue Created') ;
+                    if(status === 'success'){
+                        alert('Issue Created')  ;
+                    }
+                    else{
+                        alert('Issue Not Created, some problem occured.')
+                    }
                 },
                 error:function(data){
                     alert('Issue Not Created, some problem occured.')
