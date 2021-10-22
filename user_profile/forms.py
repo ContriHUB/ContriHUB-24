@@ -5,7 +5,7 @@ from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 
 class UserProfileForm(forms.ModelForm):
-    whats_app_no = PhoneNumberField(
+    whatsapp_no = PhoneNumberField(
         widget=PhoneNumberPrefixWidget(initial='IN')
     )
 
