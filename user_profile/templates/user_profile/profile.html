@@ -444,7 +444,42 @@
                     success(data) {},
                     error: function (data) {}
                 })
-            })
+            });
+        });
+
+        $(document).on('submit','#create_issue', function (event) {
+                event.preventDefault();
+                let title = $('#id_title').val() ;
+                let desc = $('#id_description').val() ;
+                let mentor = $('#id_mentor').val() ;
+                let project = $('#id_project').val();
+                let points = $('#id_points').val() ;
+                let level = $('#id_level').val() ;
+                let is_restricted = 0 ;
+                if($("#id_is_restricted").prop('checked') === true) {
+                    is_restricted = 1 ;
+                }
+            $.ajax({
+                url : '{% url 'create_issue' %}',
+                type : 'POST',
+                data: {
+                    project,
+                    level,
+                    mentor,
+                    title,
+                    desc,
+                    points,
+                    is_restricted,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){
+
+                    alert('Issue Created') ;
+                },
+                error:function(data){
+                    alert('Issue Not Created, some problem occured.')
+                }
+            }) ;
         })
     </script>
     <script type="text/javascript">
@@ -503,22 +538,24 @@
     <script>
         $(document).ready(function () {
             $('#toggle_contact_info').click(function () {
-                let disabled1 = $("#ms_field").attr('disabled');
-                let disabled2 = $("#whatsapp_no").attr('disabled');
+                let ms_field = $("#ms_field");
+                let whats_app_no = $("#whatsapp_no");
+                let disabled1 = ms_field.attr('disabled');
+                let disabled2 = whats_app_no.attr('disabled');
                 if (disabled1 === undefined  ) {
-                    $("#ms_field").attr('disabled', 'disabled');
+                    ms_field.attr('disabled', 'disabled');
                 } else {
-                    $("#ms_field").removeAttr('disabled');
+                    ms_field.removeAttr('disabled');
                 }
                 if (disabled2 === undefined) {
-                    $("#whatsapp_no").attr('disabled', 'disabled');
+                    whats_app_no.attr('disabled', 'disabled');
                 } else {
-                    $("#whatsapp_no").removeAttr('disabled');
+                    whats_app_no.removeAttr('disabled');
                 }
-            })
+            });
             $('#profile_edit').click(function () {
                 $("#updateprofilerequest").toast("show");
-            })
+            });
             $("#deadlineCrossed").toast('show');
         });
         function removeToastForDeadlineCrossed()
@@ -543,11 +580,11 @@
         function validate_pr(event)
         {
             let submitted_link = event.target.elements.pr_link.value;
-            let regex1 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$/;
+            let regex1 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+#issue-[0-9]+$/;
             let regex2 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
             let check1 = regex1.test(submitted_link);
             let check2 = regex2.test(submitted_link);
-            if(check1 == true || check2==true)
+            if(check1 === true || check2 === true)
                 return true;
             
             $("#invalidPR").toast('show');

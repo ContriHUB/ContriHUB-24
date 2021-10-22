@@ -74,6 +74,16 @@
                     Populate Issues
                 </button>
             </a>
+
+        {% endif %}
+        {% if user.userprofile.role == user.userprofile.ADMIN or user.userprofile.role == user.userprofile.MENTOR %}
+            {% if user.is_authenticated and user.username == native_profile.user.username %}
+            <a  class="nav-link" data-bs-toggle="modal" data-bs-target="#create_issue_modal">
+                <button type="button" class="btn btn-secondary btn-rounded" data-mdb-ripple-color="dark">
+                    Create Issue
+                </button>
+            </a>
+            {% endif %}
         {% endif %}
     {% if user.is_authenticated %}
         <a  class="nav-link" href="{% url 'logout' %}">
@@ -102,3 +112,5 @@
   <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
+
+{% include 'user_profile/create_issue.html' %}

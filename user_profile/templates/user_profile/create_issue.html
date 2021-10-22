@@ -1,0 +1,35 @@
+{% load crispy_forms_tags %}
+{% if user.userprofile.role == user.userprofile.ADMIN or user.userprofile.role == user.userprofile.MENTOR %}
+    {% if user.is_authenticated and user.username == native_profile.user.username %}
+            <div class="modal fade" id="create_issue_modal" tabindex="-1"
+         aria-labelledby="formmodal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create An Issue</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method='POST' id="create_issue">
+                        {% csrf_token %}
+                        {{ create_issue_form|crispy }}
+                        <div class="row p-3">
+                            <div class="offset-5">
+                                <button class='btn btn-primary' value="SUBMIT" data-bs-dismiss="modal" type='Submit'>
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+        {% endif %}
+{% endif %}
