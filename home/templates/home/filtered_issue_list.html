@@ -10,7 +10,10 @@
     <div class="col infinite-item">
         <div class="card m-3 text-center" style="border-radius: 15px;">
             <div class="card-header">
-                Issue #{{ issue.number }} - {{ project.domain }}{{ project.sub_domains }}
+                Issue #{{ issue.number }} - {{ issue.project.domain }}
+                {% if issue.project.get_sub_domains != '' %}
+                    ({{ issue.project.get_sub_domains }})
+                {% endif %}
             </div>
             <div class="card-body">
 

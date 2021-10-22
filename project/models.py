@@ -33,16 +33,13 @@ class Project(models.Model):
 
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
 
-    def sub_domains(project_id):
-        sub_domain_qs = SubDomainProject.objects.filter(project=project_id)
-        sd = sub_domain_qs.all()
+    def get_sub_domains(self):
+        sub_domains_qs = SubDomainProject.objects.filter(project=self)
         sub_domains = ''
-        act_sub_domains = ''
-        if (len(sd) > 0):
-            for s in sd:
-                sub_domains += s.sub_domain.name.__str__() + '/'
-            act_sub_domains = sub_domains[:-1]
-            return '(' + act_sub_domains + ')'       # (all_sub_domains_name_with_/_in_bw)
+        if ( len(sub_domains_qs) > 0 ) :
+            for sd in sub_domains_qs:
+                sub_domains += sd.sub_domain.name.__str__() + '/'
+            return  sub_domains[:-1]       # all_sub_domains_name_with_/_in_bw, and removing last '/'
         else:
             return ''
 
