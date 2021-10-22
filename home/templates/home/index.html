@@ -163,6 +163,9 @@
                         {% endifnotequal %}
                         <div class="card-header">
                             Issue #{{ issue.number }} - {{ issue.project.domain }}
+                            {% if issue.project.get_sub_domains != '' %}
+                                ({{ issue.project.get_sub_domains }})
+                            {% endif %}
                         </div>
                         <div class="card-body">
 
