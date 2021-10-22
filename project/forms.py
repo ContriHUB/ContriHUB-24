@@ -15,3 +15,4 @@ class CreateIssueForm(forms.ModelForm):
     class Meta:
         model = Issue
         fields = ('title','description','mentor','project','level','points','is_restricted')
+        
