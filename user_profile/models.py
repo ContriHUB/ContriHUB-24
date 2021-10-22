@@ -8,7 +8,6 @@ User = get_user_model()
 
 
 class UserProfile(models.Model):
-
     STUDENT, MENTOR, ADMIN = 1, 2, 3
     ROLES = (
         (STUDENT, 'Student'),

@@ -32,6 +32,18 @@
             for the field, where 'FOO' is the name of the field.
         {% endcomment %}
 
+        {% if messages %}
+            {% for message in messages %}
+                <div class="myToast">
+                    <div class="toast bg-danger fade hide" id="deadlineCrossed">
+                        <div class="toast-body">
+                            {{message}}
+                            <button onclick="removeToastForDeadlineCrossed()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
 
         <div class="myToast">
             <div class="toast bg-danger fade hide" id="invalidPR">
@@ -122,7 +134,7 @@
                 </div>
 
 
-                <div class="text-center"><h1 class="display-6 text-white"><b>Current Assignment Requests</b></h1></div>
+                <div class="text-center"><h1 class="display-6 text-white"><b>Your Assignment Requests</b></h1></div>
 
                 <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
@@ -507,7 +519,12 @@
             $('#profile_edit').click(function () {
                 $("#updateprofilerequest").toast("show");
             })
+            $("#deadlineCrossed").toast('show');
         });
+        function removeToastForDeadlineCrossed()
+        {
+            $("#deadlineCrossed").toast('hide');
+        }
         function removeToastForWhatsappNo()
         {
             $("#invalidWhatsappNo").toast('hide');
@@ -536,7 +553,7 @@
             $("#invalidPR").toast('show');
             return false;
         }
-
+        
         function removeToast()
         {
             $("#invalidPR").toast('hide');

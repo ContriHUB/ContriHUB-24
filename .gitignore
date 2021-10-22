@@ -3,6 +3,7 @@ helper_images/
 
 node_modules
 .idea/
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
