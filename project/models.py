@@ -34,9 +34,9 @@ class Project(models.Model):
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
 
     def get_sub_domains(self):
-        sub_domains_qs = SubDomainProject.objects.filter(project=self)
+        sub_domains_project_qs = SubDomainProject.objects.filter(project=self)
         sub_domains = ''
-        for sd in sub_domains_qs:
+        for sd in sub_domains_project_qs:
             sub_domains += sd.sub_domain.name.__str__() + '/'
         return  sub_domains[:-1]       # all_sub_domains_name_with_/_in_bw, and removing last '/'
 
