@@ -36,12 +36,10 @@ class Project(models.Model):
     def get_sub_domains(self):
         sub_domains_qs = SubDomainProject.objects.filter(project=self)
         sub_domains = ''
-        if ( len(sub_domains_qs) > 0 ) :
-            for sd in sub_domains_qs:
-                sub_domains += sd.sub_domain.name.__str__() + '/'
-            return  sub_domains[:-1]       # all_sub_domains_name_with_/_in_bw, and removing last '/'
-        else:
-            return ''
+        for sd in sub_domains_qs:
+            sub_domains += sd.sub_domain.name.__str__() + '/'
+        return  sub_domains[:-1]       # all_sub_domains_name_with_/_in_bw, and removing last '/'
+
 
     def __str__(self):
         return self.name
