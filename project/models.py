@@ -89,7 +89,7 @@ class Issue(models.Model):
 
     bonus_value = models.CharField(verbose_name="Bonus Value", max_length=200, default="0")
 
-    bonus_description = models.CharField(verbose_name="Bonus Description", max_length=200, default=" ");
+    bonus_description = models.CharField(verbose_name="Bonus Description", max_length=200, default="")
 
     upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
 
