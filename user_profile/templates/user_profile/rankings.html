@@ -26,30 +26,32 @@
 
         </tr>
         {% for contributor in contributors %}
-            <tr>
-                <td><b>{{ forloop.counter }}</b></td>
-                <td><b>@{{ contributor.user.username }}</b></td>
-                <td>
-                    <span class="badge badge-pill badge-primary">
-                        {{ contributor.total_points }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-pill badge-success">
-                        {{ contributor.bonus_points }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-pill badge-danger">
-                        {{ contributor.deducted_points }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-pill badge-success">
-                        {{ contributor.issues_solved }}
-                    </span>
-                </td>
-            </tr>
+            {% if contributor.total_points > 0 %}
+                <tr>
+                    <td><b>{{ forloop.counter }}</b></td>
+                    <td><b>@{{ contributor.user.username }}</b></td>
+                    <td>
+                        <span class="badge badge-pill badge-primary">
+                            {{ contributor.total_points }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge badge-pill badge-success">
+                            {{ contributor.bonus_points }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge badge-pill badge-danger">
+                            {{ contributor.deducted_points }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge badge-pill badge-success">
+                            {{ contributor.issues_solved }}
+                        </span>
+                    </td>
+                </tr>
+            {% endif %}
         {% endfor %}
 
     </table>

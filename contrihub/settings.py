@@ -149,7 +149,7 @@ SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY', default="")
 SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET', default="")
 SOCIAL_AUTH_GITHUB_SCOPE = [
     'user:email',  # For Reading user's email
-    # 'read:org',  # For Reading Organizations authenticated user is part of
+    'public_repo'  # For creating issues by Admins and Mentors
 ]
 
 LOGIN_URL = 'authorize'
@@ -173,6 +173,7 @@ LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")
 LABEL_RESTRICTED = config('LABEL_RESTRICTED', default="restricted")
+LABEL_BONUS = config('LABEL_BONUS', default="bonus")
 DEPENDABOT_LOGIN = config('DEPENDABOT_LOGIN', default="dependabot[bot]")
 
 MAX_SIMULTANEOUS_ISSUE = config('MAX_SIMULTANEOUS_ISSUE', default=2, cast=int)
