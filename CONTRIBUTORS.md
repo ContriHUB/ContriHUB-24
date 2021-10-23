@@ -28,4 +28,6 @@ Add your name in the given format.
 * [Karimulla Mohammad](https://contrihub21.herokuapp.com/profile/user/rdx-rockstar/)
 * [Rajdeep Tiwari](https://contrihub21.herokuapp.com/profile/user/tiwarirajdeep/)
 * [Pranavi](https://contrihub21.herokuapp.com/profile/user/pranavi79/)
+* [Naman Mittal](https://contrihub21.herokuapp.com/profile/user/just-a-n00b/)
 * [shivendra pratap singh](https://contrihub21.herokuapp.com/profile/user/shiva2003397/)
+
