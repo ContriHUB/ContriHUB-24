@@ -1,0 +1,15 @@
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		ankitsangwan1999
+	Succeeded at:
+		2021-10-14 01:11:19.28
+	Time Taken:
+		3.22 seconds
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		ankitsangwan1999
+	Succeeded at:
+		2021-10-14 01:11:32.96
+	Time Taken:
+		3.2 seconds

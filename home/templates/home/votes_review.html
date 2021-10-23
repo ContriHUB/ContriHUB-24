@@ -1,0 +1,42 @@
+
+
+<div class="modal fade" id="id_upvotes_review_{{issue.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #9fabbf;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upvotes</h5>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" cellpadding="10" cellspacing="5">
+                    {% for user in issue.upvotes.all %}
+                        <tr>
+                            <td><b>{{forloop.counter}}.</b></td>
+                            <td><b>@{{user.username}}</b></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="id_downvotes_review_{{issue.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #9fabbf;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Downvotes</h5>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" cellpadding="10" cellspacing="5">
+                    {% for user in issue.downvotes.all %}
+                        <tr>
+                            <td><b>{{forloop.counter}}.</b></td>
+                            <td><b>@{{user.username}}</b></td>
+                        </tr>
+                    {% endfor %}    
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

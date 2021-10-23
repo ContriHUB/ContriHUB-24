@@ -1,15 +1,34 @@
-<p class="card-text">
+
+{% include 'home/votes_review.html' %}
+
+{% if user.is_authenticated %}
+    <p class="card-text">
     {% if request.user in issue.upvotes.all %}
-        <button class="btn btn-success" id="votebtn" type="0" iid="{{ issue.pk }}"><i class="fas fa-thumbs-up"></i></button>
+        <button class="btn btn-success" id="votebtn" type="2" iid="{{ issue.pk }}"><i class="fas fa-thumbs-up"></i></button>
     {% else %}
         <button class="btn btn-primary" id="votebtn" type="0" iid="{{ issue.pk }}"><i class="fas fa-thumbs-up"></i></button>
     {% endif %}
-    <a class="btn btn-rounded btn-success" data-mdb-toggle="tooltip" title="Votes">{{ issue.upvotes.all.count }}</a>
+    <a class="btn btn-rounded btn-success" data-toggle="modal" data-target="#id_upvotes_review_{{issue.id}}" data-mdb-toggle="tooltip" title="View Up-voters">
+        {{ issue.upvotes.all.count }}
+    </a>
     {% if request.user in issue.downvotes.all %}
-        <button class="btn btn-danger" id="votebtn" type="1" iid="{{ issue.pk }}"><i class="fas fa-thumbs-down"></i></button>
+        <button class="btn btn-danger" id="votebtn" type="2" iid="{{ issue.pk }}"><i class="fas fa-thumbs-down"></i></button>
     {% else %}
         <button class="btn btn-primary" id="votebtn" type="1" iid="{{ issue.pk }}"><i class="fas fa-thumbs-down"></i></button>
     {% endif %}
-    <a class="btn btn-rounded btn-danger" data-mdb-toggle="tooltip" title="Votes">{{ issue.downvotes.all.count }}</a>
+    <a class="btn btn-rounded btn-danger" data-toggle="modal" data-target="#id_downvotes_review_{{issue.id}}" data-mdb-toggle="tooltip" title="View Down-voters">
+        {{ issue.downvotes.all.count }}
+    </a>
 </p>
+{% else %}
+    <p class="card-text">
+    <button class="btn btn-primary" id="votebtn" type="3" iid="{{ issue.pk }}"><i class="fas fa-thumbs-up"></i></button>
+    <a class="btn btn-rounded btn-success" data-toggle="modal" data-target="#id_upvotes_review_{{issue.id}}" data-mdb-toggle="tooltip" title="View Up-voters">
+        {{ issue.upvotes.all.count }}
+    </a>    <button class="btn btn-primary" id="votebtn" type="3" iid="{{ issue.pk }}"><i class="fas fa-thumbs-down"></i></button>
+    <a class="btn btn-rounded btn-danger" data-toggle="modal" data-target="#id_downvotes_review_{{issue.id}}" data-mdb-toggle="tooltip" title="View Down-voters">
+        {{ issue.downvotes.all.count }}
+    </a></p>
+{% endif %}
+
 <br>

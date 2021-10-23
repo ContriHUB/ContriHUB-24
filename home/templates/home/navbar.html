@@ -70,11 +70,19 @@
                                         <tr>
                                             <th>Project Name</th>
                                             <th>Domain</th>
+                                            <th>Sub-Domains</th>
                                         </tr>
                                         {% for project in projects %}
                                             <tr>
-                                                <td><a target="_blank" href="{{project.html_url}}"><button type="button" class="btn btn-lg btn-warning ">{{ project.name }}</button></td></a>
+                                                <td><a target="_blank" href="{{project.html_url}}"><button type="button" class="btn btn-lg btn-warning ">{{ project.name }}</button></a></td>
                                                 <td><button type="button" class="btn btn-lg btn-warning">{{ project.domain }}</button></td></td>
+                                                <td><button type="button" class="btn btn-lg btn-warning">
+                                                    {% if project.get_sub_domains != '' %}
+                                                        {{ project.get_sub_domains }}
+                                                    {% else %}
+                                                         N/A
+                                                    {% endif %}
+                                                </button></td></td>
                                             </tr>
                                         {% endfor %}
                                 

@@ -21,6 +21,9 @@
 
 {% block content %}
     {% include "user_profile/navbar-profile.html" %}
+
+    {%  include 'user_profile/remark_modal.html' %}
+
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
 
@@ -28,6 +31,52 @@
             In Django templates you can use the "get_FOO_display()" method, that will return the readable alias
             for the field, where 'FOO' is the name of the field.
         {% endcomment %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="myToast">
+                    <div class="toast bg-danger fade hide" id="deadlineCrossed">
+                        <div class="toast-body">
+                            {{message}}
+                            <button onclick="removeToastForDeadlineCrossed()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="myToast">
+            <div class="toast bg-danger fade hide" id="invalidPR">
+                <div class="toast-body">
+                    Invalid PR Link...!!
+                    <button onclick="removeToast()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="myToast">
+            <div class="toast bg-danger fade hide" id="invalidWhatsappNo">
+                <div class="toast-body">
+                    Invalid Whatsapp No...!!
+                    <button onclick="removeToastForWhatsappNo()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="myToast">
+            <div class="toast bg-danger fade hide" id="invalidMSID">
+                <div class="toast-body">
+                    Invalid MS ID...!!
+                    <button onclick="removeToastForMSID()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="myToast">
+            <div class="toast bg-success fade hide" id="updateprofilerequest">
+                <div class="toast-body">
+                    You Request is Made Successfully For updation. Wait and check later ! ;)
+                    <button onclick="removeToastForUpdateProfileRequest()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
@@ -72,20 +121,20 @@
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
-                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
-                                            <a class="btn btn-primary" data-mdb-toggle="tooltip"
+                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}" onsubmit=" return validate_pr(event)">
+                                            <a class="btn btn-primary" data-mdb-toggle="tooltip" id="pr_link"
                                                title="Enter PR Link">{{ pr_form.pr_link }}</a>
                                             <button class="btn btn-rounded btn-success" type="submit">Submit</button>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         {% endfor %}
                     </div>
                 </div>
 
 
-                <div class="text-center"><h1 class="display-6 text-white"><b>Current Assignment Requests</b></h1></div>
+                <div class="text-center"><h1 class="display-6 text-white"><b>Your Assignment Requests</b></h1></div>
 
                 <div class="container-flow p-3">
                     <div class="row row-cols-1 row-cols-md-2">
@@ -170,12 +219,22 @@
 
                                     </div>
                                     <div class="card-footer text-muted">
+
+                                        <!--Review PR Modal-->
+                                        {%  include 'user_profile/pr_review_modal.html' %}
+
                                         {% if pr.state == pr.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
                                         {% elif pr.state == pr.REJECTED %}
                                             <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
+                                        {% endif %}
+
+                                        {% if pr.state == pr.ACCEPTED or pr.state == pr.REJECTED %}
+                                            <button class="btn btn-rounded btn-warning mt-0" data-toggle="modal" data-target="#id_pr_reviewModal_{{pr.id}}">
+                                                View Remark
+                                            </button>
                                         {% endif %}
                                         <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip"
                                                 title="View PR">
@@ -199,8 +258,7 @@
                                         <svg class="mx-2 my-2" status="{{pr.state}}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="30px" width="30px" fill="#fd7e14" version="1.1" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
                                             <path d="M85.7,19.2C76.7,8.8,63.7,2.9,50,2.9C38.7,2.9,27.7,7,19.2,14.4C9.7,22.6,3.9,34,3,46.6  C2.1,59.1,6.1,71.3,14.3,80.8C22.6,90.3,34,96.1,46.6,97l0,0l0,0c1.1,0.1,2.2,0.1,3.3,0.1c11.3,0,22.3-4.1,30.8-11.5  C90.3,77.4,96.1,66,97,53.4C97.9,40.9,93.9,28.7,85.7,19.2z M87.5,52.7c-0.7,10-5.3,19.2-12.9,25.7C67.8,84.4,59,87.6,50,87.6  c-0.9,0-1.8,0-2.7-0.1l0,0l0,0c-10-0.7-19.2-5.3-25.7-12.9C15,67,11.8,57.3,12.5,47.3c0.7-10,5.3-19.2,12.9-25.7  c6.8-5.9,15.6-9.2,24.6-9.2c10.9,0,21.3,4.7,28.5,13C85,33,88.2,42.7,87.5,52.7z M50,24.4c-6.2,0-12.1,2.2-16.8,6.2  c-5.2,4.5-8.3,10.7-8.8,17.5C24,55,26.1,61.6,30.6,66.8c4.5,5.2,10.7,8.3,17.5,8.8c0.6,0,1.3,0.1,1.9,0.1c6.2,0,12.1-2.2,16.8-6.2  c5.2-4.5,8.3-10.7,8.8-17.5c0.5-6.8-1.7-13.4-6.2-18.6C64.5,27.6,57.4,24.4,50,24.4z M67.6,51.3c-0.3,4.7-2.5,9-6,12  c-3.2,2.8-7.3,4.3-11.5,4.3c-0.4,0-0.8,0-1.3,0c-4.7-0.3-9-2.5-12.1-6.1c-3.1-3.6-4.6-8.1-4.2-12.8c0.3-4.7,2.5-9,6-12  c3.2-2.8,7.3-4.3,11.5-4.3c5.1,0,10,2.2,13.3,6.1C66.4,42,67.9,46.6,67.6,51.3z M55.4,51.3c-0.1,0.4-0.2,0.8-0.4,1.2  c-0.3,0.7-0.8,1.2-1.4,1.7c-0.6,0.5-1.3,0.9-2.1,1.1c-0.5,0.2-1.1,0.3-1.6,0.3c-0.1,0-0.3,0-0.4,0c-0.7-0.1-1.5-0.3-2.1-0.6  c-0.3-0.2-0.6-0.4-0.9-0.6c-0.3-0.2-0.6-0.5-0.8-0.8c-1-1.1-1.5-2.6-1.4-4.1c0-0.4,0.1-0.7,0.2-1.1c0.3-1.1,0.9-2,1.7-2.7  c0.3-0.2,0.5-0.4,0.8-0.6c0.4-0.2,0.8-0.4,1.2-0.5c0.5-0.2,1.1-0.3,1.7-0.3c0.2,0,0.4,0,0.6,0c0.2,0,0.4,0.1,0.6,0.1  c0.2,0,0.4,0.1,0.6,0.2c0.4,0.1,0.7,0.3,1.1,0.5c0.3,0.1,0.5,0.3,0.7,0.5c0.2,0.2,0.5,0.4,0.7,0.7c0.7,0.9,1.2,1.9,1.3,3  c0,0.4,0.1,0.7,0,1.1C55.6,50.7,55.5,51,55.4,51.3z"/>
                                         </svg>
-                                    Issue #{{ pr.issue.number }}
-
+                                        Issue #{{ pr.issue.number }}
                                     </div>
                                     <div class="card-body">
 
@@ -226,21 +284,25 @@
                                     </div>
                                     <div class="card-footer text-muted">
                                         {% if pr.state == pr.ACCEPTED %}
-                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }} </a>                                            
+                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }} </a>    
+
                                         {% elif pr.state == pr.REJECTED %}
                                             <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
+
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
-                                            <button class="btn btn-success mt-0">
-                                            <a class="text-white" href="{% url 'accept_pr' pr.pk %}">Accept</a>
+                                            <button class="btn btn-success mt-0" data-toggle="modal" 
+                                                    onclick="setAcceptURL(`{{pr.pk}}`)" data-target="#id_remarkModal">
+                                                Accept
                                             </button>
-                                            <button class="btn btn-danger mt-0">
-                                             <a class="text-white" href="{% url 'reject_pr' pr.pk %}">Reject</a>
+                                            <button class="btn btn-danger mt-0" data-toggle="modal"
+                                                    onclick="setRejectURL(`{{pr.pk}}`)"  data-target="#id_remarkModal">
+                                                Reject
                                             </button>
 
                                         {% endif %}
                                         <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
-                                            <a class="text-white" href="{{ pr.pr_link }}"><i class="fas fa-eye"></i></a>
+                                            <a class="text-white" href="{{ pr.pr_link }}" target="_blank"><i class="fas fa-eye"></i></a>
                                         </button>
                                     </div>
                                 </div>
@@ -294,7 +356,7 @@
                                             <button class="btn btn-success mt-0">
                                                 <a class="text-white"
                                                    href="{% url 'accept_issue_request' request.pk %}">
-                                                    Accept
+                                                Accept
                                                 </a>
                                             </button>
                                             <button class="btn btn-danger mt-0">
@@ -362,12 +424,55 @@
             Hello, Anon. You need to Authorize with Github First.
         </div>
     {% endif %}
+
 {% endblock %}
 
+
 {% block javascript %}
+
     <script type="text/javascript">
+
+        $(document).on('submit','#create_issue', function (event) {
+            event.preventDefault();
+            let title = $('#id_title').val() ;
+            let desc = $('#id_description').val() ;
+            let mentor = $('#id_mentor').val() ;
+            let project = $('#id_project').val();
+            let points = $('#id_points').val() ;
+            let level = $('#id_level').val() ;
+            let is_restricted = 0 ;
+            if($("#id_is_restricted").prop('checked') === true) {
+                is_restricted = 1 ;
+            }
+            $.ajax({
+                url : '{% url 'create_issue' %}',
+                type : 'POST',
+                data: {
+                    project,
+                    level,
+                    mentor,
+                    title,
+                    desc,
+                    points,
+                    is_restricted,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){
+                    if(data.status === 'success'){
+                        alert('Issue Created')  ;
+                    }
+                    else{
+                        alert('Issue Not Created, some problem occurred.');
+                    }
+                },
+                error:function(data){
+                    alert('Issue Not Created, some problem occurred.')
+                }
+            }) ;
+        });
+
         $(document).ready(function () {
-            $("#form").on('submit', function (event) {
+            $("#edit_profile_form").on('submit', function (event) {
                 event.preventDefault();
                 let the_post = $(this).serialize();
                 $.ajax({
@@ -378,51 +483,143 @@
                     error: function (data) {}
                 })
             })
-        })
-    </script>
-    <script type="text/javascript">
+        });
+
+        function validateWhatsappNo(value){
+            let input = document.createElement('input') ;
+            console.log(value) ;
+            console.log(input) ;
+            input.type = 'tel';
+            input.required = true ;
+            input.value = value ;
+            let phoneno = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im ;
+            if(value.match(phoneno)){
+                return true ;
+            }
+            $('#invalidWhatsappNo').toast('show');
+            return false  ;
+        }
         function validateEmail(value) {
             let input = document.createElement('input');
 
             input.type = 'email';
             input.required = true;
             input.value = value;
-
-            return typeof input.checkValidity === 'function' ? input.checkValidity() : /\S+@\S+\.\S+/.test(value);
+            if (typeof input.checkValidity === 'function' ? input.checkValidity() : /\S+@\S+\.\S+/.test(value))
+                return true ;
+            $('#invalidMSID').toast('show');
+            return false ;
         }
 
         jQuery(document).ready(function (event) {
-            $(document).on('click', '#ms_edit', function (event) {
+            $(document).on('click', '#contact_info_edit', function (event) {
                 event.preventDefault();
                 let ms_id = $('#ms_field').val();
-                if (validateEmail(ms_id)) {
+                let whatsapp_no = $('#whatsapp_no').val();
+                if (validateEmail(ms_id) && validateWhatsappNo(whatsapp_no)) {
                     $.ajax({
-                        url: '{% url "change_msid" %}',
+                        url: '{% url "change_contact_info" %}',
                         type: 'post',
                         data: {
                             csrfmiddlewaretoken: "{{csrf_token}}",
                             ms_id: ms_id,
+                            whatsapp_no: whatsapp_no,
                         },
                         success: function (data) {
                             $("#ms_field").attr('disabled', 'disabled');
+                            $("#whatsapp_no").attr('disabled', 'disabled');
                         },
                         error: function (data) {}
                     })
-                } else {
                 }
-            })
-        })
-    </script>
-    <script>
-        $(document).ready(function () {
-            $('#toggle_ms').click(function () {
-                let disabled = $("#ms_field").attr('disabled');
-                if (disabled === undefined) {
-                    $("#ms_field").attr('disabled', 'disabled');
-                } else {
-                    $("#ms_field").removeAttr('disabled');
+                else {
                 }
             })
         });
+
+        $(document).ready(function () {
+            $('#toggle_contact_info').click(function () {
+                let ms_id = $('#ms_field').val();
+                let whatsapp_no = $('#whatsapp_no').val();
+                let disabled1 = ms_id.attr('disabled');
+                let disabled2 = whatsapp_no.attr('disabled');
+                if (disabled1 === undefined  ) {
+                    ms_id.attr('disabled', 'disabled');
+                } else {
+                    ms_id.removeAttr('disabled');
+                }
+                if (disabled2 === undefined) {
+                    whatsapp_no.attr('disabled', 'disabled');
+                } else {
+                    whatsapp_no.removeAttr('disabled');
+                }
+            });
+
+            $('#profile_edit').click(function () {
+                $("#updateprofilerequest").toast("show");
+            });
+
+            $("#deadlineCrossed").toast('show');
+        });
+
+        function removeToastForDeadlineCrossed()
+        {
+            $("#deadlineCrossed").toast('hide');
+        }
+
+        function removeToastForWhatsappNo()
+        {
+            $("#invalidWhatsappNo").toast('hide');
+        }
+
+        function removeToastForMSID()
+        {
+            $("#invalidMSID").toast('hide');
+        }
+
+        function removeToastForUpdateProfileRequest()
+        {
+            $("#updateprofilerequest").toast('hide');
+        }
+
+        function validate_pr(event)
+        {
+            let submitted_link = event.target.elements.pr_link.value;
+            let regex1 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+#issue-[0-9]+$/;
+            let regex2 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
+            let check1 = regex1.test(submitted_link);
+            let check2 = regex2.test(submitted_link);
+            if(check1 === true || check2 === true)
+                return true;
+            
+            $("#invalidPR").toast('show');
+            return false;
+        }
+        
+        function removeToast()
+        {
+            $("#invalidPR").toast('hide');
+        }
+
+        function setAcceptURL(id)
+        {
+            let url="/accept_pr/"+id+"/";
+            $("#id_remarkForm").attr('action',url);
+        }
+        function setRejectURL(id)
+        {
+            let url="/reject_pr/"+id+"/";
+            $("#id_remarkForm").attr('action',url);
+        }
+
+        function setReviewAttributes(remark,bonus,penalty)
+        {
+            console.log(remark);
+            $("#id_review_field").value=remark;
+            $("#id_bonus_field").value=bonus;
+            $("#id_penalty_field").value=penalty;
+        }
+
     </script>
+
 {% endblock %}
