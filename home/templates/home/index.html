@@ -15,51 +15,57 @@
 {% endblock %}
 
 {% block content %}
+
     {# TODO:ISSUE Make Link open in new tab #}
 
     {% include "home/navbar.html" %}
     {# TODO:ISSUE Remove all Inline Styles and move to External CSS File #}
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
 
-{#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
+    {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
     <div class="myToast">
-            <div class="toast bg-success fade hide" id="upvote">
-                <div class="toast-body">
-                    Up Voted successfully !
-                    <button onclick="removeToastForUpvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
+        <div class="toast bg-success fade hide" id="upvote">
+            <div class="toast-body">
+                Up Voted successfully !
+                <button onclick="removeToastForUpvote()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+    </div>
     <div class="myToast">
-            <div class="toast bg-danger fade hide" id="downvote">
-                <div class="toast-body">
-                    Down Voted successfully !
-                    <button onclick="removeToastForDownvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
+        <div class="toast bg-danger fade hide" id="downvote">
+            <div class="toast-body">
+                Down Voted successfully !
+                <button onclick="removeToastForDownvote()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+    </div>
     <div class="myToast">
-            <div class="toast bg-warning fade hide" id="voteremoved">
-                <div class="toast-body">
-                    Vote revoked successfully !
-                    <button onclick="removeToastForVoteRemoved()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
+        <div class="toast bg-warning fade hide" id="voteremoved">
+            <div class="toast-body">
+                Vote revoked successfully !
+                <button onclick="removeToastForVoteRemoved()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+    </div>
     <div class="myToast">
-            <div class="toast bg-danger fade hide" id="loginfirst">
-                <div class="toast-body">
-                    Login First ! Redirecting To Authorizing page...
-                    <button onclick="removeToastForLoginFirst()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
+        <div class="toast bg-danger fade hide" id="loginfirst">
+            <div class="toast-body">
+                Login First ! Redirecting To Authorizing page...
+                <button onclick="removeToastForLoginFirst()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+    </div>
 
     <div class="myToast">
         <div class="toast bg-danger fade hide" id="noneissuefound">
             <div class="toast-body">
                 No issue found for selected Domain/Sub-Domain.
-                <button onclick="removeToastForNoneIssueFound()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button onclick="removeToastForNoneIssueFound()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -68,37 +74,51 @@
         <div class="toast bg-success fade hide" id="issuefound">
             <div class="toast-body">
                 Issue List Updated.
-                <button onclick="removeToastForIssueFound()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button onclick="removeToastForIssueFound()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="myToast">
+        <div class="toast bg-success fade hide" id="django_messages">
+            <div class="toast-body">
+                ...
+                <button onclick="removeToastForMessages()" style="float: right;" type="button" class="btn-close"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
     <div class="container-flow p-3">
         <div class="row row-cols-1 row-cols-md-1">
-                <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
-                        <div class="card-header text-center">
-                            <h6>Announcements!</h6>
-                        </div>
-                        <div class="card-body">
-                            <ol>
-                                <li>
-                                    <div class="animated bounceInDown">
-                                        <b class="text-success">New FIX:</b> Now you can filter Issues based on Domain or Sub-Domain.
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="animated bounceInLeft">
-                                        <b class="text-success">IMPORTANT:</b> Please fill the <a href="https://forms.gle/tw7gxiak1xm27T2r5">Feedback Form</a> ASAP. You dont want us to put 5 minutes reminder right? :P
-                                    </div>
-                                </li>
-                                <li>
-                                    Some issues are <b>locked</b> and will be unlocked only after you solve the once which are <b>mentioned in the description</b> of a locked Issues.
-                                </li>
-                                <li>
-                                    <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
-                                    Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
-                                    Add your name, and create a Pull Request. These PR will not fetch you any points.
-                                </li>
+            <div class="col">
+                <div class="card m-3" style="border-radius: 15px;">
+                    <div class="card-header text-center">
+                        <h6>Announcements!</h6>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>
+                                <div class="animated bounceInDown">
+                                    <b class="text-success">New FIX:</b> Now you can filter Issues based on Domain or
+                                    Sub-Domain.
+                                </div>
+                            </li>
+                            <li>
+                                <div class="animated bounceInLeft">
+                                    <b class="text-success">IMPORTANT:</b> Please fill the <a
+                                        href="https://forms.gle/tw7gxiak1xm27T2r5">Feedback Form</a> ASAP. You dont want
+                                    us to put 5 minutes reminder right? :P
+                                </div>
+                            </li>
+                            <li>
+                                Some issues are <b>locked</b> and will be unlocked only after you solve the once which
+                                are <b>mentioned in the description</b> of a locked Issues.
+                            </li>
+                            <li>
+                                <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
+                                Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
+                                Add your name, and create a Pull Request. These PR will not fetch you any points.
+                            </li>
                         </ol>
                     </div>
                     <div class="card-footer text-muted">
@@ -110,118 +130,121 @@
 
 
 
-<div class="row">
-    <div class="col-md-2 m-4">
-    <div class="card text-center mb-2"><h3 class="display-7 text-primary"><b>Filter</b></h3></div>
+    <div class="row">
+        <div class="col-md-2 m-4">
+            <div class="card text-center mb-2"><h3 class="display-7 text-primary"><b>Filter</b></h3></div>
 
-			<!-- Filter 1 -->
-			<div class="card mb-4">
-				<h6 class="card-header"><b>By Domain</b></h6>
-				<div class="list-group list-group-flush">
+            <!-- Filter 1 -->
+            <div class="card mb-4">
+                <h6 class="card-header"><b>By Domain</b></h6>
+                <div class="list-group list-group-flush">
                     {% for domain in project_domain %}
-					<li class="list-group-item">
-						<input aria-label="" class="filter-checkbox" value="{{ domain.id }}" data-filter="domain" type="checkbox" />&nbsp;
-                        {{ domain }}
-					</li>
+                        <li class="list-group-item">
+                            <input aria-label="" class="filter-checkbox" value="{{ domain.id }}" data-filter="domain"
+                                   type="checkbox"/>&nbsp;
+                            {{ domain }}
+                        </li>
                     {% endfor %}
-				</div>
-			</div>
-			<!-- Filter 2 -->
-			<div class="card mb-4">
+                </div>
+            </div>
+            <!-- Filter 2 -->
+            <div class="card mb-4">
                 <h6 class="card-header"><b>By Sub Domain</b></h6>
-				<div class="list-group list-group-flush">
+                <div class="list-group list-group-flush">
                     {% for subdomain in project_sub_domain %}
-					<li class="list-group-item">
-						<input aria-label="" class="filter-checkbox" value="{{ subdomain.id }}" data-filter="subdomain" type="checkbox" />&nbsp;
-                        {{ subdomain }}
-					</li>
+                        <li class="list-group-item">
+                            <input aria-label="" class="filter-checkbox" value="{{ subdomain.id }}"
+                                   data-filter="subdomain" type="checkbox"/>&nbsp;
+                            {{ subdomain }}
+                        </li>
                     {% endfor %}
-				</div>
-			</div>
-    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="col-md-9 ml-6">
+        <div class="col-md-9 ml-6">
 
-    <div class=" card text-center mb-2"><h3 class="display-7 text-success"><b>Issues</b></h3></div>
+            <div class=" card text-center mb-2"><h3 class="display-7 text-success"><b>Issues</b></h3></div>
             <div class="loading container ajaxLoader" style="display: none;">
                 <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
                      style="display:block;margin-left:auto;margin-right:auto;">
             </div>
-        <div class="row row-cols-1 row-cols-md-2 infinite-container" id="filteredIssue">
-{#        <p class="ajaxLoader">Loading...</p>#}
+            <div class="row row-cols-1 row-cols-md-2 infinite-container" id="filteredIssue">
+                {#        <p class="ajaxLoader">Loading...</p>#}
 
-            {% for issue in issues %}
-                <div class="col infinite-item">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
-                        <div class="card-header">
-                            Issue #{{ issue.number }} - {{ issue.project.domain }}
-                        </div>
-                        <div class="card-body">
+                {% for issue in issues %}
+                    <div class="col infinite-item">
+                        <div class="card m-3 text-center" style="border-radius: 15px;">
+                            <div class="card-header">
+                                Issue #{{ issue.number }} - {{ issue.project.domain }}
+                            </div>
+                            <div class="card-body">
 
-                            <h5 class="card-title">
-                                <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
-                            </h5>
-                            <h6 class="">
-                                <a data-mdb-toggle="tooltip" title="Project"
-                                   href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
-                            </h6>
+                                <h5 class="card-title">
+                                    <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
+                                </h5>
+                                <h6 class="">
+                                    <a data-mdb-toggle="tooltip" title="Project"
+                                       href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
+                                </h6>
 
-                            <p class="card-text">
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Mentor">@{{ issue.mentor }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Level">{{ issue.get_level_display }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Points">{{ issue.points }}</a>
-                                {% if issue.is_restricted %}
-                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
-                                       title="Restricted">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </a>
+                                <p class="card-text">
+                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                       title="Mentor">@{{ issue.mentor }}</a>
+                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                       title="Level">{{ issue.get_level_display }}</a>
+                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                       title="Points">{{ issue.points }}</a>
+                                    {% if issue.is_restricted %}
+                                        <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                           title="Restricted">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+                                    {% endif %}
+                                </p>
+
+                            </div>
+                            <div id="vote-section-{{ issue.pk }}">
+                                {% include 'home/vote.html' %}
+                            </div>
+                            <div class="card-footer text-muted">
+
+                                {% if issue in all_active_issues %}
+                                    <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                                            title="Already Assigned to this Contributor" type="button"
+                                            class="btn btn-warning btn-rounded mt-0">
+                                        <a class="text-white">
+                                            Assigned to @{{ issue.contributor.username }}
+                                        </a>
+                                    </button>
+                                {% elif issue.state == issue.OPEN %}
+                                    <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
+                                    <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                                            title="Ask mentor for assigning Issue" type="button"
+                                            class="btn btn-primary mt-0">
+                                        <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                            Request Assignment
+                                        </a>
+                                    </button>
+                                {% else %}
+                                    <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
                                 {% endif %}
-                            </p>
 
-                        </div>
-                        <div id="vote-section-{{ issue.pk }}">
-                            {% include 'home/vote.html' %}
-                        </div>
-                        <div class="card-footer text-muted">
-
-                            {% if issue in all_active_issues %}
-                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                    title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
-                                    <a class="text-white">
-                                        Assigned to @{{ issue.contributor.username }}
-                                    </a>
-                                </button>
-                            {% elif issue.state == issue.OPEN %}
-                                <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
-                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                        title="Ask mentor for assigning Issue" type="button"
-                                        class="btn btn-primary mt-0">
-                                    <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                        Request Assignment
-                                    </a>
-                                </button>
-                            {% else %}
-                                <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
-                            {% endif %}
-
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-        {% if issues.has_next %}
-            <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
-        {% endif %}
+                {% endfor %}
+            </div>
+            {% if issues.has_next %}
+                <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
+            {% endif %}
 
-        <div class="loading container" style="display: none;">
-            <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
-                 style="display:block;margin-left:auto;margin-right:auto;">
+            <div class="loading container" style="display: none;">
+                <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
+                     style="display:block;margin-left:auto;margin-right:auto;">
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block javascript %}
@@ -236,25 +259,32 @@
             }
         });
 
+        jQuery(document).ready(function () {
+                {% if messages %}
+                    {% for message in messages %}
+                        $('#django_messages').children('.toast-body').html("{{message|safe }}");
+                        $('#django_messages').toast("show");
+                    {% endfor %}
+                {% endif %}
+
+            }
+        )
         // For Voting and Downvoting
         jQuery(document).ready(function () {
             $(document).on('click', '#votebtn', function (event) {
                 event.preventDefault();
                 let type = $(this).attr('type');
-                if(type === 0){
+                if (type === 0) {
                     $("#upvote").toast("show");
-                }
-                else if(type === 1){
+                } else if (type === 1) {
                     $("#downvote").toast("show");
-                }
-                else if(type === 2){
+                } else if (type === 2) {
                     $("#voteremoved").toast("show");
-                }
-                else if(type === 3){
+                } else if (type === 3) {
                     $("#loginfirst").toast("show");
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         window.location.href = {% url 'authorize' %};
-                        }, 1000);
+                    }, 1000);
                 }
                 let iid = $(this).attr('iid');
                 console.log(iid);
@@ -279,66 +309,72 @@
             })
         });
 
-        function removeToastForUpvote()
-        {
+        function removeToastForUpvote() {
             $("#upvote").toast('hide');
         }
-        function removeToastForDownvote()
-        {
+
+        function removeToastForDownvote() {
             $("#downvote").toast('hide');
         }
-        function removeToastForVoteRemoved(){
+
+        function removeToastForVoteRemoved() {
             $("#voteremoved").toast('hide');
         }
-        function removeToastForLoginFirst(){
+
+        function removeToastForLoginFirst() {
             $("#loginfirst").toast('hide');
         }
-        function removeToastForNoneIssueFound(){
+
+        function removeToastForNoneIssueFound() {
             $("#noneissuefound").toast('hide');
         }
-        function removeToastForIssueFound(){
+
+        function removeToastForIssueFound() {
             $("#issuefound").toast('hide');
+        }
+
+        function removeToastForMessages() {
+            $("#django_messages").toast('hide');
         }
     </script>
     <script>
 
-    $(document).ready(function() {
-        $(".ajaxLoader").hide() ;
-        $(".filter-checkbox").on('click', function () {
-            let _filterObj = {};
-            $(".filter-checkbox").each(function () {
-                let _filterKey = $(this).data('filter');
-                _filterObj[_filterKey] = Array.from(document.querySelectorAll('input[data-filter=' + _filterKey + ']:checked')).map(function (el) {
-                    return el.value;
+        $(document).ready(function () {
+            $(".ajaxLoader").hide();
+            $(".filter-checkbox").on('click', function () {
+                let _filterObj = {};
+                $(".filter-checkbox").each(function () {
+                    let _filterKey = $(this).data('filter');
+                    _filterObj[_filterKey] = Array.from(document.querySelectorAll('input[data-filter=' + _filterKey + ']:checked')).map(function (el) {
+                        return el.value;
+                    });
                 });
-            });
 
-            //run ajax
-            const NO_ISSUES_FOUND = '1';
+                //run ajax
+                const NO_ISSUES_FOUND = '1';
 
-            $.ajax({
-                url:"",
-                data:_filterObj,
-                dataType:'json',
-                beforeSend:function(){
-                    $(".ajaxLoader").show() ;
-                },
-                success:function(res){
-                    console.log(res) ;
-                    if(res.context === NO_ISSUES_FOUND){
-                        $("#noneissuefound").toast("show");
+                $.ajax({
+                    url: "",
+                    data: _filterObj,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $(".ajaxLoader").show();
+                    },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.context === NO_ISSUES_FOUND) {
+                            $("#noneissuefound").toast("show");
+                        } else {
+                            $("#issuefound").toast("show");
+                        }
+                        $("#filteredIssue").html(res.context);
+                        $(".ajaxLoader").hide();
                     }
-                    else{
-                        $("#issuefound").toast("show");
-                    }
-                    $("#filteredIssue").html(res.context) ;
-                    $(".ajaxLoader").hide() ;
-                }
+                });
+                console.log(_filterObj);
             });
-        console.log(_filterObj) ;
+            // end
         });
-        // end
-    });
 
     </script>
 

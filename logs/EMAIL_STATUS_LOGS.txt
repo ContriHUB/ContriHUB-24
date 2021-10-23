@@ -1,2 +1,74 @@
 
 
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-22 18:03:54.71
+	Cause:
+		please run connect() first
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-22 18:04:39.69
+	Cause:
+		please run connect() first
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-22 18:05:59.97
+	Cause:
+		please run connect() first
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-22 18:20:45.09
+	Cause:
+		please run connect() first
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-22 18:21:33.11
+	Cause:
+		please run connect() first
+
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-22 18:22:34.29
+	Cause:
+		please run connect() first
+
+PR ACCEPTED:
+	Sending mail to:
+		DuP-491
+	Failed at:
+		2021-10-23 10:36:42.37
+	Cause:
+		please run connect() first
+
+PR ACCEPTED:
+	Sending mail to:
+		DuP-491
+	Failed at:
+		2021-10-23 10:37:50.88
+	Cause:
+		please run connect() first
+
+PR REJECTED:
+	Sending mail to:
+		DuP-491
+	Failed at:
+		2021-10-23 10:38:06.36
+	Cause:
+		please run connect() first
+
