@@ -172,49 +172,6 @@
 
         <div class="row row-cols-1 row-cols-md-2 infinite-container" id="filteredIssue">
 {#        <p class="ajaxLoader">Loading...</p>#}
-
-            {% for issue in issues %}
-                <div class="col infinite-item">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
-                        {% ifnotequal issue.bonus_value "0" %}
-                            <div class="bonus">
-                                <a class="star12" data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}"></a>
-                            </div>
-                            <div class="bonus" style="font-weight: bolder; color:white;left:-4px;">
-                                <a data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}">{{issue.bonus_value}}</a>
-                            </div>
-                        {% endifnotequal %}
-                        <div class="card-header">
-                            Issue #{{ issue.number }} - {{ issue.project.domain }}
-                            {% if issue.project.get_sub_domains != '' %}
-                                ({{ issue.project.get_sub_domains }})
-                            {% endif %}
-                        </div>
-                        <div class="card-body">
-
-                            <h5 class="card-title">
-                                <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
-                            </h5>
-                            <h6 class="">
-                                <a data-mdb-toggle="tooltip" title="Project"
-                                   href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
-                            </h6>
-
-                            <p class="card-text">
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Mentor">@{{ issue.mentor }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Level">{{ issue.get_level_display }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                   title="Points">{{ issue.points }}</a>
-                                {% if issue.is_restricted %}
-                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
-                                       title="Restricted">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </a>
-                                {% endif %}
-                            </p>
-
                 {% for issue in issues %}
                     <div class="col infinite-item">
                         <div class="card m-3 text-center" style="border-radius: 15px;">
