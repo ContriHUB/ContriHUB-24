@@ -17,6 +17,7 @@ Add your name in the given format.
 * [Abhijeet Pandey](https://contrihub21.herokuapp.com/profile/user/abhijeetp94/)
 * [Shradhey Pathak](https://contrihub21.herokuapp.com/profile/user/Shradhey1008/)
 * [Sudhanshu Kumar](https://contrihub21.herokuapp.com/profile/user/sudhanshu1221/)
+* [Shivanand](https://contrihub21.herokuapp.com/profile/user/pinnacle20/)
 * [Sri Haritha kancharla](https://contrihub21.herokuapp.com/profile/user/haritha8333/)
 * [Vishwas Vaish](https://contrihub21.herokuapp.com/profile/user/VVV007)
 * [Vaishnavi Tripathi](https://contrihub21.herokuapp.com/profile/user/vaishnavi1011/)
@@ -28,3 +29,5 @@ Add your name in the given format.
 * [Karimulla Mohammad](https://contrihub21.herokuapp.com/profile/user/rdx-rockstar/)
 * [Rajdeep Tiwari](https://contrihub21.herokuapp.com/profile/user/tiwarirajdeep/)
 * [Pranavi](https://contrihub21.herokuapp.com/profile/user/pranavi79/)
+* [Naman Mittal](https://contrihub21.herokuapp.com/profile/user/just-a-n00b/)
+* [shivendra pratap singh](https://contrihub21.herokuapp.com/profile/user/shiva2003397/)
