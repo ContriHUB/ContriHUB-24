@@ -100,7 +100,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{active_issue.issue.mentor}}/" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ active_issue.issue.mentor }}
                                             </a>
@@ -155,7 +155,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ request.issue.mentor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ request.issue.mentor }}
                                             </a>
@@ -207,7 +207,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ pr.issue.mentor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ pr.issue.mentor }}
                                             </a>
@@ -271,7 +271,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ pr.contributor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Contributor">
                                                 @{{ pr.contributor }}
                                             </a>
@@ -332,7 +332,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{request.requester}}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Requester">@{{ request.requester }}</a>
                                             <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"

@@ -29,7 +29,7 @@
             {% if contributor.total_points > 0 %}
                 <tr>
                     <td><b>{{ forloop.counter }}</b></td>
-                    <td><b>@{{ contributor.user.username }}</b></td>
+                    <td><a style="color:white;" href="https://contrihub21.herokuapp.com/profile/user/{{ contributor.user.username }}"><b>@{{ contributor.user.username }}</b></a></td>
                     <td>
                         <span class="badge badge-pill badge-primary">
                             {{ contributor.total_points }}
