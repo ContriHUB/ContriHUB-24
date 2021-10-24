@@ -107,9 +107,6 @@
             </div>
         </div>
     </div>
-
-
-
 <div class="row">
     <div class="col-md-2 m-4">
     <div class="card text-center mb-2"><h3 class="display-7 text-primary"><b>Filter</b></h3></div>
@@ -170,7 +167,7 @@
                         <div class="card-body">
 
                             <h5 class="card-title">
-                                <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
+                            <a href="{% url 'issue_details' issue.pk %}" >{{ issue.title }}</a>
                             </h5>
                             <h6 class="">
                                 <a data-mdb-toggle="tooltip" title="Project"
@@ -252,6 +249,7 @@
             $(document).on('click', '#votebtn', function (event) {
                 event.preventDefault();
                 let type = $(this).attr('type');
+                console.log(type);
                 if(type === 0){
                     $("#upvote").toast("show");
                 }
