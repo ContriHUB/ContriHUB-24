@@ -33,6 +33,14 @@ class Project(models.Model):
 
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
 
+    def get_sub_domains(self):
+        sub_domains_project_qs = SubDomainProject.objects.filter(project=self)
+        sub_domains = ''
+        for sd in sub_domains_project_qs:
+            sub_domains += str(sd.sub_domain.name) + '/'
+        sub_domains = sub_domains[:-1]  # Removing trailing '/'
+        return sub_domains  # all_sub_domains_name_with_/_in_betw,een and removing last '/'
+
     def __str__(self):
         return self.name
 
@@ -68,7 +76,10 @@ class Issue(models.Model):
 
     title = models.CharField(verbose_name="Title", max_length=200)
 
-    api_url = models.URLField(verbose_name="API URL")
+    # Issue description
+    description = models.TextField(verbose_name="Description", null=True, blank=True)
+
+    api_url = models.URLField(verbose_name="API URL")  # CAUTION: May contain inconsistent values, do not use this
 
     html_url = models.URLField(verbose_name="HTML URL")
 
@@ -86,6 +97,10 @@ class Issue(models.Model):
 
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
+
+    bonus_value = models.CharField(verbose_name="Bonus Value", max_length=200, default="0")
+
+    bonus_description = models.CharField(verbose_name="Bonus Description", max_length=200, default="")
 
     upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
 

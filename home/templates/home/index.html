@@ -153,8 +153,19 @@
             {% for issue in issues %}
                 <div class="col infinite-item">
                     <div class="card m-3 text-center" style="border-radius: 15px;">
+                        {% ifnotequal issue.bonus_value "0" %}
+                            <div class="bonus">
+                                <a class="star12" data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}"></a>
+                            </div>
+                            <div class="bonus" style="font-weight: bolder; color:white;left:-4px;">
+                                <a data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}">{{issue.bonus_value}}</a>
+                            </div>
+                        {% endifnotequal %}
                         <div class="card-header">
                             Issue #{{ issue.number }} - {{ issue.project.domain }}
+                            {% if issue.project.get_sub_domains != '' %}
+                                ({{ issue.project.get_sub_domains }})
+                            {% endif %}
                         </div>
                         <div class="card-body">
 
@@ -167,7 +178,7 @@
                             </h6>
 
                             <p class="card-text">
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                <a href="https://contrihub21.herokuapp.com/profile/user/{{issue.mentor}}/" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                    title="Mentor">@{{ issue.mentor }}</a>
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                    title="Level">{{ issue.get_level_display }}</a>
@@ -190,7 +201,7 @@
                             {% if issue in all_active_issues %}
                                 <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
                                     title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
-                                    <a class="text-white">
+                                    <a class="text-white" href="https://contrihub21.herokuapp.com/profile/user/{{issue.contributor.username}}/">
                                         Assigned to @{{ issue.contributor.username }}
                                     </a>
                                 </button>

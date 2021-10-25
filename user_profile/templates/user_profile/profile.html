@@ -100,7 +100,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{active_issue.issue.mentor}}/" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ active_issue.issue.mentor }}
                                             </a>
@@ -155,7 +155,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ request.issue.mentor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ request.issue.mentor }}
                                             </a>
@@ -207,7 +207,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ pr.issue.mentor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ pr.issue.mentor }}
                                             </a>
@@ -271,7 +271,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ pr.contributor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Contributor">
                                                 @{{ pr.contributor }}
                                             </a>
@@ -332,7 +332,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{request.requester}}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Requester">@{{ request.requester }}</a>
                                             <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
@@ -430,9 +430,47 @@
 
 {% block javascript %}
 
-
-
     <script type="text/javascript">
+
+        $(document).on('submit','#create_issue', function (event) {
+            event.preventDefault();
+            let title = $('#id_title').val() ;
+            let desc = $('#id_description').val() ;
+            let mentor = $('#id_mentor').val() ;
+            let project = $('#id_project').val();
+            let points = $('#id_points').val() ;
+            let level = $('#id_level').val() ;
+            let is_restricted = 0 ;
+            if($("#id_is_restricted").prop('checked') === true) {
+                is_restricted = 1 ;
+            }
+            $.ajax({
+                url : '{% url 'create_issue' %}',
+                type : 'POST',
+                data: {
+                    project,
+                    level,
+                    mentor,
+                    title,
+                    desc,
+                    points,
+                    is_restricted,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){
+                    if(data.status === 'success'){
+                        alert('Issue Created')  ;
+                    }
+                    else{
+                        alert('Issue Not Created, some problem occurred.');
+                    }
+                },
+                error:function(data){
+                    alert('Issue Not Created, some problem occurred.')
+                }
+            }) ;
+        });
+
         $(document).ready(function () {
             $("#edit_profile_form").on('submit', function (event) {
                 event.preventDefault();
@@ -445,9 +483,8 @@
                     error: function (data) {}
                 })
             })
-        })
-    </script>
-    <script type="text/javascript">
+        });
+
         function validateWhatsappNo(value){
             let input = document.createElement('input') ;
             console.log(value) ;
@@ -455,7 +492,7 @@
             input.type = 'tel';
             input.required = true ;
             input.value = value ;
-            var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im ;
+            let phoneno = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im ;
             if(value.match(phoneno)){
                 return true ;
             }
@@ -479,7 +516,7 @@
                 event.preventDefault();
                 let ms_id = $('#ms_field').val();
                 let whatsapp_no = $('#whatsapp_no').val();
-                if (validateEmail(ms_id)&&validateWhatsappNo(whatsapp_no)) {
+                if (validateEmail(ms_id) && validateWhatsappNo(whatsapp_no)) {
                     $.ajax({
                         url: '{% url "change_contact_info" %}',
                         type: 'post',
@@ -498,56 +535,61 @@
                 else {
                 }
             })
-        })
-    </script>
-    <script>
+        });
+
         $(document).ready(function () {
             $('#toggle_contact_info').click(function () {
-                let disabled1 = $("#ms_field").attr('disabled');
-                let disabled2 = $("#whatsapp_no").attr('disabled');
+                let ms_id = $('#ms_field').val();
+                let whatsapp_no = $('#whatsapp_no').val();
+                let disabled1 = ms_id.attr('disabled');
+                let disabled2 = whatsapp_no.attr('disabled');
                 if (disabled1 === undefined  ) {
-                    $("#ms_field").attr('disabled', 'disabled');
+                    ms_id.attr('disabled', 'disabled');
                 } else {
-                    $("#ms_field").removeAttr('disabled');
+                    ms_id.removeAttr('disabled');
                 }
                 if (disabled2 === undefined) {
-                    $("#whatsapp_no").attr('disabled', 'disabled');
+                    whatsapp_no.attr('disabled', 'disabled');
                 } else {
-                    $("#whatsapp_no").removeAttr('disabled');
+                    whatsapp_no.removeAttr('disabled');
                 }
-            })
+            });
+
             $('#profile_edit').click(function () {
                 $("#updateprofilerequest").toast("show");
-            })
+            });
+
             $("#deadlineCrossed").toast('show');
         });
+
         function removeToastForDeadlineCrossed()
         {
             $("#deadlineCrossed").toast('hide');
         }
+
         function removeToastForWhatsappNo()
         {
             $("#invalidWhatsappNo").toast('hide');
         }
+
         function removeToastForMSID()
         {
             $("#invalidMSID").toast('hide');
         }
+
         function removeToastForUpdateProfileRequest()
         {
             $("#updateprofilerequest").toast('hide');
         }
-    </script>
 
-    <script>
         function validate_pr(event)
         {
             let submitted_link = event.target.elements.pr_link.value;
-            let regex1 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$/;
+            let regex1 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+#issue-[0-9]+$/;
             let regex2 = /^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$/;
             let check1 = regex1.test(submitted_link);
             let check2 = regex2.test(submitted_link);
-            if(check1 == true || check2==true)
+            if(check1 === true || check2 === true)
                 return true;
             
             $("#invalidPR").toast('show');

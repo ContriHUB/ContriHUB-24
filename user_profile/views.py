@@ -1,16 +1,22 @@
-from django.shortcuts import redirect, render, HttpResponseRedirect, reverse, HttpResponse
+import re
+import json
+import requests
+
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
-from .forms import UserProfileForm, EditProfileForm
-from .models import UserProfile
-from helper import complete_profile_required, check_issue_time_limit
-from project.forms import PRSubmissionForm
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
-from home.helpers import send_email
-import re
+from django.contrib import messages
+
+from helper import complete_profile_required, check_issue_time_limit
+from .forms import UserProfileForm, EditProfileForm
+from .models import UserProfile
+
+from project.models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
+from project.forms import CreateIssueForm, PRSubmissionForm
+from project.views import parse_level
 
 User = get_user_model()
 
@@ -62,7 +68,7 @@ def profile(request, username):
             pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
 
             pr_form = PRSubmissionForm()
-
+            create_issue_form = CreateIssueForm()
             pe_form = EditProfileForm(instance=request.user.userprofile)
             context = {
                 "mentored_issues": mentored_issues,
@@ -73,6 +79,7 @@ def profile(request, username):
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
                 'pe_form': pe_form,
+                'create_issue_form': create_issue_form,
                 "native_profile": native_profile,
                 "free_issues_solved": free_issues_solved,
                 "v_easy_issues_solved": v_easy_issues_solved,
@@ -120,7 +127,7 @@ def complete(request):
         reg_no = request.POST.get('registration_no')
         course = int(request.POST.get('course'))
         flag = False
-        if (re.match(reg_ex[course - 1], reg_no)):
+        if re.match(reg_ex[course - 1], reg_no):
             flag = True
         if flag:
             existing_profile = form.save(commit=False)
@@ -129,9 +136,7 @@ def complete(request):
             return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
         else:
             return HttpResponse('Something Went wrong.!!!')
-        return HttpResponseRedirect(reverse('complete_profile'))
-
-    # TODO:ISSUE Edit Profile Functionality
+    return HttpResponseRedirect(reverse('complete_profile'))
 
 
 @login_required
@@ -184,5 +189,95 @@ def change_contact_info(request):
             user_pro.whatsapp_no = new_whatsapp_no
             user_pro.save()
         return JsonResponse({'status': 'success'})
+    else:
+        return HttpResponse("Something Went Wrong")
+
+
+@login_required
+def create_issue(request):
+
+    # If logged - in user is Student
+    if request.user.userprofile.role == UserProfile.STUDENT:
+        messages.error(request, "Students cannot create an issue")
+        return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+
+    level = {
+        '0': 'free',
+        '1': 'easy',
+        '2': 'medium',
+        '3': 'hard',
+        '4': 'very_easy'
+    }
+    if request.is_ajax():
+        data = request.POST
+        project_id = data.get('project')
+        level_id = data.get('level')
+        mentor_id = data.get('mentor')
+        points = data.get('points')
+        is_restricted_str = data.get('is_restricted')
+        default_points = parse_level(level.get(level_id))
+        title = data.get('title')
+        description = data.get('desc')
+
+        is_default_points_used = False
+        if points == '0':
+            is_default_points_used = True
+            points = str(default_points[1])  # refer project.views and settings.py for parse_level and points
+
+        is_restricted = False
+        if is_restricted_str == '1':
+            is_restricted = True
+
+        project = Project.objects.get(id=project_id)
+        level = level.get(level_id)
+        mentor = User.objects.get(id=mentor_id).username
+        url = project.api_url
+
+        labels = [mentor, level]
+
+        if not is_default_points_used:
+            labels.append(points)
+
+        if is_restricted:
+            labels.append('restricted')
+
+        url += '/issues'
+
+        issue_detail = {
+            'title': title,
+            'body': description,
+            'labels': labels
+        }
+
+        payload = json.dumps(issue_detail)
+        social = request.user.social_auth.get(provider='github')
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
+        }
+
+        r = requests.post(url, data=payload, headers=headers)
+        response_data = r.json()
+
+        if r.status_code == 201:
+
+            print('Successfully created Issue "%s"' % title)
+            Issue.objects.create(
+                title='' + response_data['title'],
+                api_url='' + response_data['repository_url'],
+                html_url='' + response_data['url'],
+                project=project,
+                mentor=User.objects.get(id=mentor_id),
+                level=level_id,
+                points=points,
+                state=1,
+                description=description,
+                is_restricted=is_restricted
+            )
+            return JsonResponse({'status': 'success'})
+        else:
+            print('Could not create Issue "%s"' % title)
+            print('Response:', r.content)
+            return JsonResponse({'status': 'error'})
     else:
         return HttpResponse("Something Went Wrong")
