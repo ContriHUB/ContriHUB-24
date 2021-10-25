@@ -6,7 +6,6 @@ import smtplib
 import threading
 import time
 from datetime import datetime
-from pprintpp import pprint
 
 from django.conf import settings
 from django.contrib.auth import logout
@@ -529,12 +528,11 @@ def issue_details(request,issue_pk):
             'state':state,
             'created_at':created_at,
             'avatar_url':avatar_url,
-            'username':username,
+            'username':issue.mentor,
             'issue':issue,
             'all_active_issues':all_active_issues,
             'contributor':contributor,
         }
-        # print(context)
 
         return render(request,'home/issue_details_page.html',context=context)
     else:

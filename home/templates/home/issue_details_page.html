@@ -40,6 +40,10 @@
             <div class="card mb-3" style="border-radius: .5rem;">
                 <div class="row">
                     <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                        <div class="row text-center ">
+                            <h4><b>Project Name</b></h4>
+                            <div class="p-3 mb-7 bg-info text-white"><h5>{{ issue.project }}</h5></div>
+                        </div>
                         <div class="row">
                             <img src="{{ avatar_url}}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
                             <br>
@@ -70,6 +74,16 @@
                             <h4><b> Title :  {{ title }}</b></h4>
                             <hr class="mt-0 mb-4">
                             <p class="text-muted"></p>
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <h6><b>Domain</b></h6>
+                                    <div class="p-1 m-2 bg-success text-white">{{ issue.project.domain }}</div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <h6><b>SubDomains</b></h6>
+                                    <div class="p-1 m-2 bg-light text-dark">{{ issue.project.get_sub_domains }}</div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-4 mb-3">
                                     <h6><b>Status</b></h6>
