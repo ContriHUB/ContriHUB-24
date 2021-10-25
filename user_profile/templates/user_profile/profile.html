@@ -84,7 +84,7 @@
                 </div>
             </div>
         </div>
-        <div class="myToast">
+        <div class="myToast" style="z-index: 10;">
             <div class="toast bg-success fade hide" id="django_messages">
                 <div class="toast-body">
                     ...
@@ -579,8 +579,8 @@
 
         $(document).ready(function () {
             $('#toggle_contact_info').click(function () {
-                let ms_id = $('#ms_field').val();
-                let whatsapp_no = $('#whatsapp_no').val();
+                let ms_id = $('#ms_field');
+                let whatsapp_no = $('#whatsapp_no');
                 let disabled1 = ms_id.attr('disabled');
                 let disabled2 = whatsapp_no.attr('disabled');
                 if (disabled1 === undefined  ) {

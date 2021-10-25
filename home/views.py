@@ -203,12 +203,12 @@ def request_issue_assignment(request, issue_pk):
         email_thread.start()
 
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-        messages.success(request, 'issue requested successfully')
-        return redirect('home')
+        messages.success(request, 'issue requested successfully',extra_tags='safe')
+        return redirect('user_profile',username=request.user)
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> Failed.<h5>Cause:</h5>{msg}"
-    messages.success(request,message)
+    messages.success(request,message,extra_tags='safe')
     return redirect('home')
 
 
@@ -272,7 +272,8 @@ def submit_pr_request(request, active_issue_pk):
                 regex1 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$"
                 regex2 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
                 if not (re.match(regex2, pr_url) or re.match(regex1, pr_url)):
-                    return HttpResponse("Invalid PR Link...!!")
+                    messages.success(request,'Invalid PR Link',extra_tags='safe')
+                    return redirect('user_profile',username=request.user)
 
                 pr.issue = issue
                 pr.contributor = request.user
