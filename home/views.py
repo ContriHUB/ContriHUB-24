@@ -505,7 +505,7 @@ def issue_details(request,issue_pk):
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
     comments_url = ''
-    r = requests.post(url, headers=headers)
+    r = requests.get(url, headers=headers)
     response_data = r.json()
     if r.status_code == 200:
         print('Issue details arrived')

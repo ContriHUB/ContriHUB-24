@@ -5,7 +5,7 @@
     Issue Details
 {% endblock %}
 {% block content %}
-    {% include "home/issue_details/issue_details_navbar.html" %}
+    {% include "home/issue_details_navbar.html" %}
     <div class="myToast">
             <div class="toast bg-success fade hide" id="upvote">
                 <div class="toast-body">
@@ -42,7 +42,9 @@
                     <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                         <div class="row text-center ">
                             <h4><b>Project Name</b></h4>
-                            <div class="p-3 mb-7 bg-info text-white"><h5>{{ issue.project }}</h5></div>
+                            <a href="{{ issue.project.html_url }}" target="_blank">
+                                <div class="p-3 mb-7 bg-info text-white"><h5>{{ issue.project }}</h5></div>
+                            </a>
                         </div>
                         <div class="row">
                             <img src="{{ avatar_url}}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
@@ -50,7 +52,7 @@
                             <label for="mentor"><b>Mentor</b></label>
                             <div class="col-sm">
                             <a href="https://github.com/{{ username }}" target="_blank">
-                                <button class="btn btn-warning btn-rounded mt-0" data-mdb-toggle="tooltip" title="View Profile on GitHUB">
+                                <button class="btn btn-danger btn-rounded mt-0" data-mdb-toggle="tooltip" title="View Profile on GitHUB">
                                     @{{ username }}
                                 </button>
                             </a>
@@ -119,7 +121,6 @@
                                 <h6><b>Labels</b></h6>
                                 <div class="container mb-2">
                                     <p class="card-text">
-                                    <a class="btn btn-rounded btn-dark" data-mdb-toggle="tooltip" title="Mentor">@{{ issue.mentor }}</a>
                                     <a class="btn btn-rounded btn-dark" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a>
                                     {% if issue.is_restricted %}
                                         <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
