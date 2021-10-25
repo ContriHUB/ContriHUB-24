@@ -536,7 +536,7 @@ def issue_details(request,issue_pk):
 
         return render(request,'home/issue_details_page.html',context=context)
     else:
-        print('Could not create Issue ')
+        print('Could not fetch Issue details')
         print('Response:', r.content)
         return HttpResponse("Something Went Wrong")
 
