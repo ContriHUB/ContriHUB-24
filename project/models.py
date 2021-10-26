@@ -349,5 +349,5 @@ class ActiveIssue(models.Model):
         deadline = self.assigned_at + timedelta(days=self.issue.get_issue_days_limit())
         last_hour = deadline - timedelta(hours = 1)
         if(last_hour<current_time<deadline):
-            return False
-        return True
+            return True
+        return False
