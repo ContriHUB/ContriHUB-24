@@ -128,3 +128,11 @@ ISSUE ASSIGNMENT REQUEST:
 	Cause:
 		please run connect() first
 
+ISSUE ASSIGNMENT REQUEST:
+	Sending mail to:
+		divyansh
+	Failed at:
+		2021-10-26 18:17:49.07
+	Cause:
+		please run connect() first
+

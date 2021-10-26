@@ -208,7 +208,7 @@ def request_issue_assignment(request, issue_pk):
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> Failed.<h5>Cause:</h5>{msg}"
-    messages.success(request,message,extra_tags='safe')
+    messages.success(request,message,extra_tags='fail')
     return redirect('home')
 
 

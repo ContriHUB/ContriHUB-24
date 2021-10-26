@@ -262,6 +262,10 @@
         jQuery(document).ready(function () {
                 {% if messages %}
                     {% for message in messages %}
+                        {% if 'fail' in message.tags %}
+                            $('#django_messages').children().removeClass('bg-success')
+                            $('#django_messages').children().addClass('bg-danger')
+                        {% endif %}
                         $('#django_messages').children('.toast-body').html("{{message|safe }}");
                         $('#django_messages').toast("show");
                     {% endfor %}
