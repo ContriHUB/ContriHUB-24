@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, \
     DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
+from datetime import timedelta, datetime
 
 User = get_user_model()
 
