@@ -116,8 +116,14 @@
                                         </p>
                                         {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
                                         {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
-                                        {{ active_issue.get_remaining_time | timeuntil }} remaining
-
+                                        {% if active_issue.check_last_hour %}
+                                             <p style="
+                                             color: transparent;
+                                             animation: effect 2s linear infinite;                                            
+                                             ">{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
+                                        {% else %}
+                                             <p>{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
+                                        {% endif %}
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
