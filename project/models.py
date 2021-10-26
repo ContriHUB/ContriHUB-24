@@ -351,3 +351,4 @@ class ActiveIssue(models.Model):
         if(last_hour<current_time<deadline):
             return True
         return False
+    
