@@ -1,5 +1,7 @@
 import os
 import re
+import json
+import requests
 import smtplib
 import threading
 import time
@@ -68,6 +70,7 @@ def home(request):
 
     # get all active issues and set field contributor as active_issue.contributor
     all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+
 
     # page = request.GET.get('page', 1)
     # paginator = Paginator(issues_qs, 20)
@@ -481,3 +484,63 @@ def handle_vote(request):
     }
     html = render_to_string('home/vote.html', context, request=request)
     return JsonResponse({'html': html, 'message': message})
+
+
+def issue_details(request,issue_pk):
+    issue = Issue.objects.get(pk=issue_pk)
+    issue_no = issue.number
+    issue_project_api = issue.project.api_url
+    # url to fetch details from github
+    url = issue_project_api + '/issues/' + str(issue_no)
+    #social auth key
+    social = request.user.social_auth.get(provider='github')
+    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
+    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
+    contributor=''
+    if issue in all_active_issues:
+        active_issue_qs = ActiveIssue.objects.get(issue_id=issue.id)
+        contributor = active_issue_qs.contributor
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
+    }
+    comments_url = ''
+    r = requests.get(url, headers=headers)
+    response_data = r.json()
+    if r.status_code == 200:
+        print('Issue details arrived')
+        # pprint(r.json())
+        desc = response_data['body']
+        created_at=response_data['created_at']
+        lb = response_data['labels']
+        labels=[]
+        for l in lb:
+            labels.append(l['name'])
+        state = response_data['state']
+        title = response_data['title']
+        user = response_data['user']
+        avatar_url = user['avatar_url']
+        username = user['login']
+        context = {
+            'title':title,
+            'desc':desc,
+            'labels':labels,
+            'state':state,
+            'created_at':created_at,
+            'avatar_url':avatar_url,
+            'username':issue.mentor,
+            'issue':issue,
+            'all_active_issues':all_active_issues,
+            'contributor':contributor,
+        }
+
+        return render(request,'home/issue_details_page.html',context=context)
+    else:
+        print('Could not fetch Issue details')
+        print('Response:', r.content)
+        return HttpResponse("Something Went Wrong")
+
+
+
+
+
