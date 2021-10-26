@@ -343,3 +343,10 @@ class ActiveIssue(models.Model):
     #  places.
     def get_remaining_time(self):
         return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+    def check_last_hour(self):
+        current_time = timezone.now()
+        deadline = self.assigned_at + timedelta(days=self.issue.get_issue_days_limit())
+        last_hour = deadline - timedelta(hours = 1)
+        if(last_hour<current_time<deadline):
+            return False
+        return True
