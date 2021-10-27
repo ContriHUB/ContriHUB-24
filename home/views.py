@@ -157,6 +157,7 @@ class EmailThread(threading.Thread):
             if self.email is None:
                 send_email(template_path=self.template_path, email_context=self.email_context)
             else:
+                self.email.content_subtype = "html"
                 self.email.send()
             end_time = time.time()
             entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
