@@ -6,7 +6,6 @@ import smtplib
 import threading
 import time
 from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -486,6 +485,33 @@ def handle_vote(request):
     return JsonResponse({'html': html, 'message': message})
 
 
+#fetch issue conversation in comments
+def issue_conversation(url,headers):
+    url += '/comments'
+    res = requests.get(url,headers=headers)
+    r = res.json()
+    # pprint(r)
+    if res.status_code == 200:
+        all_comments=[]
+        for o_res in r:
+            body = o_res['body']
+            user = o_res['user']
+            created_at = o_res['created_at']
+            dd = created_at[8:10]
+            mm = created_at[5:7]
+            yyyy = created_at[0:4]
+            hh = created_at[11:13]
+            min = created_at[14:16]
+            date = dd+'-'+mm+'-'+yyyy
+            time = hh+':'+min
+            comment = {'body':body,'date':date,'time':time}
+            comment.update(user)
+            all_comments.append(comment)
+        return all_comments
+
+
+
+#fetch issue details only
 def issue_details(request,issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     issue_no = issue.number
@@ -504,8 +530,23 @@ def issue_details(request,issue_pk):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-    comments_url = ''
+    if request.is_ajax():
+        social = request.user.social_auth.get(provider='github')
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
+        }
+        comments_res = issue_conversation(url, headers)
+        data = {
+            'comments':comments_res,
+        }
+        rendered_template = render_to_string('home/issue_conversation_page.html', data)
+        return JsonResponse({'context': rendered_template})
+
+
     r = requests.get(url, headers=headers)
+    comments_res = issue_conversation(url,headers)
+    # print(comments_res)
     response_data = r.json()
     if r.status_code == 200:
         print('Issue details arrived')
@@ -520,7 +561,6 @@ def issue_details(request,issue_pk):
         title = response_data['title']
         user = response_data['user']
         avatar_url = user['avatar_url']
-        username = user['login']
         context = {
             'title':title,
             'desc':desc,
@@ -532,6 +572,7 @@ def issue_details(request,issue_pk):
             'issue':issue,
             'all_active_issues':all_active_issues,
             'contributor':contributor,
+            'comments':comments_res,
         }
 
         return render(request,'home/issue_details_page.html',context=context)

@@ -1,6 +1,6 @@
 
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     Issue Details
 {% endblock %}
@@ -137,7 +137,6 @@
                                     <div class="form-group basic-textarea rounded-corners">
                                         <textarea class="form-control z-depth-1" id="exampleFormControlTextarea345" rows="7" readonly >{{ desc }}</textarea>
                                     </div>
-{#                                    <textarea rows="7" class="form-control" id="description" rows="3" readonly>{{ desc }}</textarea>#}
                                 </div>
                             </div>
                         </div>
@@ -146,6 +145,36 @@
             </div>
         </div>
     </div>
+
+        <div class="container">
+  <div class="row m-10">
+    <div class="col-12">
+      <div class="comments">
+        <div class="comment-box add-comment">
+            <div class="row justify-content-center align-items-center">
+              <div class="col-lg-3 justify-content-center align-items-center">
+                  <div class="card center">
+                      <div class="p-2 bg-primary text-white text-center"><h5>Comments</h5></div>
+                  </div>
+              </div>
+          </div>
+            <div class="col-lg-1">
+                <span class="commenter-name">
+                    <button type="refresh" id="refresh" class="btn btn-default m-2">Refresh Comments</button>
+                </span>
+            </div>
+        </div>
+          <div class="loading container ajaxLoader" style="display: none;">
+                <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
+                     style="display:block;margin-left:auto;margin-right:auto;">
+            </div>
+          <div id="issue_comments">
+              {% include 'home/issue_conversation_page.html' %}
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
@@ -190,6 +219,36 @@
             })
         });
 
+    $(document).ready(function () {
+            $("#refresh").click(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '{% url 'issue_details' issue.pk %}',
+                    type: 'post',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                    },
+                    beforeSend:function(){
+                        $(".ajaxLoader").show() ;
+                    },
+                    success(data) {
+                        $("#issue_comments").html(data.context) ;
+                        $('textarea').each(function () {
+                            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');}).on('input', function () {
+                            this.style.height = 'auto';
+                            this.style.height = (this.scrollHeight) + 'px';
+                        });
+                        alert('Comments Refreshed') ;
+                        $(".ajaxLoader").hide() ;
+                    },
+                    error: function (data) {
+                        alert('Could Not Refresh, Some error occured.') ;
+                        $(".ajaxLoader").hide() ;
+                    }
+                })
+            })
+        });
+
         function removeToastForUpvote()
         {
             $("#upvote").toast('hide');
@@ -201,5 +260,15 @@
         function removeToastForVoteRemoved(){
             $("#voteremoved").toast('hide');
         }
+        function textAreaAdjust(element) {
+            element.style.height = "1px";
+            element.style.height = (25+element.scrollHeight)+"px";
+        }
+        $('textarea').each(function () {
+            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');}).on('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
     </script>
 {% endblock %}
