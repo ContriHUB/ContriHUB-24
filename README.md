@@ -14,8 +14,10 @@ ContriHUB is an event where we are expecting to get more and more people involve
     python -m venv <env_name>
     ```
 * Activate the environment
-    * On Windows, run: `<env_name>\Scripts\activate`
-    * On Linux/Mac, run: `source <env_name>/bin/activate`    
+    * On Windows - 
+        * If you have `Scripts` folder inside `<env_name>`, run: `<env_name>\Scripts\activate` (in Command Prompt) 
+        * If you have `bin` folder inside `<env_name>`, run: `<env_name>\bin\Activate.ps1` (in Powershell).
+    * On POSIX (Linux/Mac), run: `source <env_name>/bin/activate`    
 * Change directory to *ContriHUB-21*
     ```
     cd ContriHUB-21
