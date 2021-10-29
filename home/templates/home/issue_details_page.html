@@ -15,6 +15,14 @@
             </div>
         </div>
     <div class="myToast">
+            <div class="toast bg-success fade hide" id="commentsrefreshed">
+                <div class="toast-body">
+                    Comments Refreshed !
+                    <button onclick="removeToastForCommentsRefreshed()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
             <div class="toast bg-danger fade hide" id="downvote">
                 <div class="toast-body">
                     Down Voted successfully !
@@ -73,7 +81,7 @@
                     </div>
                     <div class="col-md-8 text-center">
                         <div class="card-body p-4">
-                            <h4><b> Title :  {{ title }}</b></h4>
+                            <h4><b>Issue #{{ issue.number }} : {{ title }}</b></h4>
                             <hr class="mt-0 mb-4">
                             <p class="text-muted"></p>
                             <div class="row">
@@ -108,15 +116,6 @@
                                     <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" >Go to Issue</button></a>
                                 </div>
                             </div>
-                        <div class="row">
-                            {% if issue.state == issue.OPEN and contributor == '' %}
-                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
-                                    <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                        Request Assignment
-                                    </a>
-                                </button>
-                            {% endif %}
-                        </div>
                             <div class="row pt-1">
                                 <h6><b>Labels</b></h6>
                                 <div class="container mb-2">
@@ -139,31 +138,41 @@
                                     </div>
                                 </div>
                             </div>
+                            <br>
+                            <div class="row justify-content-center align-items-center">
+                                {% if issue.state == issue.OPEN and contributor == '' %}
+                                    <div class="col-lg-7">
+                                        <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
+                                            <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                                Request Assignment
+                                            </a>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-        <div class="container">
+    <div class="container">
+        <div class="row mb-4 justify-content-center align-items-center">
+            <div class="col">
+                <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" >Add a Comment</button></a>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="p-2 bg-primary text-white text-center"><h5>Comments</h5></div>
+                </div>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" id="refresh" ><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            </div>
+        </div>
   <div class="row m-10">
     <div class="col-12">
       <div class="comments">
-        <div class="comment-box add-comment">
-            <div class="row justify-content-center align-items-center">
-              <div class="col-lg-3 justify-content-center align-items-center">
-                  <div class="card center">
-                      <div class="p-2 bg-primary text-white text-center"><h5>Comments</h5></div>
-                  </div>
-              </div>
-          </div>
-            <div class="col-lg-1">
-                <span class="commenter-name">
-                    <button type="refresh" id="refresh" class="btn btn-default m-2">Refresh Comments</button>
-                </span>
-            </div>
-        </div>
           <div class="loading container ajaxLoader" style="display: none;">
                 <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
                      style="display:block;margin-left:auto;margin-right:auto;">
@@ -238,7 +247,7 @@
                             this.style.height = 'auto';
                             this.style.height = (this.scrollHeight) + 'px';
                         });
-                        alert('Comments Refreshed') ;
+                        $("#commentsrefreshed").toast("show") ;
                         $(".ajaxLoader").hide() ;
                     },
                     error: function (data) {
@@ -259,6 +268,9 @@
         }
         function removeToastForVoteRemoved(){
             $("#voteremoved").toast('hide');
+        }
+        function removeToastForCommentsRefreshed(){
+            $("#commentsrefreshed").toast('hide');
         }
         function textAreaAdjust(element) {
             element.style.height = "1px";
