@@ -26,7 +26,7 @@
             <div class="toast bg-success fade hide" id="upvote">
                 <div class="toast-body">
                     Up Voted successfully !
-                    <button onclick="removeToastForUpvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForUpvote()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="toast bg-danger fade hide" id="downvote">
                 <div class="toast-body">
                     Down Voted successfully !
-                    <button onclick="removeToastForDownvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForDownvote()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
             <div class="toast bg-warning fade hide" id="voteremoved">
                 <div class="toast-body">
                     Vote revoked successfully !
-                    <button onclick="removeToastForVoteRemoved()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForVoteRemoved()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
             <div class="toast bg-danger fade hide" id="loginfirst">
                 <div class="toast-body">
                     Login First ! Redirecting To Authorizing page...
-                    <button onclick="removeToastForLoginFirst()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForLoginFirst()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
         <div class="toast bg-danger fade hide" id="noneissuefound">
             <div class="toast-body">
                 No issue found for selected Domain/Sub-Domain.
-                <button onclick="removeToastForNoneIssueFound()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button onclick="removeToastForNoneIssueFound()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -68,14 +68,14 @@
         <div class="toast bg-success fade hide" id="issuefound">
             <div class="toast-body">
                 Issue List Updated.
-                <button onclick="removeToastForIssueFound()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button onclick="removeToastForIssueFound()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
     <div class="container-flow p-3">
         <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
+                    <div class="card m-3 border_radius">
                         <div class="card-header text-center">
                             <h6>Announcements!</h6>
                         </div>
@@ -140,21 +140,21 @@
 <div class="col-md-9 ml-6">
 
     <div class=" card text-center mb-2"><h3 class="display-7 text-success"><b>Issues</b></h3></div>
-            <div class="loading container ajaxLoader" style="display: none;">
+            <div class="loading container ajaxLoader dis_none">
                 <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
-                     style="display:block;margin-left:auto;margin-right:auto;">
+                    class="dis_block margin_horizon">
             </div>
         <div class="row row-cols-1 row-cols-md-2 infinite-container" id="filteredIssue">
 {#        <p class="ajaxLoader">Loading...</p>#}
 
             {% for issue in issues %}
                 <div class="col infinite-item">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
+                    <div class="card m-3 text-center border_radius">
                         {% ifnotequal issue.bonus_value "0" %}
                             <div class="bonus">
                                 <a class="star12" data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}"></a>
                             </div>
-                            <div class="bonus" style="font-weight: bolder; color:white;left:-4px;">
+                            <div class="bonus bonus_css">
                                 <a data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}">{{issue.bonus_value}}</a>
                             </div>
                         {% endifnotequal %}
@@ -224,9 +224,9 @@
             <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
         {% endif %}
 
-        <div class="loading container" style="display: none;">
+        <div class="loading container dis_none">
             <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
-                 style="display:block;margin-left:auto;margin-right:auto;">
+                class="dis_block margin_horizon">
         </div>
     </div>
 </div>

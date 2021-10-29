@@ -14,8 +14,8 @@
 
     {% include "user_profile/navbar-rankings.html" %}
 
-    <div style="text-align: center"><h1 class="display-6 text-white">Rankings</h1></div>
-    <table class="table table-bordered text-white" style="background-color: rgba(0,0,0, 0.3);" border="2" cellpadding="10" cellspacing="5">
+    <div class="text_center"><h1 class="display-6 text-white">Rankings</h1></div>
+    <table class="table table-bordered text-white bg_trans2;" border="2" cellpadding="10" cellspacing="5">
         <tr>
             <th>Rank</th>
             <th>Username</th>
@@ -29,7 +29,7 @@
             {% if contributor.total_points > 0 %}
                 <tr>
                     <td><b>{{ forloop.counter }}</b></td>
-                    <td><a style="color:white;" href="https://contrihub21.herokuapp.com/profile/user/{{ contributor.user.username }}"><b>@{{ contributor.user.username }}</b></a></td>
+                    <td><a class="white_col" href="https://contrihub21.herokuapp.com/profile/user/{{ contributor.user.username }}"><b>@{{ contributor.user.username }}</b></a></td>
                     <td>
                         <span class="badge badge-pill badge-primary">
                             {{ contributor.total_points }}

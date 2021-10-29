@@ -8,7 +8,7 @@
 {% include "scripts.html" %}
 {% for issue in issues %}
     <div class="col infinite-item">
-        <div class="card m-3 text-center" style="border-radius: 15px;">
+        <div class="card m-3 text-center border_radius">
             <div class="card-header">
                 Issue #{{ issue.number }} - {{ issue.project.domain }}
                 {% if issue.project.get_sub_domains != '' %}
