@@ -50,9 +50,7 @@
                     <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                         <div class="row mb-8 text-center" style="margin-left: auto; margin-right: auto;">
                             <h4><b>Project Name</b></h4>
-                            <a href="{{ issue.project.html_url }}" target="_blank">
-                                <div class="p-3 bg-info text-white"><h5>{{ issue.project }}</h5></div>
-                            </a>
+                            <a class="btn btn-rounded btn-info text-white" href="{{ issue.project.html_url }}" target="_blank"><h3>{{ issue.project }}</h3></a>
                         </div>
                         <div class="row">
                             <img src="{{ avatar_url}}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
@@ -87,11 +85,11 @@
                             <div class="row">
                                 <div class="col-6 mb-3">
                                     <h6><b>Domain</b></h6>
-                                    <div class="p-1 m-2 bg-success text-white">{{ issue.project.domain }}</div>
+                                    <a class="btn btn-rounded btn-success text-white" >{{ issue.project.domain }}</a>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <h6><b>SubDomains</b></h6>
-                                    <div class="p-1 m-2 bg-light text-dark">{{ issue.project.get_sub_domains }}</div>
+                                    <a class="btn btn-rounded btn-light text-dark" >{{ issue.project.get_sub_domains }}</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -250,7 +248,7 @@
                         $("#commentsrefreshed").toast("show") ;
                         $(".ajaxLoader").hide() ;
                     },
-                    error: function (data) {
+                    error: function () {
                         alert('Could Not Refresh, Some error occured.') ;
                         $(".ajaxLoader").hide() ;
                     }

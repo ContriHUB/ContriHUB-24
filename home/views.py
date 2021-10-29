@@ -490,7 +490,6 @@ def issue_conversation(url,headers):
     url += '/comments'
     res = requests.get(url,headers=headers)
     r = res.json()
-    # pprint(r)
     if res.status_code == 200:
         all_comments=[]
         for o_res in r:
@@ -546,11 +545,9 @@ def issue_details(request,issue_pk):
 
     r = requests.get(url, headers=headers)
     comments_res = issue_conversation(url,headers)
-    # print(comments_res)
     response_data = r.json()
     if r.status_code == 200:
         print('Issue details arrived')
-        # pprint(r.json())
         desc = response_data['body']
         created_at=response_data['created_at']
         lb = response_data['labels']
