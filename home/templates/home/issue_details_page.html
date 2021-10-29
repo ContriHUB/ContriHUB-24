@@ -155,19 +155,19 @@
         </div>
     </div>
     <div class="container">
-        <div class="row mb-4 justify-content-center align-items-center">
-            <div class="col">
-                <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" >Add a Comment</button></a>
-            </div>
-            <div class="col">
+        <div class="row justify-content-end mb-4">
+            <div class="col-4">
                 <div class="card">
                     <div class="p-2 bg-primary text-white text-center"><h5>Comments</h5></div>
                 </div>
             </div>
-            <div class="col">
-                <button class="btn btn-primary" id="refresh" ><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            <div class="col-4 ">
+                <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" data-mdb-toggle="tooltip" title="Add Comment">Add a Comment</button></a>
+                <button class="btn btn-primary" data-mdb-toggle="tooltip" title="Refresh Comments" id="refresh" ><i class="fa fa-refresh" aria-hidden="true"></i></button>
             </div>
         </div>
+    </div>
+    <div class="container">
   <div class="row m-10">
     <div class="col-12">
       <div class="comments">
