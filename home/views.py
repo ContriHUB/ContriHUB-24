@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.contrib import messages
 
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
@@ -205,12 +206,13 @@ def request_issue_assignment(request, issue_pk):
         email_thread.start()
 
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-        return HttpResponse(
-            f"Issue Requested Successfully")
+        messages.success(request, 'issue requested successfully',extra_tags='safe')
+        return redirect('user_profile',username=request.user)
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
-              f"{issue.project.name}</a> Failed.\n<h3>Cause:</h3>{msg}"
-    return HttpResponse(message)
+              f"{issue.project.name}</a> Failed.<h5>Cause:</h5>{msg}"
+    messages.success(request,message,extra_tags='fail')
+    return redirect('home')
 
 
 @login_required
@@ -226,10 +228,12 @@ def accept_issue_request(request, issue_req_pk):
         # TODO:ISSUE Send Email to Student that their request is accepted
         message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
                   f"{issue.project.name}</a> successfully assigned to {requester}"
-        return HttpResponse(message)
+        messages.success(request,message,extra_tags='safe')
+        return redirect('user_profile',username=request.user)
     else:
         message = f"This Issue Cannot be accepted by you! Probably it's already Accepted/Rejected."
-        return HttpResponse(message)
+        messages.success(request, message,extra_tags='safe')
+        return redirect('user_profile',username=request.user)
 
 
 def reject_issue_request(request, issue_req_pk):
@@ -242,7 +246,8 @@ def reject_issue_request(request, issue_req_pk):
     issue_request.save()
     message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> is rejected for {requester}"
-    return HttpResponse(message)
+    messages.success(request, message,extra_tags='safe')
+    return redirect('user_profile', username=request.user)
 
 
 @login_required
@@ -270,7 +275,8 @@ def submit_pr_request(request, active_issue_pk):
                 regex1 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$"
                 regex2 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
                 if not (re.match(regex2, pr_url) or re.match(regex1, pr_url)):
-                    return HttpResponse("Invalid PR Link...!!")
+                    messages.success(request,'Invalid PR Link',extra_tags='safe')
+                    return redirect('user_profile',username=request.user)
 
                 pr.issue = issue
                 pr.contributor = request.user
@@ -297,15 +303,18 @@ def submit_pr_request(request, active_issue_pk):
                 email_thread.start()
                 message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
-                return HttpResponse(message)
+                messages.success(request, message,extra_tags='safe')
+                return redirect('user_profile',username=request.user)
             else:
                 message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
                           f"for <a href={issue.html_url}>Issue #{issue.number}</a> of Project <a href=" \
                           f"{issue.project.html_url}>{issue.project.name}</a>"
-            return HttpResponse(message)
+            messages.success(request, message,extra_tags='safe')
+            return redirect('user_profile',username=request.user)
 
     message = "This request cannot be full-filled."
-    return HttpResponse(message)
+    messages.success(request,message,extra_tags='safe')
+    return redirect('user_profile',username=request.user)
 
 
 # TODO:ISSUE: Implement Functionality for mentor to assign bonus/peanlty points while accepting/rejecting the issue.A form will be needed.
@@ -369,7 +378,8 @@ def accept_pr(request, pk):
     else:
         message = f"This PR is probably already Accepted. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-    return HttpResponse(message)
+    messages.success(request,message,extra_tags='safe')
+    return redirect('user_profile',username=request.user)
 
 
 @login_required
@@ -426,7 +436,8 @@ def reject_pr(request, pk):
     else:
         message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-    return HttpResponse(message)
+    messages.success(request,message,extra_tags='safe')
+    return redirect('user_profile',username=request.user)
 
 
 @login_required
