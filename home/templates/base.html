@@ -27,6 +27,9 @@
     <link href="{% static 'css/bonus.css' %}" rel="stylesheet" />
 
     <link href="{% static 'css/toast.css' %}" rel="stylesheet" /> {% include 'css.html' %}
+
+    <link href="{% static 'css/comments.css' %}" rel="stylesheet" />
+
     <style>
         {
             {# TODO: ISSUE Move styles to separate CSS file #}
@@ -51,6 +54,20 @@
             text-transform: unset !important;
         }
         
+        @keyframes effect {
+			0% {
+				background: linear-gradient(
+						#008000, #00FF00);
+				-webkit-background-clip: text;
+			}
+
+			100% {
+				background: linear-gradient(
+						#FF0000, #8B0000);
+				-webkit-background-clip: text;
+			}
+		}
+
         {
             % block style %
         }

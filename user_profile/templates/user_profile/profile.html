@@ -116,7 +116,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{active_issue.issue.mentor}}/" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ active_issue.issue.mentor }}
                                             </a>
@@ -132,8 +132,14 @@
                                         </p>
                                         {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
                                         {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
-                                        {{ active_issue.get_remaining_time | timeuntil }} remaining
-
+                                        {% if active_issue.check_last_hour %}
+                                             <p style="
+                                             color: transparent;
+                                             animation: effect 2s linear infinite;                                            
+                                             ">{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
+                                        {% else %}
+                                             <p>{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
+                                        {% endif %}
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
@@ -172,7 +178,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ request.issue.mentor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ request.issue.mentor }}
                                             </a>
@@ -224,7 +230,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ pr.issue.mentor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Mentor">
                                                 @{{ pr.issue.mentor }}
                                             </a>
@@ -293,7 +299,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{ pr.contributor }}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Contributor">
                                                 @{{ pr.contributor }}
                                             </a>
@@ -356,7 +362,7 @@
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                            <a href="https://contrihub21.herokuapp.com/profile/user/{{request.requester}}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                                title="Requester">@{{ request.requester }}</a>
                                             <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"

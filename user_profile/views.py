@@ -267,9 +267,10 @@ def create_issue(request):
 
             print('Successfully created Issue "%s"' % title)
             Issue.objects.create(
+                number= response_data['number'],
                 title='' + response_data['title'],
                 api_url='' + response_data['repository_url'],
-                html_url='' + response_data['url'],
+                html_url='' + response_data['html_url'],
                 project=project,
                 mentor=User.objects.get(id=mentor_id),
                 level=level_id,

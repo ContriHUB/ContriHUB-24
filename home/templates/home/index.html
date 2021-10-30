@@ -128,11 +128,9 @@
         </div>
     </div>
 
-
-
-    <div class="row">
-        <div class="col-md-2 m-4">
-            <div class="card text-center mb-2"><h3 class="display-7 text-primary"><b>Filter</b></h3></div>
+<div class="row">
+    <div class="col-md-2 m-4">
+    <div class="card text-center mb-2"><h3 class="display-7 text-primary"><b>Filter</b></h3></div>
 
             <!-- Filter 1 -->
             <div class="card mb-4">
@@ -175,61 +173,70 @@
                 {% for issue in issues %}
                     <div class="col infinite-item">
                         <div class="card m-3 text-center" style="border-radius: 15px;">
-                            <div class="card-header">
-                                Issue #{{ issue.number }} - {{ issue.project.domain }}
+                            {% ifnotequal issue.bonus_value "0" %}
+                            <div class="bonus">
+                                <a class="star12" data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}"></a>
                             </div>
-                            <div class="card-body">
-
-                                <h5 class="card-title">
-                                    <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
-                                </h5>
-                                <h6 class="">
-                                    <a data-mdb-toggle="tooltip" title="Project"
-                                       href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
-                                </h6>
-
-                                <p class="card-text">
-                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                       title="Mentor">@{{ issue.mentor }}</a>
-                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                       title="Level">{{ issue.get_level_display }}</a>
-                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
-                                       title="Points">{{ issue.points }}</a>
-                                    {% if issue.is_restricted %}
-                                        <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
-                                           title="Restricted">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                        </a>
-                                    {% endif %}
-                                </p>
-
+                            <div class="bonus" style="font-weight: bolder; color:white;left:-4px;">
+                                <a data-mdb-toggle="tooltip" title="Bonus: {{issue.bonus_description}}">{{issue.bonus_value}}</a>
                             </div>
-                            <div id="vote-section-{{ issue.pk }}">
-                                {% include 'home/vote.html' %}
-                            </div>
-                            <div class="card-footer text-muted">
+                        {% endifnotequal %}
+                        <div class="card-header">
+                            Issue #{{ issue.number }} - {{ issue.project.domain }}
+                            {% if issue.project.get_sub_domains != '' %}
+                                ({{ issue.project.get_sub_domains }})
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
 
-                                {% if issue in all_active_issues %}
-                                    <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                            title="Already Assigned to this Contributor" type="button"
-                                            class="btn btn-warning btn-rounded mt-0">
-                                        <a class="text-white">
-                                            Assigned to @{{ issue.contributor.username }}
-                                        </a>
-                                    </button>
-                                {% elif issue.state == issue.OPEN %}
-                                    <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
-                                    <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                            title="Ask mentor for assigning Issue" type="button"
-                                            class="btn btn-primary mt-0">
-                                        <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                            Request Assignment
-                                        </a>
-                                    </button>
-                                {% else %}
-                                    <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
+                            <h5 class="card-title">
+                            <a href="{% url 'issue_details' issue.pk %}" target="_blank" >{{ issue.title }}</a>
+                            </h5>
+                            <h6 class="">
+                                <a data-mdb-toggle="tooltip" title="Project"
+                                   href="{{ issue.project.html_url }}" target="_blank">{{ issue.project.name }}</a>
+                            </h6>
+
+                            <p class="card-text">
+                                <a href="https://contrihub21.herokuapp.com/profile/user/{{issue.mentor}}/" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                   title="Mentor">@{{ issue.mentor }}</a>
+                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                   title="Level">{{ issue.get_level_display }}</a>
+                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                   title="Points">{{ issue.points }}</a>
+                                {% if issue.is_restricted %}
+                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip"
+                                       title="Restricted">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </a>
                                 {% endif %}
+                            </p>
 
+                        </div>
+                        <div id="vote-section-{{ issue.pk }}">
+                            {% include 'home/vote.html' %}
+                        </div>
+                        <div class="card-footer text-muted">
+
+                            {% if issue in all_active_issues %}
+                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                                    title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
+                                    <a class="text-white" href="https://contrihub21.herokuapp.com/profile/user/{{issue.contributor.username}}/">
+                                        Assigned to @{{ issue.contributor.username }}
+                                    </a>
+                                </button>
+                            {% elif issue.state == issue.OPEN %}
+                                <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
+                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                                        title="Ask mentor for assigning Issue" type="button"
+                                        class="btn btn-primary mt-0">
+                                    <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                        Request Assignment
+                                    </a>
+                                </button>
+                            {% else %}
+                                <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
+                            {% endif %}
                             </div>
                         </div>
                     </div>
@@ -278,7 +285,8 @@
             $(document).on('click', '#votebtn', function (event) {
                 event.preventDefault();
                 let type = $(this).attr('type');
-                if (type === 0) {
+                console.log(type);
+                if(type === 0){
                     $("#upvote").toast("show");
                 } else if (type === 1) {
                     $("#downvote").toast("show");

@@ -1,0 +1,13 @@
+{% for com in comments %}
+    <div class="comment-box">
+        <span class="commenter-pic">
+            <img src="{{ com.avatar_url }}" class="img-fluid">
+        </span>
+        <span class="commenter-name">
+            <a href="https://github.com/{{ com.login }}" target="_blank" >{{ com.login }}</a> <span class="comment-time">Commented on  Date : {{ com.date }} at Time : {{ com.time }} </span>
+        </span>
+        <div class="form-group shadow-textarea rounded-corners">
+            <textarea class="form-control z-depth-1" id="exampleFormControlTextarea345" rows="4" readonly >{{ com.body }}</textarea>
+        </div>
+    </div>
+{% endfor %}

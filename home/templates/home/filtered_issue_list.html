@@ -5,7 +5,7 @@
         'all_active_issues': all_active_issues,
     }
 {% endcomment %}
-
+{% include "scripts.html" %}
 {% for issue in issues %}
     <div class="col infinite-item">
         <div class="card m-3 text-center" style="border-radius: 15px;">
@@ -18,7 +18,7 @@
             <div class="card-body">
 
                 <h5 class="card-title">
-                    <a href="{{ issue.html_url }}" target="_blank">{{ issue.title }}</a>
+                    <a href="{% url 'issue_details' issue.pk %}" target="_blank">{{ issue.title }}</a>
                 </h5>
                 <h6 class="">
                     <a data-mdb-toggle="tooltip" title="Project"

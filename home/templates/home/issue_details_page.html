@@ -1,0 +1,284 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Issue Details
+{% endblock %}
+{% block content %}
+    {% include "home/issue_details_navbar.html" %}
+    <div class="myToast">
+            <div class="toast bg-success fade hide" id="upvote">
+                <div class="toast-body">
+                    Up Voted successfully !
+                    <button onclick="removeToastForUpvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
+            <div class="toast bg-success fade hide" id="commentsrefreshed">
+                <div class="toast-body">
+                    Comments Refreshed !
+                    <button onclick="removeToastForCommentsRefreshed()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
+            <div class="toast bg-danger fade hide" id="downvote">
+                <div class="toast-body">
+                    Down Voted successfully !
+                    <button onclick="removeToastForDownvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
+            <div class="toast bg-warning fade hide" id="voteremoved">
+                <div class="toast-body">
+                    Vote revoked successfully !
+                    <button onclick="removeToastForVoteRemoved()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a class="nav-link" href="{% url 'home' %}">
+            <button type="button" class="btn btn-warning hBack btn-rounded" data-mdb-ripple-color="dark"><< Go Back</button>
+        </a>
+    </div>
+    <div class="row d-flex justify-content-center align-items-center h-120">
+        <div class="col col-lg-6 mb-4 mb-lg-0">
+            <div class="card mb-3" style="border-radius: .5rem;">
+                <div class="row">
+                    <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                        <div class="row mb-8 text-center" style="margin-left: auto; margin-right: auto;">
+                            <h4><b>Project Name</b></h4>
+                            <a class="btn btn-rounded btn-info text-white" href="{{ issue.project.html_url }}" target="_blank"><h3>{{ issue.project }}</h3></a>
+                        </div>
+                        <div class="row">
+                            <img src="{{ avatar_url}}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
+                            <br>
+                            <label for="mentor"><b>Mentor</b></label>
+                            <div class="col-sm">
+                            <a href="https://github.com/{{ username }}" target="_blank">
+                                <button class="btn btn-danger btn-rounded mt-0" data-mdb-toggle="tooltip" title="View Profile on GitHUB">
+                                    @{{ username }}
+                                </button>
+                            </a>
+                            </div>
+                        </div>
+                        <br>
+                        {% if issue in all_active_issues %}
+                        <div class="row">
+                                <img src="https://avatars.githubusercontent.com/{{ contributor }}" alt="Avatar" style=" border-radius: 50%;width:100px ; margin-left: auto; margin-right: auto;"><br>
+                                <label for="contributor"><b>Contributor</b></label>
+                                <div class="col-sm">
+                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
+                                    <a class="text-white">Assigned to @{{ contributor}}</a>
+                                </button>
+                                </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8 text-center">
+                        <div class="card-body p-4">
+                            <h4><b>Issue #{{ issue.number }} : {{ title }}</b></h4>
+                            <hr class="mt-0 mb-4">
+                            <p class="text-muted"></p>
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <h6><b>Domain</b></h6>
+                                    <a class="btn btn-rounded btn-success text-white" >{{ issue.project.domain }}</a>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <h6><b>SubDomains</b></h6>
+                                    <a class="btn btn-rounded btn-light text-dark" >{{ issue.project.get_sub_domains }}</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 mb-3">
+                                    <h6><b>Status</b></h6>
+                                    {% if issue in all_active_issues %}
+                                        <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
+                                            <a class="text-white">Assigned</a>
+                                        </button>
+                                    {% elif issue.state == issue.OPEN %}
+                                        <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
+                                    {% else %}
+                                        <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
+                                    {% endif %}
+                                </div>
+                                <div class="col-4 mb-3">
+                                    <h6><b>Points</b></h6>
+                                    <button class="btn-rounded btn-danger btn-round m-1" data-mdb-toggle="tooltip" title="You will get !">{{ issue.points }}</button>
+                                </div>
+                                <div class="col-4 mb-3">
+                                    <h6><b>Visit GitHub</b></h6>
+                                    <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" >Go to Issue</button></a>
+                                </div>
+                            </div>
+                            <div class="row pt-1">
+                                <h6><b>Labels</b></h6>
+                                <div class="container mb-2">
+                                    <p class="card-text">
+                                    <a class="btn btn-rounded btn-dark" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a>
+                                    {% if issue.is_restricted %}
+                                        <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+                                    {% endif %}
+                                    </p>
+                                </div>
+                                <div id="vote-section-{{ issue.pk }}">
+                                    {% include 'home/vote.html' %}
+                                </div>
+                                <div class="form-group purple-border">
+                                    <label for="description"><b>Description</b></label>
+                                    <div class="form-group basic-textarea rounded-corners">
+                                        <textarea class="form-control z-depth-1" id="exampleFormControlTextarea345" rows="7" readonly >{{ desc }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row justify-content-center align-items-center">
+                                {% if issue.state == issue.OPEN and contributor == '' %}
+                                    <div class="col-lg-7">
+                                        <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
+                                            <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                                Request Assignment
+                                            </a>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-end mb-4">
+            <div class="col-4">
+                <div class="card">
+                    <div class="p-2 bg-primary text-white text-center"><h5>Comments</h5></div>
+                </div>
+            </div>
+            <div class="col-4 ">
+                <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" data-mdb-toggle="tooltip" title="Add Comment">Add a Comment</button></a>
+                <button class="btn btn-primary" data-mdb-toggle="tooltip" title="Refresh Comments" id="refresh" ><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+  <div class="row m-10">
+    <div class="col-12">
+      <div class="comments">
+          <div class="loading container ajaxLoader" style="display: none;">
+                <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
+                     style="display:block;margin-left:auto;margin-right:auto;">
+            </div>
+          <div id="issue_comments">
+              {% include 'home/issue_conversation_page.html' %}
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+    jQuery(document).ready(function () {
+            $(document).on('click', '#votebtn', function (event) {
+                event.preventDefault();
+                let type = $(this).attr('type');
+                if(type === 0){
+                    $("#upvote").toast("show");
+                }
+                else if(type === 1){
+                    $("#downvote").toast("show");
+                }
+                else if(type === 2){
+                    $("#voteremoved").toast("show");
+                }
+                else if(type === 3){
+                    $("#loginfirst").toast("show");
+                    window.setTimeout(function(){
+                        window.location.href = {% url 'authorize' %};
+                        }, 1000);
+                }
+                let iid = $(this).attr('iid');
+                $.ajax({
+                    url: '{% url "handle_vote" %}',
+                    type: 'post',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        id: iid,
+                        type: type,
+                    },
+                    success: function (data) {
+                        $('#vote-section-' + iid).html(data['html']);
+                        let voteToast = $("#voteToast");
+                        voteToast.children(".toast-body").text(data['message']);
+                        voteToast.toast("show");
+                    },
+                    error: function () {
+                        $("#errorToast").toast("show");
+                    }
+                })
+            })
+        });
+
+    $(document).ready(function () {
+            $("#refresh").click(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '{% url 'issue_details' issue.pk %}',
+                    type: 'post',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                    },
+                    beforeSend:function(){
+                        $(".ajaxLoader").show() ;
+                    },
+                    success(data) {
+                        $("#issue_comments").html(data.context) ;
+                        $('textarea').each(function () {
+                            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');}).on('input', function () {
+                            this.style.height = 'auto';
+                            this.style.height = (this.scrollHeight) + 'px';
+                        });
+                        $("#commentsrefreshed").toast("show") ;
+                        $(".ajaxLoader").hide() ;
+                    },
+                    error: function () {
+                        alert('Could Not Refresh, Some error occured.') ;
+                        $(".ajaxLoader").hide() ;
+                    }
+                })
+            })
+        });
+
+        function removeToastForUpvote()
+        {
+            $("#upvote").toast('hide');
+        }
+        function removeToastForDownvote()
+        {
+            $("#downvote").toast('hide');
+        }
+        function removeToastForVoteRemoved(){
+            $("#voteremoved").toast('hide');
+        }
+        function removeToastForCommentsRefreshed(){
+            $("#commentsrefreshed").toast('hide');
+        }
+        function textAreaAdjust(element) {
+            element.style.height = "1px";
+            element.style.height = (25+element.scrollHeight)+"px";
+        }
+        $('textarea').each(function () {
+            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');}).on('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+    </script>
+{% endblock %}

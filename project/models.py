@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, \
     DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
+from datetime import timedelta, datetime
 
 User = get_user_model()
 
@@ -351,3 +352,11 @@ class ActiveIssue(models.Model):
     #  places.
     def get_remaining_time(self):
         return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+    def check_last_hour(self):
+        current_time = timezone.now()
+        deadline = self.assigned_at + timedelta(days=self.issue.get_issue_days_limit())
+        last_hour = deadline - timedelta(hours = 1)
+        if(last_hour<current_time<deadline):
+            return True
+        return False
+    

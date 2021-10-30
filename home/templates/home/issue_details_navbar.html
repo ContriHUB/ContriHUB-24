@@ -40,61 +40,13 @@
             {% if user.is_authenticated %}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rankings' %}">
-                            <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
-                                Ranking
-                            </button>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'user_profile'  user.username %}">
                             <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
                                 User Profile
                             </button>
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link">
-                            <button type="button" class="btn btn-primary btn-rounded" data-toggle="modal" data-target="#exampleModal">
-                                All Projects
-                            </button>
-                        </a>
-                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" style="max-width: fit-content;" role="document">
-                              <div class="modal-content" style="background-color: #204278;">
-                                <div class="modal-header" style="color: aliceblue;">
-                                  <h5 class="modal-title" id="exampleModalLabel">All Projects</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered text-white" cellpadding="10" cellspacing="5">
-                                        <tr>
-                                            <th>Project Name</th>
-                                            <th>Domain</th>
-                                            <th>Sub-Domains</th>
-                                        </tr>
-                                        {% for project in projects %}
-                                            <tr>
-                                                <td><a target="_blank" href="{{project.html_url}}"><button type="button" class="btn btn-lg btn-warning ">{{ project.name }}</button></a></td>
-                                                <td><button type="button" class="btn btn-lg btn-warning">{{ project.domain }}</button></td></td>
-                                                <td><button type="button" class="btn btn-lg btn-warning">
-                                                    {% if project.get_sub_domains != '' %}
-                                                        {{ project.get_sub_domains }}
-                                                    {% else %}
-                                                         N/A
-                                                    {% endif %}
-                                                </button></td></td>
-                                            </tr>
-                                        {% endfor %}
-                                
-                                    </table>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact_form' %}">
                             <button type="button" class="btn btn-primary btn-rounded" data-mdb-ripple-color="dark">
