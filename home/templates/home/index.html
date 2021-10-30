@@ -209,7 +209,7 @@
                             </h6>
 
                             <p class="card-text">
-                                <a href="https://contrihub21.herokuapp.com/profile/user/{{issue.mentor}}/" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
+                                <a href="{% url 'user_profile' issue.mentor.username %}" class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                    title="Mentor">@{{ issue.mentor }}</a>
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip"
                                    title="Level">{{ issue.get_level_display }}</a>
@@ -232,7 +232,7 @@
                             {% if issue in all_active_issues %}
                                 <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
                                     title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">
-                                    <a class="text-white" href="https://contrihub21.herokuapp.com/profile/user/{{issue.contributor.username}}/">
+                                    <a class="text-white" href="{% url 'user_profile' issue.contributor.username %}">
                                         Assigned to @{{ issue.contributor.username }}
                                     </a>
                                 </button>
@@ -280,12 +280,13 @@
         jQuery(document).ready(function () {
                 {% if messages %}
                     {% for message in messages %}
+                        let django_messages = $('#django_messages');
                         {% if 'fail' in message.tags %}
-                            $('#django_messages').children().removeClass('bg-success')
-                            $('#django_messages').children().addClass('bg-danger')
+                            django_messages.children().removeClass('bg-success')
+                            django_messages.children().addClass('bg-danger')
                         {% endif %}
-                        $('#django_messages').children('.toast-body').html("{{message|safe }}");
-                        $('#django_messages').toast("show");
+                        django_messages.children('.toast-body').html("{{message|safe }}");
+                        django_messages.toast("show");
                     {% endfor %}
                 {% endif %}
 
