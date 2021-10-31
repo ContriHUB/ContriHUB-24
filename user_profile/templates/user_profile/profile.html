@@ -132,14 +132,16 @@
                                         </p>
                                         {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
                                         {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
+                                        <div id="event-box" hidden> {{ active_issue.get_remaining_time|date:"M d, Y H:m:s" }} </div>
                                         {% if active_issue.check_last_hour %}
-                                             <p style="
+                                            <div id="countdown-box" class="text-center mt-3 h4" style="
                                              color: transparent;
-                                             animation: effect 2s linear infinite;                                            
-                                             ">{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
+                                             animation: effect 2s linear infinite;
+                                             "></div>
                                         {% else %}
-                                             <p>{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
+                                            <div id="countdown-box" class="text-center mt-3 h4" ></div>
                                         {% endif %}
+                                        <h4>remaining</h4>
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
