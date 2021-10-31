@@ -37,17 +37,18 @@
                 <div class="myToast">
                     <div class="toast bg-danger fade hide" id="deadlineCrossed">
                         <div class="toast-body">
-                            {{message}}
-                {% if 'safe' not in message.tags %}
-                    <div class="myToast">
-                        <div class="toast bg-danger fade hide" id="deadlineCrossed">
-                            <div class="toast-body">
-                                {{ message }}
-                                <button onclick="removeToastForDeadlineCrossed()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
+                            {% if 'safe' not in message.tags %}
+                                <div class="myToast">
+                                    <div class="toast bg-danger fade hide" id="deadlineCrossed">
+                                        <div class="toast-body">{{ message }}
+                                            <button onclick="removeToastForDeadlineCrossed()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
-                {% endif %}
+                </div>
             {% endfor %}
         {% endif %}
 
@@ -92,7 +93,6 @@
                 </div>
             </div>
         </div>
-
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
                 <div class="text-center"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
@@ -129,20 +129,37 @@
                                                 </a>
                                             {% endif %}
                                         </p>
-                                        {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
-                                        {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
-                                        <div id="event-box" hidden> {{ active_issue.get_remaining_time|date:"M d, Y H:i:s" }} </div>
+                                        <div id="event-box{{ active_issue.id }}" hidden> {{ active_issue.get_remaining_time|date:"M d, Y H:i:s" }} </div>
                                         {% if active_issue.check_last_hour %}
-
-                                            <div id="countdown-box" class="text-center mt-3 h4" style="
+                                            <div id="countdown-box{{ active_issue.id }}" class="text-center mt-3 h4" style="
                                              color: transparent;
                                              animation: effect 2s linear infinite;
                                              "></div>
-
                                         {% else %}
-                                            <div id="countdown-box" class="text-center mt-3 h4" ></div>
+                                            <div id="countdown-box{{ active_issue.id }}" class="text-center mt-3 h4" ></div>
                                         {% endif %}
                                         <h4>remaining</h4>
+                                        <!-- Script attached for different timers for different issues -->
+                                        <script>
+                                            const eventBox{{ active_issue.id }}= document.getElementById('event-box{{ active_issue.id }}')
+                                            const eventDate{{ active_issue.id }} = Date.parse(eventBox{{ active_issue.id }}.textContent)
+                                            console.log(eventBox{{ active_issue.id }}.textContent)
+                                            setInterval(()=>{
+                                                const now = new Date().getTime()
+                                                const diff{{ active_issue.id }} = eventDate{{ active_issue.id }} - now
+                                                const days{{ active_issue.id }} = Math.floor( (diff{{ active_issue.id }}/(1000*60*60*24)) )
+                                                const hours{{ active_issue.id }} = Math.floor( (diff{{ active_issue.id }}/(1000*60*60))%24 )
+                                                const minutes{{ active_issue.id }} = Math.floor((diff{{ active_issue.id }}/(1000*60))%60 )
+                                                const seconds{{ active_issue.id }} = Math.floor((diff{{ active_issue.id }}/1000)%60 )
+                                                if(diff{{ active_issue.id }}>0){
+                                                    document.getElementById("countdown-box{{ active_issue.id }}").innerHTML = days{{ active_issue.id }} + "d " + hours{{ active_issue.id }} + "h " + minutes{{ active_issue.id }} + "m " + seconds{{ active_issue.id }} + "s "
+                                                }
+                                                else{
+                                                    document.getElementById("countdown-box{{ active_issue.id }}").innerHTML = " Time Expired For Issue ! "
+                                                }
+                                            },1000)
+                                        </script>
+                                        <!-- script ended -->
                                     </div>
                                     <div class="card-footer text-muted">
                                         {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
