@@ -10,6 +10,15 @@
           </button>
     </div>
 </div>
+    <div class="myToast" style="z-index: 10;">
+            <div class="toast bg-success fade hide" id="django_messages">
+                <div class="toast-body">
+                    ...
+                    <button onclick="removeToastForMessages()" style="float: right;" type="button" class="btn-close"
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
 </div>
 <div class="text-center text-white">
     <h1 class="display-6 text-white">Enter Following Information</h1>
@@ -53,5 +62,18 @@
         }
     }
 </script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'safe' in message.tags %}
+                            $('#django_messages').children('.toast-body').html("{{message|safe }}");
+                            $('#django_messages').toast("show");
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
 
+            }
+        )
+    </script>
 {% endblock %}

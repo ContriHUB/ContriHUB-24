@@ -6,7 +6,6 @@ import smtplib
 import threading
 import time
 from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -17,6 +16,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.contrib import messages
 
 from helper import complete_profile_required, check_issue_time_limit
 from home.helpers import send_email
@@ -206,12 +206,13 @@ def request_issue_assignment(request, issue_pk):
         email_thread.start()
 
         # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-        return HttpResponse(
-            f"Issue Requested Successfully")
+        messages.success(request, 'issue requested successfully',extra_tags='safe')
+        return redirect('user_profile',username=request.user)
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
-              f"{issue.project.name}</a> Failed.\n<h3>Cause:</h3>{msg}"
-    return HttpResponse(message)
+              f"{issue.project.name}</a> Failed.<h5>Cause:</h5>{msg}"
+    messages.success(request,message,extra_tags='fail')
+    return redirect('home')
 
 
 @login_required
@@ -227,10 +228,12 @@ def accept_issue_request(request, issue_req_pk):
         # TODO:ISSUE Send Email to Student that their request is accepted
         message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
                   f"{issue.project.name}</a> successfully assigned to {requester}"
-        return HttpResponse(message)
+        messages.success(request,message,extra_tags='safe')
+        return redirect('user_profile',username=request.user)
     else:
         message = f"This Issue Cannot be accepted by you! Probably it's already Accepted/Rejected."
-        return HttpResponse(message)
+        messages.success(request, message,extra_tags='safe')
+        return redirect('user_profile',username=request.user)
 
 
 def reject_issue_request(request, issue_req_pk):
@@ -243,7 +246,8 @@ def reject_issue_request(request, issue_req_pk):
     issue_request.save()
     message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> is rejected for {requester}"
-    return HttpResponse(message)
+    messages.success(request, message,extra_tags='safe')
+    return redirect('user_profile', username=request.user)
 
 
 @login_required
@@ -271,7 +275,8 @@ def submit_pr_request(request, active_issue_pk):
                 regex1 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$"
                 regex2 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
                 if not (re.match(regex2, pr_url) or re.match(regex1, pr_url)):
-                    return HttpResponse("Invalid PR Link...!!")
+                    messages.success(request,'Invalid PR Link',extra_tags='safe')
+                    return redirect('user_profile',username=request.user)
 
                 pr.issue = issue
                 pr.contributor = request.user
@@ -298,15 +303,18 @@ def submit_pr_request(request, active_issue_pk):
                 email_thread.start()
                 message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
                           f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
-                return HttpResponse(message)
+                messages.success(request, message,extra_tags='safe')
+                return redirect('user_profile',username=request.user)
             else:
                 message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
                           f"for <a href={issue.html_url}>Issue #{issue.number}</a> of Project <a href=" \
                           f"{issue.project.html_url}>{issue.project.name}</a>"
-            return HttpResponse(message)
+            messages.success(request, message,extra_tags='safe')
+            return redirect('user_profile',username=request.user)
 
     message = "This request cannot be full-filled."
-    return HttpResponse(message)
+    messages.success(request,message,extra_tags='safe')
+    return redirect('user_profile',username=request.user)
 
 
 # TODO:ISSUE: Implement Functionality for mentor to assign bonus/peanlty points while accepting/rejecting the issue.A form will be needed.
@@ -370,7 +378,8 @@ def accept_pr(request, pk):
     else:
         message = f"This PR is probably already Accepted. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-    return HttpResponse(message)
+    messages.success(request,message,extra_tags='safe')
+    return redirect('user_profile',username=request.user)
 
 
 @login_required
@@ -427,7 +436,8 @@ def reject_pr(request, pk):
     else:
         message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
                   f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-    return HttpResponse(message)
+    messages.success(request,message,extra_tags='safe')
+    return redirect('user_profile',username=request.user)
 
 
 @login_required
@@ -487,6 +497,32 @@ def handle_vote(request):
     return JsonResponse({'html': html, 'message': message})
 
 
+#fetch issue conversation in comments
+def issue_conversation(url,headers):
+    url += '/comments'
+    res = requests.get(url,headers=headers)
+    r = res.json()
+    if res.status_code == 200:
+        all_comments=[]
+        for o_res in r:
+            body = o_res['body']
+            user = o_res['user']
+            created_at = o_res['created_at']
+            dd = created_at[8:10]
+            mm = created_at[5:7]
+            yyyy = created_at[0:4]
+            hh = created_at[11:13]
+            min = created_at[14:16]
+            date = dd+'-'+mm+'-'+yyyy
+            time = hh+':'+min
+            comment = {'body':body,'date':date,'time':time}
+            comment.update(user)
+            all_comments.append(comment)
+        return all_comments
+
+
+
+#fetch issue details only
 def issue_details(request,issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     issue_no = issue.number
@@ -505,12 +541,25 @@ def issue_details(request,issue_pk):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
-    comments_url = ''
+    if request.is_ajax():
+        social = request.user.social_auth.get(provider='github')
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
+        }
+        comments_res = issue_conversation(url, headers)
+        data = {
+            'comments':comments_res,
+        }
+        rendered_template = render_to_string('home/issue_conversation_page.html', data)
+        return JsonResponse({'context': rendered_template})
+
+
     r = requests.get(url, headers=headers)
+    comments_res = issue_conversation(url,headers)
     response_data = r.json()
     if r.status_code == 200:
         print('Issue details arrived')
-        # pprint(r.json())
         desc = response_data['body']
         created_at=response_data['created_at']
         lb = response_data['labels']
@@ -521,7 +570,6 @@ def issue_details(request,issue_pk):
         title = response_data['title']
         user = response_data['user']
         avatar_url = user['avatar_url']
-        username = user['login']
         context = {
             'title':title,
             'desc':desc,
@@ -533,6 +581,7 @@ def issue_details(request,issue_pk):
             'issue':issue,
             'all_active_issues':all_active_issues,
             'contributor':contributor,
+            'comments':comments_res,
         }
 
         return render(request,'home/issue_details_page.html',context=context)

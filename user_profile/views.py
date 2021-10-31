@@ -2,7 +2,7 @@ import re
 import json
 import requests
 
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse,redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -98,7 +98,8 @@ def profile(request, username):
                 "hard_issues_solved": hard_issues_solved,
             }
             return render(request, 'user_profile/profile.html', context=context)
-    return HttpResponse("Profile not found!")
+    messages.success(request,"Profile not found!",extra_tags='safe')
+    return HttpResponseRedirect(reverse('home'))
 
 
 @login_required
@@ -135,7 +136,8 @@ def complete(request):
             existing_profile.save()
             return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
         else:
-            return HttpResponse('Something Went wrong.!!!')
+            messages.success(request,'Something Went wrong.!!!',extra_tags='safe')
+            return HttpResponseRedirect(reverse('complete_profile'))
     return HttpResponseRedirect(reverse('complete_profile'))
 
 
@@ -173,7 +175,8 @@ def edit_profile(request):
         email.send()
         return JsonResponse({'status': 'success'})
     else:
-        return HttpResponse("Something went wrong")
+        messages.success(request, 'Something Went wrong.!!!', extra_tags='safe')
+        return redirect('user_profile',username=request.user)
 
 
 @login_required
@@ -190,7 +193,8 @@ def change_contact_info(request):
             user_pro.save()
         return JsonResponse({'status': 'success'})
     else:
-        return HttpResponse("Something Went Wrong")
+        messages.success(request, 'Something Went wrong.!!!', extra_tags='safe')
+        return redirect('user_profile', username=request.user)
 
 
 @login_required
@@ -281,4 +285,5 @@ def create_issue(request):
             print('Response:', r.content)
             return JsonResponse({'status': 'error'})
     else:
-        return HttpResponse("Something Went Wrong")
+        messages.success(request, 'Something Went wrong.!!!', extra_tags='safe')
+        return redirect('user_profile', username=request.user)

@@ -1,6 +1,6 @@
 
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     Issue Details
 {% endblock %}
@@ -11,6 +11,14 @@
                 <div class="toast-body">
                     Up Voted successfully !
                     <button onclick="removeToastForUpvote()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <div class="myToast">
+            <div class="toast bg-success fade hide" id="commentsrefreshed">
+                <div class="toast-body">
+                    Comments Refreshed !
+                    <button onclick="removeToastForCommentsRefreshed()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -42,9 +50,7 @@
                     <div class="col-md-4 gradient-custom text-center card_style">
                         <div class="row mb-8 text-center margin_horizon">
                             <h4><b>Project Name</b></h4>
-                            <a href="{{ issue.project.html_url }}" target="_blank">
-                                <div class="p-3 bg-info text-white"><h5>{{ issue.project }}</h5></div>
-                            </a>
+                            <a class="btn btn-rounded btn-info text-white" href="{{ issue.project.html_url }}" target="_blank"><h3>{{ issue.project }}</h3></a>
                         </div>
                         <div class="row">
                             <img src="{{ avatar_url}}" alt="Avatar" class="margin_horizon img_css">
@@ -73,17 +79,17 @@
                     </div>
                     <div class="col-md-8 text-center">
                         <div class="card-body p-4">
-                            <h4><b> Title :  {{ title }}</b></h4>
+                            <h4><b>Issue #{{ issue.number }} : {{ title }}</b></h4>
                             <hr class="mt-0 mb-4">
                             <p class="text-muted"></p>
                             <div class="row">
                                 <div class="col-6 mb-3">
                                     <h6><b>Domain</b></h6>
-                                    <div class="p-1 m-2 bg-success text-white">{{ issue.project.domain }}</div>
+                                    <a class="btn btn-rounded btn-success text-white" >{{ issue.project.domain }}</a>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <h6><b>SubDomains</b></h6>
-                                    <div class="p-1 m-2 bg-light text-dark">{{ issue.project.get_sub_domains }}</div>
+                                    <a class="btn btn-rounded btn-light text-dark" >{{ issue.project.get_sub_domains }}</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -108,15 +114,6 @@
                                     <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" >Go to Issue</button></a>
                                 </div>
                             </div>
-                        <div class="row">
-                            {% if issue.state == issue.OPEN and contributor == '' %}
-                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
-                                    <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                        Request Assignment
-                                    </a>
-                                </button>
-                            {% endif %}
-                        </div>
                             <div class="row pt-1">
                                 <h6><b>Labels</b></h6>
                                 <div class="container mb-2">
@@ -137,8 +134,19 @@
                                     <div class="form-group basic-textarea rounded-corners">
                                         <textarea class="form-control z-depth-1" id="exampleFormControlTextarea345" rows="7" readonly >{{ desc }}</textarea>
                                     </div>
-{#                                    <textarea rows="7" class="form-control" id="description" rows="3" readonly>{{ desc }}</textarea>#}
                                 </div>
+                            </div>
+                            <br>
+                            <div class="row justify-content-center align-items-center">
+                                {% if issue.state == issue.OPEN and contributor == '' %}
+                                    <div class="col-lg-7">
+                                        <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
+                                            <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                                Request Assignment
+                                            </a>
+                                        </button>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -146,6 +154,34 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <div class="row justify-content-end mb-4">
+            <div class="col-4">
+                <div class="card">
+                    <div class="p-2 bg-primary text-white text-center"><h5>Comments</h5></div>
+                </div>
+            </div>
+            <div class="col-4 ">
+                <a href="{{ issue.html_url }}" target="_blank"><button class="btn btn-secondary" data-mdb-toggle="tooltip" title="Add Comment">Add a Comment</button></a>
+                <button class="btn btn-primary" data-mdb-toggle="tooltip" title="Refresh Comments" id="refresh" ><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+  <div class="row m-10">
+    <div class="col-12">
+      <div class="comments">
+          <div class="loading container ajaxLoader" style="display: none;">
+                <img src="{% static 'images/loader/loader.gif' %}" alt="loading more issues" width="60px"
+                     style="display:block;margin-left:auto;margin-right:auto;">
+            </div>
+          <div id="issue_comments">
+              {% include 'home/issue_conversation_page.html' %}
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
@@ -190,6 +226,36 @@
             })
         });
 
+    $(document).ready(function () {
+            $("#refresh").click(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '{% url 'issue_details' issue.pk %}',
+                    type: 'post',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                    },
+                    beforeSend:function(){
+                        $(".ajaxLoader").show() ;
+                    },
+                    success(data) {
+                        $("#issue_comments").html(data.context) ;
+                        $('textarea').each(function () {
+                            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');}).on('input', function () {
+                            this.style.height = 'auto';
+                            this.style.height = (this.scrollHeight) + 'px';
+                        });
+                        $("#commentsrefreshed").toast("show") ;
+                        $(".ajaxLoader").hide() ;
+                    },
+                    error: function () {
+                        alert('Could Not Refresh, Some error occured.') ;
+                        $(".ajaxLoader").hide() ;
+                    }
+                })
+            })
+        });
+
         function removeToastForUpvote()
         {
             $("#upvote").toast('hide');
@@ -201,5 +267,18 @@
         function removeToastForVoteRemoved(){
             $("#voteremoved").toast('hide');
         }
+        function removeToastForCommentsRefreshed(){
+            $("#commentsrefreshed").toast('hide');
+        }
+        function textAreaAdjust(element) {
+            element.style.height = "1px";
+            element.style.height = (25+element.scrollHeight)+"px";
+        }
+        $('textarea').each(function () {
+            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');}).on('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
     </script>
 {% endblock %}
