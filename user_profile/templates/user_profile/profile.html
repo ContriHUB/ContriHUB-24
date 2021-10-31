@@ -131,7 +131,7 @@
                                         </p>
                                         {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
                                         {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
-                                        <div id="event-box" hidden> {{ active_issue.get_remaining_time|date:"M d, Y H:m:s" }} </div>
+                                        <div id="event-box" hidden> {{ active_issue.get_remaining_time|date:"M d, Y H:i:s" }} </div>
                                         {% if active_issue.check_last_hour %}
 
                                             <div id="countdown-box" class="text-center mt-3 h4" style="
