@@ -10,7 +10,7 @@
             <div class="toast bg-success fade hide" id="upvote">
                 <div class="toast-body">
                     Up Voted successfully !
-                    <button onclick="removeToastForUpvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForUpvote()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
             <div class="toast bg-danger fade hide" id="downvote">
                 <div class="toast-body">
                     Down Voted successfully !
-                    <button onclick="removeToastForDownvote()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForDownvote()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="toast bg-warning fade hide" id="voteremoved">
                 <div class="toast-body">
                     Vote revoked successfully !
-                    <button onclick="removeToastForVoteRemoved()" style="float: right;" type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForVoteRemoved()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
     </div>
@@ -45,15 +45,15 @@
     </div>
     <div class="row d-flex justify-content-center align-items-center h-120">
         <div class="col col-lg-6 mb-4 mb-lg-0">
-            <div class="card mb-3" style="border-radius: .5rem;">
+            <div class="card mb-3 border_radius2">
                 <div class="row">
-                    <div class="col-md-4 gradient-custom text-center" style="display:flex; flex-direction:column; justify-content: center; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-                        <div class="row mb-8 text-center" style="margin-left: auto; margin-right: auto;">
+                    <div class="col-md-4 gradient-custom text-center card_style">
+                        <div class="row mb-8 text-center margin_horizon">
                             <h4><b>Project Name</b></h4>
                             <a class="btn btn-rounded btn-info text-white" href="{{ issue.project.html_url }}" target="_blank"><h3>{{ issue.project }}</h3></a>
                         </div>
                         <div class="row">
-                            <img src="{{ avatar_url}}" alt="Avatar" style=" border-radius: 50%;width:150px ; margin-left: auto; margin-right: auto;">
+                            <img src="{{ avatar_url}}" alt="Avatar" class="margin_horizon img_css">
                             <br>
                             <label for="mentor"><b>Mentor</b></label>
                             <div class="col-sm">
@@ -67,7 +67,7 @@
                         <br>
                         {% if issue in all_active_issues %}
                         <div class="row">
-                                <img src="https://avatars.githubusercontent.com/{{ contributor }}" alt="Avatar" style=" border-radius: 50%;width:100px ; margin-left: auto; margin-right: auto;"><br>
+                                <img src="https://avatars.githubusercontent.com/{{ contributor }}" alt="Avatar" class="margin_horizon img_css"><br>
                                 <label for="contributor"><b>Contributor</b></label>
                                 <div class="col-sm">
                                 <button data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Already Assigned to this Contributor" type="button" class="btn btn-warning btn-rounded mt-0">

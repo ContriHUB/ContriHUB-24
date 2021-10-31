@@ -34,13 +34,16 @@
 
         {% if messages %}
             {% for message in messages %}
+                <div class="myToast">
+                    <div class="toast bg-danger fade hide" id="deadlineCrossed">
+                        <div class="toast-body">
+                            {{message}}
                 {% if 'safe' not in message.tags %}
                     <div class="myToast">
                         <div class="toast bg-danger fade hide" id="deadlineCrossed">
                             <div class="toast-body">
                                 {{ message }}
-                                <button onclick="removeToastForDeadlineCrossed()" style="float: right;" type="button"
-                                        class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                                <button onclick="removeToastForDeadlineCrossed()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                             </div>
                         </div>
                     </div>
@@ -52,8 +55,7 @@
             <div class="toast bg-danger fade hide" id="invalidPR">
                 <div class="toast-body">
                     Invalid PR Link...!!
-                    <button onclick="removeToast()" style="float: right;" type="button" class="btn-close"
-                            data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToast()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -61,8 +63,7 @@
             <div class="toast bg-danger fade hide" id="invalidWhatsappNo">
                 <div class="toast-body">
                     Invalid Whatsapp No...!!
-                    <button onclick="removeToastForWhatsappNo()" style="float: right;" type="button" class="btn-close"
-                            data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForWhatsappNo()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -70,8 +71,7 @@
             <div class="toast bg-danger fade hide" id="invalidMSID">
                 <div class="toast-body">
                     Invalid MS ID...!!
-                    <button onclick="removeToastForMSID()" style="float: right;" type="button" class="btn-close"
-                            data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForMSID()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -79,8 +79,7 @@
             <div class="toast bg-success fade hide" id="updateprofilerequest">
                 <div class="toast-body">
                     You Request is Made Successfully For updation. Wait and check later ! ;)
-                    <button onclick="removeToastForUpdateProfileRequest()" style="float: right;" type="button"
-                            class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button onclick="removeToastForUpdateProfileRequest()" type="button" class="btn-close float_right" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -101,7 +100,7 @@
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for active_issue in active_issues %}
                             <div class="col">
-                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                <div class="card m-3 text-center border-radius">
                                     <div class="card-header">
                                         Issue #{{ active_issue.issue.number }}
                                     </div>
@@ -133,9 +132,7 @@
                                         {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
                                         {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
                                         {% if active_issue.check_last_hour %}
-                                             <p style="
-                                             color: transparent;
-                                             animation: effect 2s linear infinite;                                            
+                                             <p class="anime_trans                                          
                                              ">{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
                                         {% else %}
                                              <p>{{ active_issue.get_remaining_time | timeuntil }} remaining</p>
@@ -163,7 +160,7 @@
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for request in assignment_requests_by_student %}
                             <div class="col">
-                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                <div class="card m-3 text-center border_radius">
                                     <div class="card-header">
                                         Issue #{{ request.issue.number }}
                                     </div>
@@ -215,7 +212,7 @@
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for pr in pr_requests_by_student %}
                             <div class="col">
-                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                <div class="card m-3 text-center border_radius">
                                     <div class="card-header">
                                         Issue #{{ pr.issue.number }}
                                     </div>
@@ -277,7 +274,7 @@
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for pr in pr_requests_for_mentor %}
                             <div class="col">
-                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                <div class="card m-3 text-center border_radius">
                                     <div class="card-header">
                                         <svg class="mx-2 my-2" status="{{ pr.state }}"
                                              xmlns="http://www.w3.org/2000/svg"
@@ -347,7 +344,7 @@
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for request in assignment_requests_for_mentor %}
                             <div class="col">
-                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                <div class="card m-3 text-center border_radius">
                                     <div class="card-header">
                                         Issue #{{ request.issue.number }}
                                     </div>
@@ -407,7 +404,7 @@
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for issue in mentored_issues %}
                             <div class="col">
-                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                <div class="card m-3 text-center border_radius">
                                     <div class="card-header">
                                         Issue #{{ issue.number }}
                                     </div>
