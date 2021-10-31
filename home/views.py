@@ -182,6 +182,10 @@ class EmailThread(threading.Thread):
 @complete_profile_required
 @check_issue_time_limit
 def request_issue_assignment(request, issue_pk):
+
+    # Pausing ContriHUB for now. Uncomment this to resume ContriHUB
+    return HttpResponse("ContriHUB is paused, Issues won't be assigned now!")
+
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
     check, msg = issue.is_assignable(requester=requester)

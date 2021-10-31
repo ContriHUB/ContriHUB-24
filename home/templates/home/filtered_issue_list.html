@@ -56,9 +56,9 @@
                 {% elif issue.state == issue.OPEN %}
                     <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
                     <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                            title="Ask mentor for assigning Issue" type="button"
+                            title="Issues won't be assigned now!" type="button"
                             class="btn btn-primary mt-0">
-                        <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                        <a class="text-white disabled" href="{% url 'request_issue_assignment' issue.pk %}">
                             Request Assignment
                         </a>
                     </button>
