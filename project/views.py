@@ -102,7 +102,8 @@ def populate_issues(request):
                         points=points,
                         is_restricted=is_restricted,
                         bonus_value=bonus_value,
-                        bonus_description=bonus_description
+                        bonus_description=bonus_description,
+                        state=state
                     )
 
                 # print(db_issue)
