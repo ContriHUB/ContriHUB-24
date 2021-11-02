@@ -351,7 +351,10 @@ class ActiveIssue(models.Model):
     # TODO: ISSUE: Rename this function to 'get_deadline' as it is more suitable. Don't Forget to update name at all
     #  places.
     def get_remaining_time(self):
-        return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+        datetime = self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+        #returning IST i.e +5:30(330 min ahead of GMT)
+        local_dt = timezone.localtime(datetime, timezone.get_fixed_timezone(330))
+        return local_dt
     def check_last_hour(self):
         current_time = timezone.now()
         deadline = self.assigned_at + timedelta(days=self.issue.get_issue_days_limit())
