@@ -329,11 +329,9 @@
                                             </button>
 
                                         {% endif %}
-                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip"
-                                                title="View PR">
-                                            <a class="text-white" href="{{ pr.pr_link }}" target="_blank"><i
-                                                    class="fas fa-eye"></i></a>
-                                        </button>
+                                            <a class="text-white" href="{% url 'pr' pr.pk %}" target="_blank"><button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip"
+                                                title="View PR"><i
+                                                    class="fas fa-eye"></i></button></a>
                                     </div>
                                 </div>
                             </div>

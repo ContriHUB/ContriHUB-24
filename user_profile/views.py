@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.contrib import messages
+from pprintpp import pprint
 
 from helper import complete_profile_required, check_issue_time_limit
 from .forms import UserProfileForm, EditProfileForm
@@ -287,3 +288,113 @@ def create_issue(request):
     else:
         messages.success(request, 'Something Went wrong.!!!', extra_tags='safe')
         return redirect('user_profile', username=request.user)
+
+
+
+def pr_details(request,pk):
+    pr = PullRequest.objects.get(pk=pk)
+    pr_url = pr.pr_link
+    url = pr.issue.project.api_url
+    index = pr_url.rfind('pull/')
+    index+= 5
+    pull_no=''
+    for c in pr_url[index:len(pr_url)]:
+        if c=='/'or c=='#':
+            break
+        pull_no+=c
+    url+='/pulls/'+pull_no
+    social = request.user.social_auth.get(provider='github')
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
+    }
+    r = requests.get(url, headers=headers)
+    response_data = r.json()
+    if r.status_code == 200:
+        user = response_data['user']
+        user_avatar_url = user['avatar_url']
+        user_name = user['login']
+        head = response_data['head']
+        head_label = head['label']
+        pr_to_repo = head['repo']
+        pr_to_repo_name = pr_to_repo['name']+':'+pr_to_repo['default_branch']
+        body = response_data['body']
+        files_changed=response_data['changed_files']
+        no_of_commits = response_data['commits']
+        created_at = response_data['created_at']
+        created_dd = created_at[8:10]
+        created_mm = created_at[5:7]
+        created_yyyy = created_at[0:4]
+        created_hh = created_at[11:13]
+        created_min = created_at[14:16]
+        created_date = created_dd + '-' + created_mm + '-' + created_yyyy
+        created_time = created_hh + ':' + created_min
+        created_dt = 'On '+created_date +' at '+created_time
+        deletions = response_data['deletions']
+        pr_from = response_data['head']
+        html_url = response_data['html_url']
+        l = response_data['labels']
+        labels=[]
+        no_of_labels = 0
+        for lb in l:
+            labels.append(lb['name'])
+            no_of_labels+=1
+        maintainer_can_modify = response_data['maintainer_can_modify']
+        mergeable = response_data['mergeable']
+        mergeable_state = response_data['mergeable_state']
+        merged_at = response_data['merged_at']
+        merge_status = True
+        merged_dt=''
+        if merged_at == '':
+            merge_status = False
+        if merged_at :
+            merged_dd = merged_at[8:10]
+            merged_mm = merged_at[5:7]
+            merged_yyyy = merged_at[0:4]
+            merged_hh = merged_at[11:13]
+            merged_min = merged_at[14:16]
+            merged_date = merged_dd + '-' + merged_mm + '-' + merged_yyyy
+            merged_time = merged_hh + ':' + merged_min
+            merged_dt = 'On '+merged_date +' at '+merged_time
+        merged_by = response_data['merged_by']
+        merged_by_user = ''
+        if merged_by != None:
+            merged_by_user=merged_by['login']
+        else:
+            merged_by_user='None'
+        title = response_data['title']
+        updated_at = response_data['updated_at']
+        context = {
+            'pr_no':pull_no,
+            'pr':pr,
+            'head_label' : head_label,
+            'user' : user,
+            'user_avatar_url' : user_avatar_url,
+            'username':user_name,
+            'body' : body,
+            'files_changed' : files_changed,
+            'no_of_commits' : no_of_commits,
+            'created_at' : created_at,
+            'deletions' : deletions,
+            'pr_from' : pr_from,
+            'html_url' : html_url,
+            'labels' : labels,
+            'no_of_labels':no_of_labels,
+            'maintainer_can_modify' : maintainer_can_modify,
+            'mergeable' : mergeable,
+            'mergeable_state' : mergeable_state,
+            'merge_status':merge_status,
+            'merged_at' : merged_at,
+            'merged_by_user' : merged_by_user,
+            'title' : title,
+            'updated_at' : updated_at,
+            'issue' : pr.issue,
+            'pr_to_repo_name':pr_to_repo_name,
+            'merged_dt':merged_dt,
+            'created_dt':created_dt,
+        }
+        return render(request, 'user_profile/pr_details_page.html', context=context)
+    else:
+        print('Could not fetch PR details')
+        print('Response:', r.content)
+        return HttpResponse("Something Went Wrong")
