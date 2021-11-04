@@ -72,6 +72,7 @@ def populate_issues(request):
                 print("This issue is a actually a PR")
                 continue
             title, number = issue['title'], issue['number']
+            state = issue['state']
             mentor_name, level, points, is_restricted, bonus_value, bonus_description = parse_labels(labels=issue['labels'])
 
             if mentor_name and level:  # If mentor name and level labels are present in issue
@@ -86,6 +87,10 @@ def populate_issues(request):
                     db_issue.is_restricted = is_restricted
                     db_issue.bonus_value = bonus_value
                     db_issue.bonus_description = bonus_description
+                    if state == "closed":
+                        db_issue.state = db_issue.CLOSED
+                    else : 
+                        db_issue.state = db_issue.OPEN
                 else:  # Else Create New
                     db_issue = Issue(
                         number=number,
@@ -97,7 +102,8 @@ def populate_issues(request):
                         points=points,
                         is_restricted=is_restricted,
                         bonus_value=bonus_value,
-                        bonus_description=bonus_description
+                        bonus_description=bonus_description,
+                        state=state
                     )
 
                 # print(db_issue)
