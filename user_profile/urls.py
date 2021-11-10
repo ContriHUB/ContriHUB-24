@@ -8,4 +8,5 @@ urlpatterns = [
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('create_issue/', views.create_issue, name='create_issue'),
     path('edit_contact_info/', views.change_contact_info, name='change_contact_info'),
+    path('pr/<int:pk>/',views.pr_details,name='pr'),
 ]
