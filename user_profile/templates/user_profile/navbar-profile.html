@@ -1,0 +1,89 @@
+<!-- Navbar -->
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Navbar brand -->
+        <a class="navbar-brand mt-2 mt-lg-0" href="{% url 'home' %}">
+        <img
+          src="{% static 'images/logo/ch.png' %}"
+          height="45"
+          alt=""
+          loading="lazy"
+        />
+        </a>
+      <a style="color: #39FF14" class="navbar-brand mt-2 mt-lg-0" href="https://contrihub.github.io/">
+          <b>ContriHub</b>
+      </a>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a  class="nav-link" href="{% url 'home' %}">
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-rounded"
+                      data-mdb-ripple-color="dark"
+                    >
+                        Home
+                    </button>
+                </a>
+            </li>
+          <li class="nav-item">
+            <a  class="nav-link" href="{% url 'rankings' %}">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-rounded"
+                  data-mdb-ripple-color="dark"
+                >
+                    Rankings
+                </button>
+            </a>
+        </li>
+      </ul>
+    </div>
+    <!-- Collapsible wrapper -->
+
+    <!-- Right elements -->
+    <div class="d-flex align-items-center">
+        {% if user.is_authenticated and user.userprofile.role == user.userprofile.ADMIN and user.username == native_profile.user.username %}
+            <a  class="nav-link" href="{% url 'populate_projects' %}">
+                <button type="button" class="btn btn-secondary btn-rounded" data-mdb-ripple-color="dark">
+                    Populate Projects
+                </button>
+            </a>
+            <a  class="nav-link" href="{% url 'populate_issues' %}">
+                <button type="button" class="btn btn-secondary btn-rounded" data-mdb-ripple-color="dark">
+                    Populate Issues
+                </button>
+            </a>
+        {% endif %}
+    {% if user.is_authenticated %}
+        <a  class="nav-link" href="{% url 'logout' %}">
+            <button
+              type="button"
+              class="btn btn-danger btn-rounded"
+              data-mdb-ripple-color="dark"
+            >
+                Logout
+            </button>
+        </a>
+    {% else %}
+        <a  class="nav-link" href="{% url 'authorize' %}">
+            <button
+              type="button"
+              class="btn btn-success btn-rounded"
+              data-mdb-ripple-color="dark"
+            >
+                Authorize
+            </button>
+        </a>
+    {% endif %}
+    </div>
+    <!-- Right elements -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+

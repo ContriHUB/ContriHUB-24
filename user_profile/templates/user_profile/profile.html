@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+{# TODO:ISSUE Profile Navbar is not Collapsible. Fix It #}
+{# TODO:ISSUE Add Links to All Username to Profile Page. #}
+{% comment %}
+    context = {
+        "mentored_issues": mentored_issues,
+        "pr_requests_by_student": pr_requests_by_student,
+        "pr_requests_for_mentor": pr_requests_for_mentor,
+        "assignment_requests_by_student": assignment_requests_by_student,
+        "assignment_requests_for_mentor": assignment_requests_for_mentor,
+        'pr_form': pr_form,
+
+        // If the user visiting the profile is not same as the user whose profile is being visited (native user)
+        "native_profile": UserProfile.objects.get(user__username=username),
+    }
+{% endcomment %}
+
+{% block title %}
+    User Profile
+{% endblock %}
+
+{% block content %}
+    {% include "user_profile/navbar-profile.html" %}
+
+    {% if user.is_authenticated %}
+        {% include "user_profile/profile-card.html" %}
+
+        {% comment %}
+            In Django templates you can use the "get_FOO_display()" method, that will return the readable alias
+            for the field, where 'FOO' is the name of the field.
+        {% endcomment %}
+
+        {% if user.username == native_profile.user.username %}
+            {% if user.userprofile.role == user.userprofile.STUDENT %}
+                <div class="text-center"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
+                            <div class="container-flow p-3" >
+                    <div class="row row-cols-1 row-cols-md-2">
+                        {% for active_issue in active_issues %}
+                            <div class="col">
+                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                    <div class="card-header">
+                                    Issue #{{ active_issue.issue.number }}
+                                    </div>
+                                    <div class="card-body">
+
+                                        <h5 class="card-title">
+                                            <a href="{{ active_issue.issue.html_url }}">{{ active_issue.issue.title }}</a>
+                                        </h5>
+                                        <h6 class="">
+                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ active_issue.issue.project.html_url }}">{{ active_issue.issue.project.name }}</a>
+                                        </h6>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
+                                                @{{ active_issue.issue.mentor }}
+                                            </a>
+                                            <a class="btn btn-rounded btn-info">{{ active_issue.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ active_issue.issue.points }}</a>
+                                            {% if active_issue.issue.is_restricted %}
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </a>
+                                            {% endif %}
+                                        </p>
+                                    {# TODO:ISSUE: Implement Live Timer which ticks (instead of steady timer which changes on refreshing #}
+                                    {# TODO:ISSUE: Turn Timer Color to Red when last 1 hour is remaining. #}
+                                            {{ active_issue.get_remaining_time | timeuntil }} remaining
+
+                                  </div>
+                                    <div class="card-footer text-muted">
+                                    {# TODO:ISSUE Create Check on URL in frontend so that it is a Valid Github PR URL.#}
+                                        <form method="get" action="{% url 'submit_pr_request' active_issue.pk %}">
+                                            <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Enter PR Link">{{ pr_form.pr_link }}</a>
+                                            <button class="btn btn-rounded btn-success" type="submit">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+                <div class="text-center"><h1 class="display-6 text-white"><b>Current Assignment Requests</b></h1></div>
+
+                <div class="container-flow p-3" >
+                    <div class="row row-cols-1 row-cols-md-2">
+                        {% for request in assignment_requests_by_student %}
+                            <div class="col">
+                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                    <div class="card-header">
+                                    Issue #{{ request.issue.number }}
+                                    </div>
+                                    <div class="card-body">
+
+                                        <h5 class="card-title">
+                                            <a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a>
+                                        </h5>
+                                        <h6 class="">
+                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
+                                        </h6>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
+                                                @{{ request.issue.mentor }}
+                                            </a>
+                                            <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ request.issue.points }}</a>
+                                            {% if request.issue.is_restricted %}
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </a>
+                                            {% endif %}
+                                        </p>
+
+                                  </div>
+                                    <div class="card-footer text-muted">
+                                        {% if request.state == request.ACCEPTED %}
+                                            <a class="btn btn-rounded btn-success">{{ request.get_state_display }}</a>
+                                        {% elif request.state == request.REJECTED %}
+                                            <a class="btn btn-rounded btn-danger">{{ request.get_state_display }}</a>
+                                        {% elif request.state == request.PENDING_VERIFICATION %}
+                                            <a class="btn btn-rounded btn-warning">{{ request.get_state_display }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center"><h1 class="display-6 text-white"><b>PRs Submitted</b></h1></div>
+
+                <div class="container-flow p-3" >
+                    <div class="row row-cols-1 row-cols-md-2">
+                        {% for pr in pr_requests_by_student %}
+                            <div class="col">
+                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                    <div class="card-header">
+                                    Issue #{{ pr.issue.number }}
+                                    </div>
+                                    <div class="card-body">
+
+                                        <h5 class="card-title">
+                                            <a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a>
+                                        </h5>
+                                        <h6 class="">
+                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a>
+                                        </h6>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
+                                                @{{ pr.issue.mentor }}
+                                            </a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Time Since">
+                                                {{ pr.submitted_at | timesince }} ago
+                                            </a>
+                                        </p>
+
+                                  </div>
+                                    <div class="card-footer text-muted">
+                                        {% if pr.state == pr.ACCEPTED %}
+                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
+                                        {% elif pr.state == pr.REJECTED %}
+                                            <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
+                                        {% elif pr.state == pr.PENDING_VERIFICATION %}
+                                            <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
+                                        {% endif %}
+                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
+                                            <a class="text-white" href="{{ pr.pr_link }}" target="_blank"><i class="fas fa-eye"></i></a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center"><h1 class="display-6 text-white"><b>PR Verification Requests</b></h1></div>
+                <div class="container-flow p-3" >
+                    <div class="row row-cols-1 row-cols-md-2">
+                        {% for pr in pr_requests_for_mentor %}
+                            <div class="col">
+                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                    <div class="card-header">
+                                    Issue #{{ pr.issue.number }}
+                                    </div>
+                                    <div class="card-body">
+
+                                        <h5 class="card-title">
+                                            <a href="{{ pr.issue.html_url }}">{{ pr.issue.title }}</a>
+                                        </h5>
+                                        <h6 class="">
+                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ pr.issue.project.html_url }}">{{ pr.issue.project.name }}</a>
+                                        </h6>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Contributor">
+                                                @{{ pr.contributor }}
+                                            </a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Time Since">
+                                                {{ pr.submitted_at | timesince }} ago
+                                            </a>
+                                        </p>
+
+                                  </div>
+                                    <div class="card-footer text-muted">
+                                        {% if pr.state == pr.ACCEPTED %}
+                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
+                                        {% elif pr.state == pr.REJECTED %}
+                                            <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
+                                        {% elif pr.state == pr.PENDING_VERIFICATION %}
+                                            <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
+                                        {% endif %}
+                                    {# TODO: ISSUE: Disable these buttons from Frontend if PR is already accepted/rejected #}
+                                        <button class="btn btn-success mt-0">
+                                            <a class="text-white" href="{% url 'accept_pr' pr.pk %}">
+                                                Accept
+                                            </a>
+                                        </button>
+                                        <button class="btn btn-danger mt-0">
+                                            <a class="text-white" href="{% url 'reject_pr' pr.pk %}">Reject</a>
+                                        </button>
+                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
+                                            <a class="text-white" href="{{ pr.pr_link }}"><i class="fas fa-eye"></i></a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center"><h1 class="display-6 text-white"><b>Issue Assignment Requests</b></h1></div>
+
+                <div class="container-flow p-3" >
+                    <div class="row row-cols-1 row-cols-md-2">
+                        {% for request in assignment_requests_for_mentor %}
+                            <div class="col">
+                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                    <div class="card-header">
+                                    Issue #{{ request.issue.number }}
+                                    </div>
+                                    <div class="card-body">
+
+                                        <h5 class="card-title">
+                                            <a href="{{ request.issue.html_url }}">{{ request.issue.title }}</a>
+                                        </h5>
+                                        <h6 class="">
+                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ request.issue.project.html_url }}">{{ request.issue.project.name }}</a>
+                                        </h6>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Requester">@{{ request.requester }}</a>
+                                            <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ request.issue.points }}</a>
+                                            {% if request.issue.is_restricted %}
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </a>
+                                            {% endif %}
+                                        </p>
+
+                                  </div>
+                                    <div class="card-footer text-muted">
+                                        {% if request.state == request.ACCEPTED %}
+                                            <a class="btn btn-rounded btn-success">{{ request.get_state_display }}</a>
+                                        {% elif request.state == request.REJECTED %}
+                                            <a class="btn btn-rounded btn-danger">{{ request.get_state_display }}</a>
+                                        {% elif request.state == request.PENDING_VERIFICATION %}
+                                            <a class="btn btn-rounded btn-warning">{{ request.get_state_display }}</a>
+                                            <button class="btn btn-success mt-0">
+                                                <a class="text-white" href="{% url 'accept_issue_request' request.pk %}">
+                                                    Accept
+                                                </a>
+                                            </button>
+                                            <button class="btn btn-danger mt-0">
+                                                <a class="text-white" href="{% url 'reject_issue_request' request.pk %}">Reject</a>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center"><h1 class="display-6 text-white"><b>All Issues Under Me</b></h1></div>
+
+                <div class="container-flow p-3" >
+                    <div class="row row-cols-1 row-cols-md-2">
+                        {% for issue in mentored_issues %}
+                            <div class="col">
+                                <div class="card m-3 text-center" style="border-radius: 15px;">
+                                    <div class="card-header">
+                                    Issue #{{ issue.number }}
+                                    </div>
+                                    <div class="card-body">
+
+                                        <h5 class="card-title">
+                                            <a href="{{ issue.html_url }}">{{ issue.title }}</a>
+                                        </h5>
+                                        <h6 class="">
+                                            <a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
+                                        </h6>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-rounded btn-info">{{ issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
+                                            {% if issue.is_restricted %}
+                                                <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </a>
+                                            {% endif %}
+                                        </p>
+
+                                  </div>
+                                    <div class="card-footer text-muted">
+                                        {% if issue.state == issue.OPEN %}
+                                            <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
+                                        {% else %}
+                                            <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <div class="alert alert-secondary" role="alert">
+            Hello, Anon. You need to Authorize with Github First.
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}
