@@ -44,6 +44,25 @@ ContriHUB is an event where we are expecting to get more and more people involve
     ```
 * To access admin panel, you need to be superuser. Follow [this](https://www.geeksforgeeks.org/how-to-create-superuser-in-django/) link for instructions.
 
+## Points to keep in mind
+
+* SMTP protocol will not work with proxy. Kindly use mobile data while requesting an assignment/ submitting PR link/ testing out email functionality.
+* Every python project will be following some linting rules - Flake8 in this case. Kindly run Flake8 tests before submitting your code.
+    To install Flake8, run this command:
+    ```
+    python<version> -m pip install flake8
+    ```
+    
+    To run Flake8 tests on a file, run this command:
+    ```
+    flake8 path/to/your_code/main.py #check particular file
+    ```
+        
+    or for an entire repository, run this command:
+    ```
+    flake8 path/to/your_project/ #check the entire project repo
+    ```
+
 # Maintainers
 
 - [Divyansh Upadhyay](https://github.com/DuP-491)
