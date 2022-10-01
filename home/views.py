@@ -65,7 +65,7 @@ def request_issue_assignment(request, issue_pk):
             'url': issue.html_url,
             'protocol': request.build_absolute_uri().split('://')[0],
             'host': request.get_host(),
-            'subject': "Request for Issue Assignment under ContriHUB-21.",
+            'subject': "Request for Issue Assignment under ContriHUB-22.",
         }
         try:
             send_email(template_path=template_path, email_context=email_context)
@@ -147,7 +147,7 @@ def submit_pr_request(request, active_issue_pk):
                     'url': pr.pr_link,
                     'protocol': request.build_absolute_uri().split('://')[0],
                     'host': request.get_host(),
-                    'subject': "Request for Approval of PR on an issue under ContriHUB-21.",
+                    'subject': "Request for Approval of PR on an issue under ContriHUB-22.",
                 }
                 try:
                     send_email(template_path=template_path, email_context=email_context)
