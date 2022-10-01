@@ -62,8 +62,8 @@ def populate_issues(request):
             for issue in issues:
                 # print(issue)
                 # TODO: Can be given as ISSUE
-                # if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
-                #     continue
+                if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
+                    continue
                 if issue.get('pull_request') is not None:  # this issue is actually a PR.
                     # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
                     print("This issue is a actually a PR")
