@@ -72,9 +72,9 @@ def request_issue_assignment(request, issue_pk):
             # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
             return HttpResponse(f"Issue Requested Successfully. Email Request Sent to the Mentor({issue.mentor.username}). Keep your eye out on the your profile.")
         except mail.BadHeaderError:
-            ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+            linkedin_id = UserProfile.objects.get(user=issue.mentor).linkedin_id
             return HttpResponse(f"Issue Requested Successfully, but there was some problem sending email to the mentor("
-                                f"{issue.mentor.username}). For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})")
+                                f"{issue.mentor.username}). For quick response from mentor try contacting him/her on Linkedin({linkedin_id})")
 
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> cannot be made by you currently."
