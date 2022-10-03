@@ -88,7 +88,7 @@ def complete(request):
 
 @login_required
 def rankings(request):
-    contributors = UserProfile.objects.filter(role=UserProfile.STUDENT).order_by('-total_points')
+    contributors = UserProfile.objects.filter(role=UserProfile.STUDENT).exclude(total_points=0).order_by('-total_points')
     context = {
         'contributors': contributors,
     }
