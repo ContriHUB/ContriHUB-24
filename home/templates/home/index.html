@@ -63,9 +63,21 @@
                         </div>
                     </div>
                 </div>
-    </div>
-        <div class="row row-cols-1 row-cols-md-2">
-            {% for issue in issues %}
+        </div>
+        <div class="row py-4 px-5 row-cols-1 row-cols-md-6 text-white" >
+            <div class="col">Card view</div>
+            <div class="col form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="toggle-view">
+            </div>
+            <div class="col">Tabular view</div>
+        </div>
+        <!-- <button type="button" class="btn btn-lg btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off" id="toggle-view">
+            <div>toggle</div>
+        </button> -->
+
+        <div id="cardview">
+            <div class="row row-cols-1 row-cols-md-2">
+                {% for issue in issues %}
                 <div class="col">
                     <div class="card m-3 text-center" style="border-radius: 15px;">
                         <div class="card-header">
@@ -91,7 +103,7 @@
                                 {% endif %}
                             </p>
 
-                      </div>
+                        </div>
                         <div class="card-footer text-muted">
                             {% if issue.state == issue.OPEN %}
                                 <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
@@ -107,14 +119,77 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        <div id="tabularview" style="display: none;">
+            <div class="row row-cols-1 row-cols-md-2">
+                <table class="table">
+                    <thead class="bg-dark text-white">
+                        <tr class="align-middle text-center">
+                        <th scope="col">#</th>
+                        <th scope="col">Issue</th>
+                        <th scope="col">Project</th>
+                        <th scope="col">Domain</th>
+                        <th scope="col">Mentor</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Level</th>
+                        <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    
+                    {% for issue in issues %}
+                        <tbody class="bg-light">
+                        <tr class="align-middle text-center">
+                            <th scope="row">{{ issue.number }}</th>
+                            <td><a href="{{ issue.html_url }}">{{ issue.title }}</a></td>
+                            <td><a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a></td>
+                            <td>{{ issue.project.domain }}</td>
+                            <td>@{{ issue.mentor }}</td>
+                            <td>{{ issue.points }}</td>
+                            <td><a class="btn btn-rounded btn-info mt-0" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a></td>
+                            <td>
+                                {% if issue.is_restricted %}
+                                <button data-mdb-toggle="tooltip"
+                                        title="Restricted" type="button" class="btn btn-rounded btn-warning mt=0">
+                                    <a class="text-white"><i class="fas fa-exclamation-triangle"></i></a>
+                                </button>
+                                {% endif %}
+                                
+                                {% if issue.state == issue.OPEN %}
+                                    <button data-mdb-toggle="tooltip"
+                                        title="Issue is open" type="button" class="btn btn-rounded btn-success mt=0">
+                                        <a class="text-white">{{ issue.get_state_display }}</a>
+                                    </button>
+
+                                    <button data-mdb-toggle="tooltip" 
+                                        title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
+                                        <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
+                                            Request Assignment
+                                        </a>
+                                    </button>
+                                {% else %}
+                                    <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     </div>
 
 {% endblock %}
 
 {% block javascript %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $("#toggle-view").click(function(){
+        console.log("hello");
+        $("#tabularview, #cardview").toggle();
+    });
+</script>
 {% endblock %}
 
 {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
