@@ -87,7 +87,7 @@ def populate_issues(request):
                     db_issue.is_restricted = is_restricted
                     if state == "closed":
                         db_issue.state = db_issue.CLOSED
-                    else :
+                    else:
                         db_issue.state = db_issue.OPEN
 
                 else:  # Else Create New
