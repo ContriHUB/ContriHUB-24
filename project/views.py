@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import safe_hit_url, SUCCESS, complete_profile_required
+from config import api_endpoint, html_endpoint
 
 User = get_user_model()
 
@@ -19,8 +20,8 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = "https://api.github.com/repos/ContriHUB/"
-    html_uri = "https://github.com/ContriHUB/"
+    api_uri = api_endpoint['contrihub_api_1']
+    html_uri = html_endpoint['contrihub_html']
     # print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
@@ -52,7 +53,7 @@ def populate_issues(request):
         "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
     }
 
-    uri = "https://api.github.com/repos/contrihub/"
+    uri = api_endpoint['contrihub_api_2']
 
     for project in project_qs:
         url = f"{uri}{project.name}/issues"
