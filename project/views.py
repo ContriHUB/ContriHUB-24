@@ -73,7 +73,7 @@ def populate_issues(request):
                     # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
                     print("This issue is a actually a PR")
                     continue
-                title, number = issue['title'], issue['number']
+                title, number, state = issue['title'], issue['number'], issue['state']
                 mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
                 # print("Fsf ",mentor_name)
                 api_url, html_url = issue['url'], issue['html_url']
@@ -85,6 +85,11 @@ def populate_issues(request):
                     db_issue.level = level
                     db_issue.points = points
                     db_issue.is_restricted = is_restricted
+                    if state == "closed":
+                        db_issue.state = db_issue.CLOSED
+                    else :
+                        db_issue.state = db_issue.OPEN
+
                 else:  # Else Create New
                     db_issue = Issue(
                         number=number,
