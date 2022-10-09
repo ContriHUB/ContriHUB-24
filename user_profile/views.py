@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm
 from .models import UserProfile
+from home.helpers import send_email_to_admin
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
+import json
 
 User = get_user_model()
 
@@ -42,6 +44,8 @@ def profile(request, username):
             pr_form = PRSubmissionForm()
 
             context = {
+                "student_years": UserProfile.YEARS,
+                "student_courses": UserProfile.COURSES,
                 "mentored_issues": mentored_issues,
                 "pr_requests_by_student": pr_requests_by_student,
                 "pr_requests_for_mentor": pr_requests_for_mentor,
@@ -83,7 +87,68 @@ def complete(request):
         existing_profile.save()
     return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
 
-# TODO:ISSUE Edit Profile Functionality
+
+@complete_profile_required
+def edit_linkedin_id(request):
+    try:
+        if request.method == "POST":
+            body = json.loads(request.body)
+            if 'linkedin_id' not in body:
+                return HttpResponse(status=400)
+
+            existing_profile = UserProfile.objects.get(user=request.user)
+            new_linkedin_id = body['linkedin_id']
+            existing_profile.linkedin_id = new_linkedin_id
+            existing_profile.save()
+
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=400)
+    except Exception:
+        return HttpResponse(status=400)
+
+
+@complete_profile_required
+def edit_profile(request):
+    try:
+        if request.method == "POST":
+            body = json.loads(request.body)
+
+            if 'profile_regno' not in body:
+                return HttpResponse(status=400)
+            new_regno = body['profile_regno']
+
+            if 'profile_name' not in body:
+                return HttpResponse(status=400)
+            new_name = body['profile_name']
+
+            if 'profile_course' not in body:
+                return HttpResponse(status=400)
+            new_course = body['profile_course']
+
+            if 'profile_year' not in body:
+                return HttpResponse(status=400)
+            new_year = body['profile_year']
+
+            user = request.user
+            template_path = "user_profile/mail_template_request_profile_edit.html"
+            email_context = {
+                'username': user.username,
+                'protocol': request.build_absolute_uri().split('://')[0],
+                'host': request.get_host(),
+                'subject': f"Request for Profile Edit by {user.username}",
+                'new_regno': new_regno,
+                'new_name': new_name,
+                'new_course': new_course,
+                'new_year': new_year,
+            }
+            send_email_to_admin(template_path=template_path, email_context=email_context)
+
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=400)
+    except Exception:
+        return HttpResponse(status=400)
 
 
 @login_required

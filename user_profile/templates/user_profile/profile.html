@@ -338,5 +338,117 @@ Profile @{{ native_profile.user.username }}
 {% endblock %}
 
 {% block javascript %}
+    {% if user.username == native_profile.user.username and user.userprofile.role == user.userprofile.STUDENT %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            let csrftoken = getCookie('csrftoken');
 
+            function toggleEditProfileModal()
+            {
+                $('.edit-profile-modal-blur').toggle();
+                $('.edit-profile-modal').toggle();
+
+                $('.edit-linkedin-error').text('');
+                $('.edit-linkedin-success').text('');
+
+                $('.edit-profile-error').text('');
+                $('.edit-profile-success').text('');
+            }
+
+            function editLinkedInID(e)
+            {
+                e.preventDefault();
+                $('.edit-linkedin-error').text('');
+                $('.edit-linkedin-success').text('');
+                $('.edit-profile-error').text('');
+                $('.edit-profile-success').text('');
+
+                let linkedin_id = $('#edit-linkedin').val();
+
+                // Checking if the entered linkedin id is a valid url or not
+                // Doing this because when we first enter our linkedin id when completing our profile
+                // there is a url check performed by default html validation. So this keeps the frontend consistent
+                let url_check = true;
+                try
+                {
+                    let linkedin_id_url = new URL(linkedin_id);
+                    url_check = (linkedin_id_url.protocol === "http:" || linkedin_id_url.protocol === "https:");
+                }
+                catch (_)
+                {
+                    console.log(_)
+                    url_check = false;  
+                }
+                if (!url_check)
+                {
+                    $('.edit-linkedin-error').text('Please enter valid url!');
+                    return;
+                }
+
+                fetch('/profile/user/linkedin_id/edit/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ 'linkedin_id': linkedin_id })
+                }).then(res => {
+                    if (res.status === 200)
+                    {
+                        $('.profile-card-linkedin-id').text(linkedin_id);
+                        $('.edit-linkedin-success').text('Linkedin ID has been edited successfully!');
+                    }
+                    else
+                        $('.edit-linkedin-error').text('Please try again later!');
+                });
+            }
+
+            function editProfile(e)
+            {
+                e.preventDefault();
+                $('.edit-linkedin-error').text('');
+                $('.edit-linkedin-success').text('');
+                $('.edit-profile-error').text('');
+                $('.edit-profile-success').text('');
+
+                let profile_regno = $('#edit-regno').val();
+                let profile_name = $('#edit-name').val();
+                let profile_course = $('#edit-course').val();
+                let profile_year = $('#edit-year').val();
+
+                fetch('/profile/user/details/edit/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ 
+                        'profile_regno': profile_regno,
+                        'profile_name': profile_name,
+                        'profile_course': profile_course,
+                        'profile_year': profile_year,
+                    })
+                }).then(res => {
+                    if (res.status === 200)
+                        $('.edit-profile-success').text('Request has been sent successfully!');
+                    else
+                        $('.edit-profile-error').text('Please try again later!');
+                });
+            }
+        </script>
+    {% endif %}
 {% endblock %}
