@@ -1,13 +1,13 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 
-from home.helpers import send_email
+from home.helpers import EmailThread
 from django.core import mail
-
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
+
 from django.utils import timezone
 
 
@@ -102,8 +102,8 @@ def logout_(request):
 def request_issue_assignment(request, issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
-
     if issue.is_assignable(requester=requester):
+
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
@@ -121,7 +121,7 @@ def request_issue_assignment(request, issue_pk):
             'receiver': issue.mentor,
         }
         try:
-            send_email(template_path=template_path, email_context=email_context)
+            EmailThread(template_path, email_context).start()
             # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
             return HttpResponse(f"Issue Requested Successfully. Email Request Sent to the Mentor(\
                                 {issue.mentor.username}). Keep your eye out on your profile.")
@@ -208,7 +208,7 @@ def submit_pr_request(request, active_issue_pk):
                     'receiver': issue.mentor,
                 }
                 try:
-                    send_email(template_path=template_path, email_context=email_context)
+                    EmailThread(template_path, email_context).start()
                     message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request\
                               Successfully Submitted for <a href={issue.html_url}>Issue #" f"{issue.number}\
                               </a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
@@ -268,7 +268,7 @@ def accept_pr(request, pk):
                     'receiver': contributor,
                 }
                 try:
-                    send_email(template_path=template_path, email_context=email_context)
+                    EmailThread(template_path, email_context).start()
                     return HttpResponse(f"PR Accepted Successfully. Email sent to the contributor(\
                                         {contributor}).")
                 except mail.BadHeaderError:
@@ -316,7 +316,7 @@ def reject_pr(request, pk):
                     'receiver': contributor,
                 }
                 try:
-                    send_email(template_path=template_path, email_context=email_context)
+                    EmailThread(template_path, email_context).start()
                     return HttpResponse(f"PR rejected successfully. Email sent to the contributor(\
                                         {contributor}).")
                 except mail.BadHeaderError:
