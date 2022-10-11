@@ -14,4 +14,5 @@ urlpatterns = [
     path('reject_pr/<int:pk>/', views.reject_pr, name='reject_pr'),
     path('filter_by_domain/<int:domain_pk>/', views.filter_by_domain, name='filter_by_domain'),
     path('filter_by_subdomain/<int:subdomain_pk>/', views.filter_by_subdomain, name='filter_by_subdomain'),
+    path('contact/', views.contact_form, name='contact_form'),
 ]
