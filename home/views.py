@@ -347,7 +347,7 @@ def contact_form(request):
         subject = form['subject'].value()
         message = 'Name: {}\nEmail: {}\n\n{}'.format(user, email, body)
         try:
-            send_mail(subject, message, '', ['prakhara72@gmail.com'])
+            send_mail(subject, message, '', ['contrihub.avishkar@gmail.com'])
         except BadHeaderError:
             return HttpResponse('Mail could not be sent. Try again later!!')
         return redirect('home')
