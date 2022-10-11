@@ -336,6 +336,7 @@ def reject_pr(request, pk):
                     the "  "Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
 
+
 @login_required
 def contact_form(request):
     if request.method == 'POST':
