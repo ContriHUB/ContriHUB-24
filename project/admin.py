@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain
-from .models import Likes, Dislikes
+from project.models import Likes, Dislikes
 
 
 class ProjectAdmin(admin.ModelAdmin):
