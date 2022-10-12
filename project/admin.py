@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain, Likes, Dislikes
+from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain
+from .models import Likes, Dislikes
 
 
 class ProjectAdmin(admin.ModelAdmin):
@@ -23,6 +24,7 @@ class ActiveIssueAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Project, ProjectAdmin)
+
 admin.site.register(Issue, IssueAdmin)
 admin.site.register(PullRequest, PullRequestAdmin)
 admin.site.register(IssueAssignmentRequest, IssueAssignmentRequestAdmin)
