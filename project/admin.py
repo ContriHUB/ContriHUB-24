@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain
-from project.models import Likes, Dislikes
+import project.models
 
 
 class ProjectAdmin(admin.ModelAdmin):
@@ -31,5 +31,5 @@ admin.site.register(IssueAssignmentRequest, IssueAssignmentRequestAdmin)
 admin.site.register(ActiveIssue, ActiveIssueAdmin)
 admin.site.register(Domain)
 admin.site.register(SubDomain)
-admin.site.register(Likes)
-admin.site.register(Dislikes)
+admin.site.register(project.models.Likes)
+admin.site.register(project.models.Dislikes)
