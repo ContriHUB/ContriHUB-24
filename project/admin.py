@@ -20,7 +20,8 @@ class IssueAssignmentRequestAdmin(admin.ModelAdmin):
 class ActiveIssueAdmin(admin.ModelAdmin):
     list_display = ('contributor', 'issue', 'assigned_at')
 
-
+admin.site.register(Likes)
+admin.site.register(Dislikes)
 admin.site.register(Project, ProjectAdmin)
 
 admin.site.register(Issue, IssueAdmin)
@@ -29,5 +30,3 @@ admin.site.register(IssueAssignmentRequest, IssueAssignmentRequestAdmin)
 admin.site.register(ActiveIssue, ActiveIssueAdmin)
 admin.site.register(Domain)
 admin.site.register(SubDomain)
-admin.site.register(Likes)
-admin.site.register(Dislikes)
