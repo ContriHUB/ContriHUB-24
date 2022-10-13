@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain
-import project.models
-
+from .models import *
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'domain', 'html_url')
@@ -31,5 +29,5 @@ admin.site.register(IssueAssignmentRequest, IssueAssignmentRequestAdmin)
 admin.site.register(ActiveIssue, ActiveIssueAdmin)
 admin.site.register(Domain)
 admin.site.register(SubDomain)
-admin.site.register(project.models.Likes)
-admin.site.register(project.models.Dislikes)
+admin.site.register(Likes)
+admin.site.register(Dislikes)
