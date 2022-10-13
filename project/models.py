@@ -170,10 +170,12 @@ class PullRequest(models.Model):
 
     submitted_at = models.DateTimeField(verbose_name="Submitted At", default=timezone.now)
 
+    remark = models.CharField(verbose_name="remark", max_length=100,  blank=True, null=True)
+
     def __str__(self):
         return f"{self.contributor}_{self.issue}"
 
-    def accept(self, bonus=0, penalty=0):
+    def accept(self, bonus=0, penalty=0, remark=''):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -185,6 +187,7 @@ class PullRequest(models.Model):
         self.state = self.ACCEPTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating related Issue
@@ -193,7 +196,7 @@ class PullRequest(models.Model):
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += int(self.issue.points)
+        contributor_profile.total_points += int(self.issue.points) + int(bonus) - int(penalty)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
@@ -204,7 +207,7 @@ class PullRequest(models.Model):
         except AttributeError:
             pass
 
-    def reject(self, bonus=0, penalty=0):
+    def reject(self, bonus=0, penalty=0, remark=''):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -216,10 +219,12 @@ class PullRequest(models.Model):
         self.state = self.REJECTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
+        contributor_profile.total_points += int(bonus) - int(penalty)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
