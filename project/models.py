@@ -1,9 +1,9 @@
-from email.policy import default
 from django.db import models
 from django.contrib.auth import get_user_model
 from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, \
     DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
+from user_profile.models import UserProfile
 
 User = get_user_model()
 
@@ -77,6 +77,10 @@ class Issue(models.Model):
 
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
+
+    likes = models.IntegerField(default=0)
+
+    dislikes = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -297,3 +301,14 @@ class ActiveIssue(models.Model):
     #  places.
     def get_remaining_time(self):
         return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+
+
+class Like(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_like')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_like')
+
+
+class Dislike(models.Model):
+
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_dislike')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_dislike')
