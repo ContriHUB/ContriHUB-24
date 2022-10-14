@@ -333,7 +333,7 @@ def contact_form(request):
             send_mail(subject, message, '', ['contrihub.avishkar@gmail.com'])
         except BadHeaderError:
             return HttpResponse('Mail could not be sent. Try again later!!')
-        messages.success(request, "Message sent successfully" )
+        messages.success(request, "Message sent successfully")
         return redirect('home')
     elif request.method == 'GET':
         form = ContactForm()
