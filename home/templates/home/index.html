@@ -75,10 +75,6 @@
                 <div class="col align-self-center"><i class="lni lni-list"></i></div>
             </div>
         </div>
-        <!-- <button type="button" class="btn btn-lg btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off" id="toggle-view">
-            <div>toggle</div>
-        </button> -->
-            
 
         <div id="cardview">
             <div class="row row-cols-1 row-cols-md-2">
@@ -203,7 +199,6 @@
                                     </button>
                                     <a href="{% url 'like_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Like" class="btn btn-rounded btn-primary" id="liveToastBtnlike1{{issue.pk}}"><i class="fa-regular fa-thumbs-up fs-6 text-light">  {{issue.likes}}</i></button></a>
                                     <a href="{% url 'dislike_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Dislike" class="btn btn-rounded btn-danger" id="liveToastBtndislike2{{issue.pk}}"><i class="fa-regular fa-thumbs-down fs-6 text-light">  {{issue.dislikes}}</i></button></a>
-                                    {% comment %} <a class="btn btn-rounded btn-danger"><i class="fa-regular fa-thumbs-down fs-6"></i></a> {% endcomment %}
                                 {% else %}
                                     <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
                                 {% endif %}
