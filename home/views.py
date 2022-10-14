@@ -1,14 +1,15 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
-from django.core.mail import EmailMessage, send_mail, BadHeaderError
+from django.core.mail import send_mail, BadHeaderError
 
 from home.helpers import EmailThread
 from django.core import mail
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain
+from project.models import Project, Issue, IssueAssignmentRequest, Like
+from project.models import ActiveIssue, PullRequest, Domain, SubDomain, Dislike
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm, PRJudgeForm
-
 from django.utils import timezone
 from django.contrib import messages
 
@@ -338,3 +339,63 @@ def contact_form(request):
     elif request.method == 'GET':
         form = ContactForm()
         return render(request, 'home/contact_form.html', context={'form': form})
+
+
+@login_required
+def likes(request, issue_pk):
+    user = request.user.userprofile
+    issue = Issue.objects.get(pk=issue_pk)
+    current_likes = Issue.objects.get(pk=issue_pk).likes
+    current_dislikes = Issue.objects.get(pk=issue_pk).dislikes
+    liked = Like.objects.filter(user=user, issue=issue)
+    disliked = Dislike.objects.filter(user=user, issue=issue)
+    if not liked and not disliked:
+
+        liked = Like.objects.create(user=user, issue=issue)
+        current_likes = current_likes + 1
+
+    elif not liked and disliked:
+
+        liked = Like.objects.create(user=user, issue=issue)
+        disliked = Dislike.objects.filter(user=user, issue=issue).delete()
+        current_likes = current_likes + 1
+        current_dislikes = current_dislikes - 1
+
+    else:
+
+        liked = Like.objects.filter(user=user, issue=issue).delete()
+        current_likes = current_likes - 1
+
+    Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
+    Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
+    return redirect('/')
+
+
+@login_required
+def dislikes(request, issue_pk):
+    user = request.user.userprofile
+    issue = Issue.objects.get(pk=issue_pk)
+    current_likes = Issue.objects.get(pk=issue_pk).likes
+    current_dislikes = Issue.objects.get(pk=issue_pk).dislikes
+    liked = Like.objects.filter(user=user, issue=issue)
+    disliked = Dislike.objects.filter(user=user, issue=issue)
+    if not disliked and not liked:
+
+        disliked = Dislike.objects.create(user=user, issue=issue)
+        current_dislikes = current_dislikes + 1
+
+    elif not disliked and liked:
+
+        disliked = Dislike.objects.create(user=user, issue=issue)
+        liked = Like.objects.filter(user=user, issue=issue).delete()
+        current_likes = current_likes - 1
+        current_dislikes = current_dislikes + 1
+
+    else:
+
+        disliked = Dislike.objects.filter(user=user, issue=issue).delete()
+        current_dislikes = current_dislikes - 1
+
+    Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
+    Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
+    return redirect('/')
