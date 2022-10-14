@@ -3,7 +3,8 @@ from django.core.mail import send_mail, BadHeaderError
 
 from home.helpers import EmailThread
 from django.core import mail
-from project.models import *
+from project.models import Project, Issue, IssueAssignmentRequest, Like
+from project.models import ActiveIssue, PullRequest, Domain, SubDomain, Dislike
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
