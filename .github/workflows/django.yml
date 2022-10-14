@@ -2,9 +2,9 @@ name: Django-Automated-Testing
 
 on:
   push:
-    branches: [ "my-patch" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "my-patch" ]
+    branches: [ "main" ]
 
 jobs:
   build:
