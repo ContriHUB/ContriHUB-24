@@ -84,7 +84,7 @@ class Issue(models.Model):
 
     # Bonus Points
     bonus_pt = models.IntegerField(verbose_name="Bonus Points", default=0)
-    
+
     def __str__(self):
         return self.title
 
