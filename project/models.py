@@ -82,6 +82,9 @@ class Issue(models.Model):
 
     dislikes = models.IntegerField(default=0)
 
+    # Bonus Points
+    bonus_pt = models.IntegerField(verbose_name="Bonus Points", default=0)
+    
     def __str__(self):
         return self.title
 
