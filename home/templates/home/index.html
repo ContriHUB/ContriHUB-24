@@ -1,285 +1,770 @@
-{% extends 'base.html' %}
 {% load static %}
-{% comment %}
-    context = {
-        'projects': project_qs,
-        'issues': issues_qs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <meta property="og:title" content="ContriHUB" />
+  <meta property="og:url" content="https://sac.mnnit.ac.in/contrihub" />
+  <meta property="og:image" content="" />
+  <meta property="og:description" content="ContriHUB is an Open Source event at @MNNIT" />
+  <meta property="og:type" content="website" />
+
+
+  <title>ContriHUB</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <!-- removed older version of font awsome with newer version 
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}" />
+  <link href='https://fonts.googleapis.com/css?family=Cormorant Infant' rel='stylesheet'>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css"
+    rel='stylesheet'>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+
+  <style type="text/css">
+    html,
+    body,
+    header,
+    .view {
+      height: 100%;
+      scroll-behavior: smooth;
     }
-{% endcomment %}
 
-{% block title %}
-    Homepage
-{% endblock %}
+    @media (max-width: 740px) {
 
-{% block content %}
-    {# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
-    {# TODO:ISSUE Display who is currently working on this issue #}
-    {# TODO:ISSUE Make Link open in new tab #}
+      html,
+      body,
+      header,
+      .view {
+        height: 1000px;
+      }
+    }
 
-    {% include "home/navbar.html"%}
-    {# TODO:ISSUE Remove all Inline Styles and move to External CSS File #}
-    {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
-{#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol id="success" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-    </symbol>
-</svg>
-{% for message in messages %}
-<div id="msg" class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#{{ message.tags }}"/></svg> {{ message }}
-    <button type="button" onclick="removeMessage()" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-    <div class="container-flow p-3" >
-    <div class="row row-cols-1 row-cols-md-1">
-                <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
-                        <div class="card-header text-center">
-                            <h6>Announcements!</h6>
-                        </div>
-                        <div class="card-body">
-                            <ol>
-                                <li class="animate slideInRight">
-                                    <div class="animated slideInRight">
-                                        <b>Note:</b> Be sure to submit the PR link from your profile under Currently Active Issues after raising PR on GitHUB. Otherwise the PR will not get merged.
-                                    </div>
-                                </li>
-                                <li>
-                                    <b>FIX:</b> Very-Easy Issues are made restricted by default now.
-                                </li>
-                                <li>
-                                    Some issues are <b>locked</b> and will be unlocked only after you solve the once which are <b>mentioned in the description</b> of a locked Issues.
-                                </li>
-                                <li>
-                                    <b>NOTE: </b>If your Issue Assignment is rejected, it is most probably because
-                                    <ol>
-                                        <li>
-                                        Some other person has <b>already-requested/already-solving</b> the same issue.
-                                        </li>
-                                        <li>
-                                        The issue is still locked. <b>So Check the Description of Issue on GitHub first then Request it.</b>
-                                        </li>
-                                    </ol>
-                                </li>
-                                <li>
-                                    <span><b>Free Issues</b> are present so that you can learn the flow of Open Source Contributions using Github (i.e. Pull Requests, etc).</span>
-                                    Go to any of the projects listed here, Open the <b>CONTRIBUTORS.md</b> file.
-                                    Add your name, and create a Pull Request. These PR will not fetch you any points.</span>
-                                </li>
+    @media (min-width: 800px) and (max-width: 850px) {
 
-                            </ol>
-                        </div>
-                        <div class="card-footer text-muted">
-                        </div>
-                    </div>
-                </div>
-        </div>
-        <div class="d-flex justify-content-center shadow-lg p-3 rounded text-center" style="background-color: rgba(0, 0, 0, 0.2);margin: 0 1rem;">
-            <div class="bg-transparent py-3 px-3 row row-cols-1 row-cols-md-3 text-white ">
-                <div class="col align-self-center"><i class="lni lni-grid-alt"></i></div>
-                <div class="col align-self-center">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="toggle-view">
-                    </div>
-                </div>
-                <div class="col align-self-center"><i class="lni lni-list"></i></div>
-            </div>
-        </div>
+      html,
+      body,
+      header,
+      .view {
+        height: 650px;
+      }
+    }
 
-        <div id="cardview">
-            <div class="row row-cols-1 row-cols-md-2">
-                {% for issue in issues %}
-                <div class="col">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
-                        <div class="card-header">
-                        Issue #{{ issue.number }} - {{ issue.project.domain }}
-                        {% if issue.project.subdomain != None %}
-                            ({{ issue.project.subdomain }})
-                        {% endif %}
-                        </div>
-                        <div class="card-body">
+    @media (min-width: 800px) and (max-width: 850px) {
+      .navbar:not(.top-nav-collapse) {
+        background: #1C2331 !important;
+      }
+    }
+  </style>
+</head>
 
-                            <h5 class="card-title">
-                                <a href="{{ issue.html_url }}">{{ issue.title }}</a>
-                            </h5>
-                            <h6 class="">
-                                <a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a>
-                            </h6>
+<body>
 
-                            <p class="card-text">
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">@{{ issue.mentor }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
-                                {% if issue.bonus_pt != 0 %}
-                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Bonus" style="background-color:#FF1493 !important;">{{ issue.bonus_pt }}</a>
-                                {% endif %}
-                                {% if issue.is_restricted %}
-                                    <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </a>
-                                {% endif %}
-                                
-                            </p>
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
 
-                        </div>
-                        <div class="card-footer text-muted">
-                            {% if issue.state == issue.OPEN %}
-                                <a class="btn btn-rounded btn-success">{{ issue.get_state_display }}</a>
-                                <button data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                                    title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
-                                    <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                        Request Assignment
-                                    </a>
-                                </button>
-                            {% else %}
-                                <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
-                            {% endif %}
-                            <a href="{% url 'like_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Like" class="btn btn-rounded btn-primary" id="liveToastBtnlike{{issue.pk}}"><i class="fa-regular fa-thumbs-up fs-6 text-light">  {{issue.likes}}</i></button></a>
-                            <a href="{% url 'dislike_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Dislike" class="btn btn-rounded btn-danger" id="liveToastBtndislike{{issue.pk}}"><i class="fa-regular fa-thumbs-down fs-6 text-light">  {{issue.dislikes}}</i></button></a>
-                        </div>
-                    </div>
-                </div>
-                <script>
-                    var option = {
-                        animation: true,
-                        delay: 2000
-                    };
-                    document.getElementById("liveToastBtnlike{{issue.pk}}").onclick=function() {
-                        var myAlert = document.getElementById('liveToastlike')
-                        var bsAlert = new bootstrap.Toast(myAlert, option);
-                        bsAlert.show();
-                    }
-                </script>
-                <script>
-                    var option = {
-                        animation: true,
-                        delay: 2000
-                    };
-                    document.getElementById("liveToastBtndislike{{issue.pk}}").onclick=function() {
-                        var myAlert = document.getElementById('liveToastdislike')
-                        var bsAlert = new bootstrap.Toast(myAlert, option);
-                        bsAlert.show();
-                    }
-                </script>
-                {% endfor %}
-            </div>
-        </div>
-        <div id="tabularview" class="mx-4" style="display: none;">
-            <div class="row row-cols-1 row-cols-md-2" style="margin-top: 0.8rem;">
-                <table class="table">
-                    <thead class="bg-dark text-white">
-                        <tr class="align-middle text-center">
-                        <th scope="col">#</th>
-                        <th scope="col">Issue</th>
-                        <th scope="col">Project</th>
-                        <th scope="col">Domain</th>
-                        <th scope="col">Mentor</th>
-                        <th scope="col">Points</th>
-                        <th scope="col">Level</th>
-                        <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    
-                    {% for issue in issues %}
-                        <tbody class="bg-light">
-                        <tr class="align-middle text-center">
-                            <th scope="row">{{ issue.number }}</th>
-                            <td><a href="{{ issue.html_url }}">{{ issue.title }}</a></td>
-                            <td><a data-mdb-toggle="tooltip" title="Project" href="{{ issue.project.html_url }}">{{ issue.project.name }}</a></td>
-                            <td>{{ issue.project.domain }}</td>
-                            <td>@{{ issue.mentor }}</td>
-                            <td>{{ issue.points }}</td>
-                            <td><a class="btn btn-rounded btn-info mt-0" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a></td>
-                            <td>
-                                {% if issue.is_restricted %}
-                                <button data-mdb-toggle="tooltip"
-                                        title="Restricted" type="button" class="btn btn-rounded btn-warning mt=0">
-                                    <a class="text-white"><i class="fas fa-exclamation-triangle"></i></a>
-                                </button>
-                                {% endif %}
-                                
-                                {% if issue.state == issue.OPEN %}
-                                    <button data-mdb-toggle="tooltip"
-                                        title="Issue is open" type="button" class="btn btn-rounded btn-success mt=0">
-                                        <a class="text-white">{{ issue.get_state_display }}</a>
-                                    </button>
+      <!-- Brand -->
+      <a class="navbar-brand" href="/">
+        <strong>ContriHUB</strong>
+      </a>
 
-                                    <button data-mdb-toggle="tooltip" 
-                                        title="Ask mentor for assigning Issue" type="button" class="btn btn-primary mt-0">
-                                        <a class="text-white" href="{% url 'request_issue_assignment' issue.pk %}">
-                                            Request Assignment
-                                        </a>
-                                    </button>
-                                    <a href="{% url 'like_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Like" class="btn btn-rounded btn-primary" id="liveToastBtnlike1{{issue.pk}}"><i class="fa-regular fa-thumbs-up fs-6 text-light">  {{issue.likes}}</i></button></a>
-                                    <a href="{% url 'dislike_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Dislike" class="btn btn-rounded btn-danger" id="liveToastBtndislike2{{issue.pk}}"><i class="fa-regular fa-thumbs-down fs-6 text-light">  {{issue.dislikes}}</i></button></a>
-                                {% else %}
-                                    <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        </tbody>
-                        <script>
-                            var option = {
-                                animation: true,
-                                delay: 2000
-                            };
-                            document.getElementById("liveToastBtnlike1{{issue.pk}}").onclick=function() {
-                                var myAlert = document.getElementById('liveToastlike')
-                                var bsAlert = new bootstrap.Toast(myAlert, option);
-                                bsAlert.show();
-                            }
-                        </script>
-                        <script>
-                            var option = {
-                                animation: true,
-                                delay: 2000
-                            };
-                            document.getElementById("liveToastBtndislike2{{issue.pk}}").onclick=function() {
-                                var myAlert = document.getElementById('liveToastdislike')
-                                var bsAlert = new bootstrap.Toast(myAlert, option);
-                                bsAlert.show();
-                            }
-                        </script>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
+      <!-- Collapse -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <!-- Left -->
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About ContriHUB</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#ourgoal">Our Goal</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#ourteam">Our Team</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/project">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#pastorganizers">Past Organizers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Participate Now!</a>
+          </li>
+        </ul>
+
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons">
+<!--           <li class="nav-item">
+            <a href="https://www.facebook.com/groups/ContriHUB/" class="nav-link">
+              <i class="fab fa-facebook"></i>
+            </a>
+          </li> -->
+          <li class="nav-item">
+            <a href="https://github.com/ContriHUB" class="nav-link border border-light rounded" target="_blank">
+              <i class="fab fa-github mr-2"></i>ContriHUB GitHub
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
     </div>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div id="liveToastlike" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-            <strong class="me-auto fs-5">You liked this Issue</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </nav>
+  <!-- Navbar -->
+
+  <!-- Full Page Intro -->
+  <div class="view full-page-intro"
+    style="background-image: url('{% static 'img/background.jpg' %}'); background-repeat: no-repeat; background-size: cover;">
+
+    <!-- Mask & flexbox options-->
+    <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+      <!-- Content -->
+      <div class="container">
+        <div class="row justify-content-center text-white">
+          <div
+            style="width: 40%; max-width: 100%; height: auto; position: relative; transform: translateY(25%); margin-top: 25px">
+            <img src="{% static 'img/hacktober.png' %}" alt="Github" class="img-thumbnail img-responsive img-circle">
+          </div>
+        </div>
+        <!-- <div class="row justify-content-center text-white" >
+          <h1 style="font-size:100px;">Github</h1>
+        </div> -->
+        <div class="row justify-content-center text-white" style="margin-bottom: 40px">
+          <h2><br><br><br>Presents</h2>
+        </div>
+        <div class="row justify-content-center text-white">
+          <h1 style="font-size:100px; font-family: Cormorant Infant">ContriHUB</h1>
+        </div>
+      </div>
+      <!-- Content -->
+    </div>
+
+  </div>
+  <!-- Mask & flexbox options-->
+
+  </div>
+  <!-- Full Page Intro -->
+
+  <!--Main layout-->
+  <main>
+    <div class="container">
+
+      <!--Section: Main info-->
+      <section class="mt-5 wow fadeIn pt-5 pb-5" id="about">
+        <div style="margin-bottom: 50px">
+          <h2 class="h2 mb-6 text-center display-5 font-weight-bold">About ContriHUB</h2>
+          ContriHUB is an Open Source Event, which aims to get more people into the world of open source. This event
+          gives a jumpstart to open source development skills. It also serves as a warm up for GSoC and other global
+          open source competitions. This is a monthlong event, throughout the whole event participants learn different
+          open source tools, solve various issues and compete against one another to be the winner.
+        </div>
+        <!--Grid row-->
+        <div class="row justify-content-center">
+
+          <!--Grid column-->
+          <div class="col-md-5 mx-1 my-1 card">
+            <div class="card-body">
+              <h3 class="h3 mb-3">How This Works</h3>
+              <ul>
+                <li>Participants are required to solve the issues and earn points.</li>
+                <li>At the end of competition, winner will be declared from top 6 by judging the quality of issues
+                  solved by them.<b style="color: black;font-weight: 400;">So the participant with the most points need
+                    not be the winner.</b></li>
+                <li>Projects registered for the event can be solved to earn points. All of them can be found at <a
+                    href="https://github.com/ContriHUB">ContriHUB Organization</a>.</li>
+              </ul>
+
+              <h3 class="h3 mb-3">Scoring Criteria</h3>
+              <p>Each project will have issues open in it of varying difficulty and each issue will have points
+                associated with it as below:</p>
+              <ul>
+                <li>Very-Easy: 2 points</li>
+                <li>Easy: 10 points</li>
+                <li>Medium: 20 points</li>
+                <li>Difficult: 30 points</li>
+              </ul>
+              <p><b>Note: </b>Some issues might have different points than above mentioned points.</p>
             </div>
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-md-5 mx-1 my-1 card">
+
+            <!-- Main heading -->
+            <div class="card-body">
+              <h3 class="h3 mb-3">Prizes & Important Points</h3>
+              <h6>Prizes will be awarded in the following categories:</h6>
+              <ul style="text-align: justify;padding-bottom: 2.4vh;">
+                <!-- <li>Winners will be awarded Cash prize*.</li> -->
+                <li>Every participant with 4 valid PRs will be awarded with T-shirts and stickers.</li>
+                <li>A participant at anytime can have 2 issues assigned.</li>
+                <li>Once assigned, issues will be locked for 1 day (Very-Easy and Easy), 2 days (Medium), and 3 days (Hard).
+                  If you fail to submit PR within deadline, issues will be opened to all.</li>
+                <li>Participants have to submit their PR for an issue <a
+                    href="http://contrihub21.herokuapp.com/">here</a> to be eligible for points.</li>
+                <br>
+              </ul>
+              <p><b>Note: </b>Some issues mention that they "unlock after issue #xyz". In that case the concerned issue
+                will only be alloted once the issue it depends on (#xyz) is resolved.</p>
+            </div>
+          </div>
+          <!--Grid column-->
+
+        </div>
+        <!--Grid row-->
+
+      </section>
+      <!--Section: Main info-->
+
+      <hr class="my-5">
+      <!--Section: More-->
+      <section id="ourgoal" class="pt-5 pb-5">
+
+        <h2 class="h2 mb-5 text-center display-5 font-weight-bold">Our Goals</h2>
+
+        <!--First row-->
+
+        <div class="container">
+          <div class="row justify-content-center">
+
+            <div class="col-auto">
+              <div class="card my-1" style="width: 300px">
+                <div class="card-body">
+                  <i class="fab fa-github fa-2x indigo-text" aria-hidden="true"></i>
+                  <h4 class="card-title">Git & Github</h4>
+                  <p class="card-text">Introduce budding developers to the world of Git And GitHub</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-auto">
+              <div class="card my-1" style="width: 300px">
+                <div class="card-body">
+                  <i class="fab fa-google fa-2x indigo-text" aria-hidden="true"></i>
+                  <h4 class="card-title">GSOC</h4>
+                  <p class="card-text">Prepare aspiring developers for Google Summer Of Code 2022.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="container">
+          <div class="row justify-content-center">
+
+            <div class="col-auto">
+              <div class="card my-1" style="width: 300px">
+                <div class="card-body">
+                  <i class="fa fa-bullhorn fa-2x indigo-text" aria-hidden="true"></i>
+                  <h4 class="card-title">Awareness</h4>
+                  <p class="card-text">Increase awareness about the world of open source.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-auto">
+              <div class="card my-1" style="width: 300px">
+                <div class="card-body">
+                  <i class="fa fa-code fa-2x indigo-text" aria-hidden="true"></i>
+                  <h4 class="card-title">Improve Skills</h4>
+                  <p class="card-text">Help mentors to improve their guiding skills.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--/First row-->
+      </section>
+
+      <hr class="my-5">
+      <section id="ourteam" class="pt-5 pb-5 shadow-sm">
+        <h2 class="h2 mb-5 text-center display-5 font-weight-bold">Our Team</h2>
+        <div class="container">
+          
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ldk.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">LDK</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming something @somewhere
+                  </p>
+                  <a href="https://github.com/" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ldk.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">LDK</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming something @somewhere
+                  </p>
+                  <a href="https://github.com/" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ldk.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">LDK</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming something @somewhere
+                  </p>
+                  <a href="https://github.com/" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ldk.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">LDK</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming something @somewhere
+                  </p>
+                  <a href="https://github.com/" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ldk.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">LDK</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming something @somewhere
+                  </p>
+                  <a href="https://github.com/" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+           </div>
+
             
+        <div class="column justify-content-center" style="margin-top: 50px;">
+          <div class="row justify-content-center">
+            <a href="/project" class="btn btn-primary" style="margin-top: auto"><i
+                class="fa fa-user-shield ml-2"></i> See all project mentors</a>
+          </div>
         </div>
-    </div>
-   <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div id="liveToastdislike" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-            <strong class="me-auto fs-5">You disliked this Isssue</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </section>
+      <!--Section: More-->
+      <!-- <hr class="my-5"> -->
+      <section id="pastorganizers" class="pt-5 pb-5 shadow-sm">
+        <h2 class="h2 mb-5 text-center display-5 font-weight-bold">Past organizers</h2>
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ss.jpg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Shamoyeeta Saha</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming Technical Member @ DE Shaw
+                  </p>
+                  <a href="https://github.com/shamoyeeta" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
             </div>
-            
-        </div>
-    </div>
-{% endblock %}
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/yg.jpg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Yaggya Garg</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'23 | Upcoming SWE @ Uber
+                  </p>
+                  <a href="https://github.com/yaggya01" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ldk.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px;object-fit: cover; ">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Lovedeep Singh Kamal</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">IT MNNIT'23 | Upcoming SWE @ Arista
+                  </p>
+                  <a href="https://github.com/dev-lovedeep" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/sy.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px;object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Shreya Yadav</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">IT MNNIT'23 | Upcoming SWE @ Google
+                  </p>
+                  <a href="https://github.com/hackko-20" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/du.jpeg' %}" class="card-img-top w-100" alt="Card Image"
+                  style="max-height: 250px;object-fit: cover; ">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Divyansh Upadhyay</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">IT MNNIT'23 | Upcoming SWE @ Microsoft
+                  </p>
+                  <a href="https://github.com/DuP-491" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
 
-{% block javascript %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $("#toggle-view").click(function(){
-        console.log("hello");
-        $("#tabularview, #cardview").toggle();
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/pirate_ksh.jpeg' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Kshitiz Srivastava</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'22 | SWE @ Google
+                  </p>
+                  <a href="https://github.com/pirateksh" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/ashu.jpeg' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Ashutosh Chitranshi</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'22 | Member Technical @ DE Shaw
+                  </p>
+                  <a href="https://github.com/ashu12chi" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/nsp.jpeg' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Nishchal Siddharth Pandey</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE MNNIT'22 | SWE @
+                    PhonePe
+                  </p>
+                  <a href="https://github.com/nisiddharth" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/sangwan.jpeg' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Ankit Sangwan</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">ECE MNNIT'22 | Member Technical @ DE Shaw
+                  </p>
+                  <a href="https://github.com/ankitsangwan1999" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/abhey.png' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Abhey Rana</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">I am an enthusiastic programmer who
+                    loves open source development.</p>
+                  <a href="https://github.com/Abhey" class="btn btn-primary" style="margin-top: auto">See Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/akshay.png' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Akshay Sharma
+                  </h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CS Undergraduate at MNNIT Allahabad
+                    Former Intern at DE Shaw.</p>
+                  <a href="https://github.com/akshay31057" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/deepak.png' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Deepak Bharti</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE @ MNNIT'19</p>
+                  <a href="https://github.com/dbads" class="btn btn-primary" style="margin-top: auto">See Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+              <div class="card justify-content-center align-items-center">
+                <img src="{% static 'img/profile/mohit.jpg' %}" class="card-img-top" alt="Card Image"
+                  style="max-height: 250px; max-width: 250px;">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">Mohit Khare</h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                    style="max-width: 250px; max-height: 200px; overflow-y: auto">CSE @ MNNIT'19 | Computer-Club Coordi
+                    | Android | Python</p>
+                  <a href="https://github.com/mkfeuhrer" class="btn btn-primary" style="margin-top: auto">See
+                    Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+  </main>
+  <!--Main layout-->
+
+  <!-- <hr class="my-5"> -->
+
+  <section>
+  </section>
+
+  <!--Footer-->
+  <footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+    <!--Call to action-->
+    <div class="pt-4">
+    </div>
+    <!--/.Call to action-->
+
+    <div class="container" style="margin-top: 40px">
+
+      <!--Grid row-->
+      <div class="row wow fadeIn">
+
+        <!--Grid column-->
+        <div class="col-md-6 mb-4 text-center text-md-left">
+
+          <h1 class="display-5 font-weight-bold">New To The World Of OpenSource</h1>
+
+          <hr class="hr-light">
+
+          <p>
+            <strong>Worry not we have lot's of guides just for you.</strong>
+          </p>
+
+          <p class="mb-4 d-none d-md-block">
+            <strong>If you are confused about OpenSource Development and how to get started, then go through the
+              comprehensive guide we have prepared for you guys. If you still have any doubt then feel free to write to
+              us.</strong>
+          </p>
+
+          <a target="_blank" href="https://github.com/CC-MNNIT/2021-22-Classes/tree/main/Git-GitHub"
+            class="btn btn-indigo btn-lg">Getting Started With Git And GitHub
+            <i class="fa fa-graduation-cap ml-2"></i>
+          </a>
+
+        </div>
+        <!--Grid column-->
+
+        <!-- Grid column -->
+        <div class="col-md-6 col-xl-5 mb-4 text-md-left">
+
+          <!--Card-->
+          <!-- <div class="card"> -->
+
+            <!--Card content-->
+            <!-- <div class="card-body"> -->
+              <h1 class="display-5 font-weight-bold">Have any queries? Feel Free to Contact us </h1>
+
+              <hr class="hr-light">
+
+              <p>
+                <strong>Write us at: contrihub.avishkar@gmail.com</strong>
+              </p>
+
+              <!-- Form -->
+              <!-- <form name="">
+                <h3 class="dark-grey-text text-center">
+                  <strong>Write to us:</strong>
+                </h3>
+                <hr>
+
+                <div class="md-form">
+                  <i class="fa fa-user prefix grey-text"></i>
+                  <input type="text" id="form3" class="form-control">
+                  <label for="form3">Your name</label>
+                </div>
+                <div class="md-form">
+                  <i class="fa fa-envelope prefix grey-text"></i>
+                  <input type="text" id="form2" class="form-control">
+                  <label for="form2">Your email</label>
+                </div>
+
+                <div class="md-form">
+                  <i class="fa fa-pencil prefix grey-text"></i>
+                  <textarea type="text" id="form8" class="md-textarea"></textarea>
+                  <label for="form8">Your message</label>
+                </div>
+
+                <div class="text-center">
+                  <button class="btn btn-indigo">Send</button>
+                  <hr>
+                  <fieldset class="form-check">
+                    <input type="checkbox" class="form-check-input" id="checkbox1">
+                    <label for="checkbox1" class="form-check-label dark-grey-text">Subscribe me to the
+                      newsletter</label>
+                  </fieldset>
+                </div>
+
+              </form> -->
+              <!-- Form -->
+
+            <!-- </div> -->
+
+          <!-- </div> -->
+          <!--/.Card-->
+
+        <!-- </div> -->
+        <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Social icons -->
+    <div class="pb-4">
+      <a href="https://www.facebook.com/groups/ContriHUB/" target="_blank">
+        <i class="fab fa-facebook mr-3"></i>
+      </a>
+
+      <a href="https://github.com/ContriHUB" target="_blank">
+        <i class="fab fa-github mr-3"></i>
+      </a>
+
+      </a>
+    </div>
+
+    <!-- Deleted Code-->
+
+    <!-- Deleted Code -->
+    <!-- Social icons -->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3">
+      © 2023 Copyright:
+      <a href="https://sac.mnnit.ac.in/contrihub" target="_blank"> sac.mnnit.ac.in/contrihub </a>
+    </div>
+    <!--/.Copyright-->
+
+  </footer>
+  <!--/.Footer-->
+
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'js/jquery-mCustomScrollbar-concat.min.js' %}"></script>
+
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+  <!-- Initializations -->
+  <script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+  </script>
+
+  <!-- Custom Scrollbar -->
+  <script type="text/javascript">
+    $(function () {
+      /* Dark Thin */
+      $("member-intro").mCustomScrollbar({
+        theme: "dark-thin"
+      });
     });
-    function removeMessage() {
-        $("#msg").hide();
-    }
-</script>
+  </script>
 
-{% endblock %}
+</body>
 
-{# TODO:ISSUE Disable Request for Assignment Button of Assigned/Closed Issue from Frontend #}
-
-{# TODO:ISSUE Add Contact Us Form, Email will be sent to Admin if user submits this. #}
+</html>

@@ -23,9 +23,12 @@ from django.contrib import messages
 from user_profile.models import UserProfile
 from .forms import ContactForm
 
+def home(request):
+    return render(request, 'home/index.html')
+
 
 @complete_profile_required
-def home(request):
+def dashboard(request):
     global issues_qs, domain, subdomain
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.all()
@@ -41,7 +44,7 @@ def home(request):
         'curr_domain': domain,
         'curr_subdomain': subdomain
     }
-    return render(request, 'home/index.html', context=context)
+    return render(request, 'dashboard/index.html', context=context)
 
 
 @complete_profile_required
@@ -61,7 +64,7 @@ def filter_by_domain(request, domain_pk):
         'curr_domain': domain,
         'curr_subdomain': subdomain
     }
-    return render(request, 'home/index.html', context=context)
+    return render(request, 'dasboard/index.html', context=context)
 
 
 @complete_profile_required
@@ -82,7 +85,7 @@ def filter_by_subdomain(request, subdomain_pk):
         'curr_domain': domain,
         'curr_subdomain': subdomain
     }
-    return render(request, 'home/index.html', context=context)
+    return render(request, 'dasboard/index.html', context=context)
 
 
 def authorize(request):
@@ -91,7 +94,7 @@ def authorize(request):
     :param request:
     :return:
     """
-    return render(request, 'home/authorize.html', {})
+    return render(request, 'dasboard/authorize.html', {})
 
 
 @login_required
@@ -112,7 +115,7 @@ def request_issue_assignment(request, issue_pk):
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
 
-        template_path = "home/mail_template_request_issue_assignment.html"
+        template_path = "dasboard/mail_template_request_issue_assignment.html"
         email_context = {
             'mentor': issue.mentor,
             'user': requester,
@@ -199,7 +202,7 @@ def submit_pr_request(request, active_issue_pk):
 
                 # TODO:ISSUE Create Check on URL in backend so that it is a Valid Github PR URL.
 
-                template_path = "home/mail_template_submit_pr_request.html"
+                template_path = "dashboard/mail_template_submit_pr_request.html"
                 email_context = {
                     'mentor': issue.mentor,
                     'user': contributor,
@@ -263,7 +266,7 @@ def judge_pr(request, pk):
                     pr.accept(bonus=bonus, penalty=penalty, remark=remark)
                     message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                         f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                    template_path = "home/mail_template_pr_action.html"
+                    template_path = "dashboard/mail_template_pr_action.html"
                     email_context = {
                         'mentor': issue.mentor,
                         'user': contributor,
@@ -289,7 +292,7 @@ def judge_pr(request, pk):
                     pr.reject(bonus=bonus, penalty=penalty, remark=remark)
                     message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
                         f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                    template_path = "home/mail_template_pr_action.html"
+                    template_path = "dashboard/mail_template_pr_action.html"
                     email_context = {
                         'mentor': issue.mentor,
                         'user': contributor,
@@ -338,7 +341,7 @@ def contact_form(request):
         return redirect('home')
     elif request.method == 'GET':
         form = ContactForm()
-        return render(request, 'home/contact_form.html', context={'form': form})
+        return render(request, 'dashboard/contact_form.html', context={'form': form})
 
 
 @login_required

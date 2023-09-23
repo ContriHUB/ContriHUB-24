@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponseRedirect, reverse
+from django.shortcuts import HttpResponseRedirect, reverse, render
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
     DEFAULT_HARD_POINTS
@@ -9,6 +9,9 @@ from helper import safe_hit_url, SUCCESS, complete_profile_required
 from config import api_endpoint, html_endpoint
 
 User = get_user_model()
+
+def home(request):
+    return render(request, 'index.html')
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
