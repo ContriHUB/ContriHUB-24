@@ -107,12 +107,12 @@ For any query head on to dedicated Gitter Channel - [ContriHUB](https://gitter.i
 
 If you still have more doubts then feel free to ping any of the student co-ordinator.
 
-Team-2021 -
+Team-2023 -
 
--   [Kshitiz Srivastava](https://github.com/pirateksh)
+-   [Priyav K Kaneria](https://github.com/PriyavKaneria)
 
--   [Ashutosh Chitranshi](https://github.com/ashu12chi)
+-   [Shashank Verma](https://github.com/shank03)
 
--   [Nishchal Siddharth Pandey](https://github.com/nisiddharth)
+-   [Amit Kumar](https://github.com/hackeramitkumar)
 
--   [Ankit Sangwan](https://github.com/ankitsangwan1999)   
+-   [Sanskar Omar](https://github.com/sanskaromar)   
