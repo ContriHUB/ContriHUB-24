@@ -23,6 +23,7 @@ from django.contrib import messages
 from user_profile.models import UserProfile
 from .forms import ContactForm
 
+
 def home(request):
     return render(request, 'home/index.html')
 

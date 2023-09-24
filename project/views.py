@@ -10,6 +10,7 @@ from config import api_endpoint, html_endpoint
 
 User = get_user_model()
 
+
 def home(request):
     return render(request, 'index.html')
 
