@@ -65,7 +65,7 @@ def filter_by_domain(request, domain_pk):
         'curr_domain': domain,
         'curr_subdomain': subdomain
     }
-    return render(request, 'dasboard/index.html', context=context)
+    return render(request, 'dashboard/index.html', context=context)
 
 
 @complete_profile_required
@@ -86,7 +86,7 @@ def filter_by_subdomain(request, subdomain_pk):
         'curr_domain': domain,
         'curr_subdomain': subdomain
     }
-    return render(request, 'dasboard/index.html', context=context)
+    return render(request, 'dashboard/index.html', context=context)
 
 
 def authorize(request):
@@ -95,7 +95,7 @@ def authorize(request):
     :param request:
     :return:
     """
-    return render(request, 'dasboard/authorize.html', {})
+    return render(request, 'dashboard/authorize.html', {})
 
 
 @login_required
@@ -116,7 +116,7 @@ def request_issue_assignment(request, issue_pk):
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
 
-        template_path = "dasboard/mail_template_request_issue_assignment.html"
+        template_path = "dashboard/mail_template_request_issue_assignment.html"
         email_context = {
             'mentor': issue.mentor,
             'user': requester,
