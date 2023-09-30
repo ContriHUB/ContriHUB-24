@@ -1,16 +1,16 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, DAYS_PER_ISSUE_MEDIUM, \
-    DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
+from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, \
+    DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
-from datetime import timedelta, datetime
+from user_profile.models import UserProfile
 
 User = get_user_model()
 
 
 class Domain(models.Model):
 
-    name = models.CharField(max_length=56, null=True)
+    name = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.name
@@ -18,47 +18,29 @@ class Domain(models.Model):
 
 class SubDomain(models.Model):
 
-    name = models.CharField(max_length=56, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
 
 
 class Project(models.Model):
-
     name = models.CharField(verbose_name="Name", max_length=200)
 
     api_url = models.URLField(verbose_name="API URL")
 
     html_url = models.URLField(verbose_name="HTML URL")
-
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
-
-    def get_sub_domains(self):
-        sub_domains_project_qs = SubDomainProject.objects.filter(project=self)
-        sub_domains = ''
-        for sd in sub_domains_project_qs:
-            sub_domains += str(sd.sub_domain.name) + '/'
-        sub_domains = sub_domains[:-1]  # Removing trailing '/'
-        return sub_domains  # all_sub_domains_name_with_/_in_betw,een and removing last '/'
+    subdomain = models.ForeignKey(SubDomain, on_delete=models.DO_NOTHING, blank=True, default=None, null=True)
 
     def __str__(self):
         return self.name
 
 
-class SubDomainProject(models.Model):
-
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
-
-    sub_domain = models.ForeignKey(SubDomain, on_delete=models.CASCADE, null=True)
-
-    def __str__(self):
-        return self.project.name + ' -> ' + self.sub_domain.name
-
-
 class Issue(models.Model):
     FREE, EASY, MEDIUM, HARD, VERY_EASY = 0, 1, 2, 3, 4
-    FREE_READ, VERY_EASY_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Very-Easy", "Easy", "Medium", "Hard"  # Human Readable Names
+    FREE_READ, VERY_EASY_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Very-Easy", "Easy", "Medium", "Hard" \
+        # Human Readable Names
     LEVELS = (
         (FREE, FREE_READ),  # (Value, Human Readable Name)
         (VERY_EASY, VERY_EASY_READ),
@@ -77,10 +59,7 @@ class Issue(models.Model):
 
     title = models.CharField(verbose_name="Title", max_length=200)
 
-    # Issue description
-    description = models.TextField(verbose_name="Description", null=True, blank=True)
-
-    api_url = models.URLField(verbose_name="API URL")  # CAUTION: May contain inconsistent values, do not use this
+    api_url = models.URLField(verbose_name="API URL")
 
     html_url = models.URLField(verbose_name="HTML URL")
 
@@ -99,13 +78,12 @@ class Issue(models.Model):
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
 
-    bonus_value = models.CharField(verbose_name="Bonus Value", max_length=200, default="0")
+    likes = models.IntegerField(default=0)
 
-    bonus_description = models.CharField(verbose_name="Bonus Description", max_length=200, default="")
+    dislikes = models.IntegerField(default=0)
 
-    upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
-
-    downvotes = models.ManyToManyField(User, related_name="downvotes", blank=True)
+    # Bonus Points
+    bonus_pt = models.IntegerField(verbose_name="Bonus Points", default=0)
 
     def __str__(self):
         return self.title
@@ -113,48 +91,52 @@ class Issue(models.Model):
     def is_assignable(self, requester):
 
         if self.state == self.CLOSED:
-            return False, "The Issue is Closed Already."
+            return False
 
         is_active = ActiveIssue.objects.filter(issue=self)
 
         if is_active:  # If this issue is already assigned to someone currently
-            return False, "This issue is already assigned to someone else currently"
+            return False
 
-        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self,
-                                                                     state=IssueAssignmentRequest.PENDING_VERIFICATION)
+        is_already_requested = IssueAssignmentRequest.objects.filter(issue=self, requester=requester)
 
-        if is_already_requested:  # Current requester has already requested it and is pending.
-            return False, f"This issue has been already requested by @{is_already_requested.first().requester}"
+        if is_already_requested:  # Current requester has already requested it.
+            return False
 
         # TEST: Start
         requester_requests_count = IssueAssignmentRequest.objects.filter(requester=requester,
-                                                                         state=IssueAssignmentRequest.PENDING_VERIFICATION).count()
+                                                                         state=IssueAssignmentRequest.
+                                                                         PENDING_VERIFICATION).count()
         requester_active_issue_count = ActiveIssue.objects.filter(contributor=requester).count()
-        if requester_requests_count + requester_active_issue_count >= MAX_SIMULTANEOUS_ISSUE:
-            return False, f"Your Max-Simultaneous-Issue-Engagement-Count(2) Reached. Total Pending Requests:- {requester_active_issue_count}, Total Active Issues Count:- {requester_active_issue_count}"
+        if requester_requests_count + requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
+            return False
         # TEST: End
 
         profile = requester.userprofile
 
         if profile.role != profile.STUDENT:  # Issues can be assigned to Student Role only
-            return False, f"Whoa! You are not a Student."
+            return False
 
         if profile.current_year == profile.FINAL:  # Final Year Students not allowed
-            return False, f"Hehe! Have a chill pill, vro. It's Final year"
+            return False
 
         if self.is_restricted or self.level == self.VERY_EASY:
             if profile.course in (profile.M_TECH, profile.M_SC, profile.PHD):
-                return False, f"Sorry! M.Tech, M.Sc and Phd Student not allowed."
+                return False
 
             if profile.course == profile.B_TECH:
                 if profile.current_year in (profile.THIRD, profile.FINAL):
-                    return False, f"Sorry! B.Tech Third Year Student cannot take this issue."
+                    return False
 
             if profile.course == profile.MCA:
                 if profile.current_year in (profile.THIRD, profile.FINAL):
-                    return False, f"Sorry! MCA Final Year Student cannot take this issue."
+                    print("Cant be Assigned")
+                    return False
 
-        return True, f"Success."
+        if requester_active_issue_count > MAX_SIMULTANEOUS_ISSUE:
+            return False
+
+        return True
 
     def get_issue_days_limit(self):
         if self.level == self.FREE:
@@ -171,7 +153,6 @@ class Issue(models.Model):
 
 class PullRequest(models.Model):
     ACCEPTED, REJECTED, PENDING_VERIFICATION = 1, 2, 3
-    BONUS, PENALTY = "bonus", "penalty"
     STATES = (
         (ACCEPTED, "Accepted"),
         (REJECTED, "Rejected"),
@@ -180,9 +161,7 @@ class PullRequest(models.Model):
 
     pr_link = models.URLField(verbose_name="PR Link")
 
-    contributor = models.ForeignKey(User, on_delete=models.CASCADE, related_query_name='contributor')
-
-    remark = models.CharField(max_length=50, blank=True)
+    contributor = models.ForeignKey(User, on_delete=models.CASCADE)
 
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
@@ -194,13 +173,12 @@ class PullRequest(models.Model):
 
     submitted_at = models.DateTimeField(verbose_name="Submitted At", default=timezone.now)
 
+    remark = models.CharField(verbose_name="remark", max_length=100,  blank=True, null=True)
+
     def __str__(self):
         return f"{self.contributor}_{self.issue}"
 
-    class Meta:
-        ordering = ['-state', 'submitted_at']
-
-    def accept(self, bonus, penalty, remark):
+    def accept(self, bonus=0, penalty=0, remark=''):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -219,27 +197,20 @@ class PullRequest(models.Model):
         self.issue.state = self.issue.CLOSED
         self.issue.save()
 
-        # Updated accepted pr req. of current user
-        accepted_pr_count = PullRequest.objects.filter(contributor=self.contributor, state=self.ACCEPTED).count()
-
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += (int(self.issue.points) + int(bonus) - int(penalty))
+        contributor_profile.total_points += int(self.issue.points) + int(bonus) - int(penalty)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
-        contributor_profile.issues_solved = accepted_pr_count
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        active_issue = ActiveIssue.objects.filter(issue=self.issue, contributor=self.contributor)
-        if active_issue:
-            active_issue[0].delete()
-        # try:
-        #     self.issue.activeissue_set.first().delete()
-        # except AttributeError:
-        #     pass
+        try:
+            self.issue.activeissue_set.first().delete()
+        except AttributeError:
+            pass
 
-    def reject(self, bonus, penalty, remark):
+    def reject(self, bonus=0, penalty=0, remark=''):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -256,20 +227,16 @@ class PullRequest(models.Model):
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += (int(bonus) - int(penalty))
+        contributor_profile.total_points += int(bonus) - int(penalty)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
 
         # Deleting Active Issue related to this PR
-        active_issue = ActiveIssue.objects.filter(issue=self.issue, contributor=self.contributor)
-        if active_issue:
-            active_issue[0].delete()
-
-        # try:
-        #     self.issue.activeissue_set.first().delete()
-        # except AttributeError:
-        #     pass
+        try:
+            self.issue.activeissue_set.first().delete()
+        except AttributeError:
+            pass
 
 
 class IssueAssignmentRequest(models.Model):
@@ -286,13 +253,10 @@ class IssueAssignmentRequest(models.Model):
 
     state = models.PositiveSmallIntegerField(verbose_name="State", choices=STATES, default=PENDING_VERIFICATION)
 
-    created_on = models.DateTimeField(default=timezone.now)
+    requested_at = models.DateTimeField(verbose_name="Requested At", default=timezone.now)
 
     def __str__(self):
         return f"{self.requester}_{self.issue}"
-
-    class Meta:
-        ordering = ['-state', 'created_on']
 
     def is_acceptable(self, mentor):
 
@@ -306,21 +270,16 @@ class IssueAssignmentRequest(models.Model):
         if self.state != self.PENDING_VERIFICATION:  # If this Issue Request was already Accepted/Rejected
             return False
 
-        is_active = ActiveIssue.objects.filter(issue=self.issue)
+        active_count = ActiveIssue.objects.filter(contributor=requester, issue=issue).count()
 
-        if is_active:  # If this issue is already assigned to someone currently
-            return False
-
-        active_count = ActiveIssue.objects.filter(contributor=requester).count()
-
-        if active_count >= MAX_SIMULTANEOUS_ISSUE:  # If this requester is already working on MAX_SIMULTANEOUS_ISSUE
-            # issues
+        if active_count >= MAX_SIMULTANEOUS_ISSUE:
             return False
 
         return True
 
 
 class ActiveIssue(models.Model):
+
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
 
     contributor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -351,15 +310,15 @@ class ActiveIssue(models.Model):
     # TODO: ISSUE: Rename this function to 'get_deadline' as it is more suitable. Don't Forget to update name at all
     #  places.
     def get_remaining_time(self):
-        datetime = self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
-        #returning IST i.e +5:30(330 min ahead of GMT)
-        local_dt = timezone.localtime(datetime, timezone.get_fixed_timezone(330))
-        return local_dt
-    def check_last_hour(self):
-        current_time = timezone.now()
-        deadline = self.assigned_at + timedelta(days=self.issue.get_issue_days_limit())
-        last_hour = deadline - timedelta(hours = 1)
-        if(last_hour<current_time<deadline):
-            return True
-        return False
-    
+        return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+
+
+class Like(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_like')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_like')
+
+
+class Dislike(models.Model):
+
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_dislike')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_dislike')

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Login or Signup
+{% endblock %}
+
+{% block content %}
+    <div style="display: flex; justify-content: center; margin-top: auto;">
+                <!-- Github -->
+            <a class="btn btn-lg btn-rounded text-white" style="background-color: #333333;" href="{% url 'social:begin' 'github' %}" role="button"
+              >Continue with <i class="fab fa-github"></i
+            ></a>
+{#        <button type="button" class="btn btn-success btn-rounded">#}
+{#            <a style="color: white" href="{% url 'social:begin' 'github' %}">#}
+{#                Continue with <i class="fa fa-github" style="font-size:18px"></i>#}
+{#            </a>#}
+{#        </button>#}
+    </div>
+{% endblock %}
+
+
+{% block javascript %}
+
+{% endblock %}

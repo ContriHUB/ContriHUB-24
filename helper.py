@@ -2,10 +2,10 @@ import requests
 import json
 
 from django.http import HttpResponse
-from django.shortcuts import HttpResponseRedirect, reverse, render
-from django.contrib import messages
+from django.shortcuts import HttpResponseRedirect, reverse
 from django.utils import timezone
 from project.models import ActiveIssue
+
 SUCCESS, FAILED = 1, 2
 
 
@@ -57,7 +57,6 @@ def complete_profile_required(func):
     :param func:
     :return:
     """
-
     def wrapper(*args, **kwargs):
         request = args[0]
         user = request.user
@@ -74,7 +73,6 @@ def check_issue_time_limit(func):
     :param func:
     :return:
     """
-
     def wrapper(*args, **kwargs):
         request = args[0]
         user = request.user
@@ -92,7 +90,6 @@ def check_issue_time_limit(func):
                         active_issue_qs = ActiveIssue.objects.filter(contributor=user)
                         for active_issue in active_issue_qs:
                             if is_deadline_passed(active_issue):  # Deadline Crossed
-                                messages.warning(request, f"Deadline Crossed For Issue: {active_issue.issue}")
                                 active_issue.delete()
                     return func(*args, **kwargs)
             else:
@@ -101,21 +98,20 @@ def check_issue_time_limit(func):
                     active_issue = active_issue_qs[0]
                     if is_deadline_passed(active_issue):  # Deadline Crossed
                         active_issue.delete()
-                        # TODO: ISSUE: set a message i.e. "Dead Crossed" here and redirect to user profile and show this
+                        # TODO: ISSUE: set a message i.e. "Dead Crossed" here and redirect to user profile and show \
+                        # this
                         #  message
-                        messages.warning(request, f"Deadline Crossed For Issue: {active_issue.issue}")
-                        return HttpResponseRedirect(reverse('user_profile',kwargs={'username': username}))
+                        return HttpResponse("Deadline Crossed")
                     else:
                         return func(*args, **kwargs)
                 else:
                     # TODO: ISSUE: Redirect to 404 page
-                    return render(request, '404.html')
+                    return HttpResponse("That's a 404")
         else:
             # Some operation regarding this issue is taking place
             active_issue_qs = ActiveIssue.objects.filter(issue=issue_pk)
             for active_issue in active_issue_qs:
                 if is_deadline_passed(active_issue):  # Deadline
-                    messages.warning(request, f"Deadline Crossed For Issue: {active_issue.issue}")
                     active_issue.delete()
             return func(*args, **kwargs)
 
@@ -130,19 +126,3 @@ def is_deadline_passed(active_issue):
     if total_seconds <= 0:  # Deadline Crossed
         return True
     return False
-
-
-# Fetches all the issues(PRs included) both Open and Closed
-def fetch_all_issues(uri, project_name, headers):
-    issues = {'data': []}
-    page = 0
-    while True:
-        page += 1
-        url = f"{uri}{project_name}/issues?per_page=100&state=all&page={page}"  # All PR's and Issues
-        response = safe_hit_url(url=url, headers=headers)
-        if response['status'] == SUCCESS:
-            if len(response['data']) == 0:  # No results from this and further page numbers
-                break
-            else:
-                issues['data'].extend(response['data'])
-    return issues

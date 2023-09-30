@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
@@ -8,6 +7,7 @@ User = get_user_model()
 
 
 class UserProfile(models.Model):
+
     STUDENT, MENTOR, ADMIN = 1, 2, 3
     ROLES = (
         (STUDENT, 'Student'),
@@ -38,10 +38,9 @@ class UserProfile(models.Model):
 
     registration_no = models.CharField(verbose_name='Registration Number', max_length=10, default='')
 
-    ms_teams_id = models.EmailField(verbose_name="MS Teams ID", default='')
+    linkedin_id = models.URLField(verbose_name="Linkedin ID", default='')
 
     # TODO:ISSUE Add a field to take What'sapp Number with all checks (External App can be used)
-    whatsapp_no = PhoneNumberField(verbose_name='Whatsapp Number', default='', blank=False, null=False)
 
     course = models.PositiveSmallIntegerField(verbose_name='Course', choices=COURSES, default=B_TECH)
 

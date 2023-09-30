@@ -1,55 +1,118 @@
-# ContriHUB - 21
+# ContriHUB Official Website
 
-ContriHUB is an event where we are expecting to get more and more people involved in Open Source activities.
+Hello Noobs :wave:
 
+Join us by getting involved in the open source community :octocat: solving some interesting tasks along the way.
 
-## How to run locally?
-* [Install Python](https://www.wikihow.com/Install-Python)
-* Clone this repository
-    ```
-    git clone https://github.com/ContriHUB/ContriHUB-21.git
-    ```
-* Create Virtual Environment
-    ```
-    python -m venv <env_name>
-    ```
-* Activate the environment
-    * On Windows - 
-        * If you have `Scripts` folder inside `<env_name>`, run: `<env_name>\Scripts\activate` (in Command Prompt) 
-        * If you have `bin` folder inside `<env_name>`, run: `<env_name>\bin\Activate.ps1` (in Powershell).
-    * On POSIX (Linux/Mac), run: `source <env_name>/bin/activate`    
-* Change directory to *ContriHUB-21*
-    ```
-    cd ContriHUB-21
-    ```
-* Install the dependencies
-    ```
-    pip install -r requirements.txt
-    ```
+All repositories which are part of ContriHUB can be accessed here -
+[ContriHUB](https://github.com/ContriHUB/)
 
-* Create a **.env** file
-    * In Windows, Right Click, Open Git Bash here, and run: `touch .env`
-    * In Linux/Mac, run: `touch .env`
-* Fill the contents of **.env** by following the format given in *sample_env_file.txt*
-    * You can use [this](https://stackoverflow.com/a/16630719/11671368) to generate **SECRET_KEY**, otherwise just remove that from **.env** file and it should work fine.
-    * You will need to create a [Github OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) in order to fill **SOCIAL_AUTH_GITHUB_KEY** and **SOCIAL_AUTH_GITHUB_SECRET** fields.
-    * Put both *Homepage URL* and *Authorization callback URL* as `http://127.0.0.1:8000/`.
-    * If you want to work on Email Sending Issue, you also need to fill you Email (GMail) in **EMAIL_HOST_USER** and your Email password in **EMAIL_HOST_PASSWORD**. (*Now you know why you should never push .env file to remote*).
-    * You will also need to **Allow Access to Less Secure Apps** in your GMail Account.
-    * You can also create a new GMail account to avoid using your personal account.
-* To apply the migrations run,
-    ```
-    python manage.py migrate
-    ```
-* Now to run the server, and visit `http://127.0.0.1:8000/`.
-    ```
-    python manage.py runserver
-    ```
-* To access admin panel, you need to be superuser. Follow [this](https://www.geeksforgeeks.org/how-to-create-superuser-in-django/) link for instructions.
+**Make sure to get your GitHub Student Pack here:** [https://education.github.com/pack](https://education.github.com/pack)
 
-## Mentors
-You can reach out to us if you need help.
-* [Ankit Sangwan](https://contrihub21.herokuapp.com/profile/user/ankitsangwan1999/)
-* [Kshitiz Srivastava](https://contrihub21.herokuapp.com/profile/user/pirateksh/)
+## What is ContriHUB?
 
-### CAUTION: Website is currently under development.
+A month long contest starting from October 7th to get people involved in [Open Source](https://github.com/open-source). This repo is just the guide to get started on GitHub. We have a lot of different projects coming up. So start contributing and while you are at it, keep checking for more projects as they are added!
+
+Choose any project and start fixing the issues. Every issue you fix will fetch you some points according to the difficulty. There are goodies waiting for you :P. So, Stay tuned and keep checking the repos [here](https://github.com/ContriHUB) for more projects and issues :smiley:
+
+So, if you want to contribute to a particular project by either fixing an issue or adding a feature, all you have to do is
+
+-   Fork the project
+-   Create a new branch
+-   Add a fix to the issue
+-   Create a Pull Request
+-   Submit the link to your Pull Request [here](https://contrihub21.herokuapp.com/)
+-   Wait for it to accept and grab your points :smiley:
+
+Also, please make sure to follow the proper formatting such as
+
+```markdown
+fixes #1
+```
+
+if you want your PR to be approved. The correct formatting should be followed.
+
+If you don't know what the above means, just keep reading ... you'll get there.
+
+We will not be accepting more PR's until the formatting of the current files is fixed. Please fix those, referencing the issues present. Also note that the issues and the PR have common # numbers , so the first issue might not be #1 but could be #138 . Please check this before referencing the issue. Incorrect # numbers will not be merged.
+
+## How to contribute to this project
+
+Here is a quick and painless way to contribute to this project:
+
+-   Add your name to the `CONTRIBUTORS.md` file.
+
+Choose one or both, make a pull request for your work and wait for it to be merged!
+
+## Getting Started
+
+-   Fork this repository (click the Fork button in the top right of this page, click your Profile Image)
+-   Clone your fork down to your local machine
+
+```markdown
+git clone https://github.com/your-username/XXXXX.git
+```
+
+-   Create a branch
+
+```markdown
+git checkout -b branch-name
+```
+
+-   Make your changes (choose from any task below)
+-   Commit and push
+
+```markdown
+git add .
+git commit -m 'Commit message'
+git push origin branch-name
+```
+
+-   Create a new pull request from your forked repository (click the `New Pull Request` button located at the top of your repo)
+-   Wait for your PR review and merge approval!
+-   **Star this repository** :star: if you had fun!
+
+## Choose from these tasks
+
+### 1. Add your name
+
+Add your name to the `CONTRIBUTORS.md` file using the below convention:
+
+```markdown
+#### Name: [YOUR NAME](Your Profile Link)
+
+-   Place: City, State, Country
+-   Bio: Who are you?
+-   GitHub: [Github account link](GitHub link)
+```
+
+## Reference links
+
+Here is a great tutorial for creating your first pull request by [Roshan Jossey](https://github.com/Roshanjossey):
+[https://github.com/Roshanjossey/first-contributions](https://github.com/Roshanjossey/first-contributions)
+
+Managing your Forked Repo: [https://help.github.com/articles/fork-a-repo/](https://help.github.com/articles/fork-a-repo/)
+
+Syncing a Fork: [https://help.github.com/articles/syncing-a-fork/](https://help.github.com/articles/syncing-a-fork/)
+
+Keep Your Fork Synced: [https://gist.github.com/CristinaSolana/1885435](https://gist.github.com/CristinaSolana/1885435)
+
+Checkout this list for README examples - Awesome README [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
+
+Github-Flavored Markdown [https://guides.github.com/features/mastering-markdown/](https://guides.github.com/features/mastering-markdown/)
+
+## Contacts
+
+For any query head on to dedicated Gitter Channel - [ContriHUB](https://gitter.im/ContriHUB/Lobby#)
+
+If you still have more doubts then feel free to ping any of the student co-ordinator.
+
+Team-2023 -
+
+-   [Priyav K Kaneria](https://github.com/PriyavKaneria)
+
+-   [Shashank Verma](https://github.com/shank03)
+
+-   [Amit Kumar](https://github.com/hackeramitkumar)
+
+-   [Sanskar Omar](https://github.com/sanskaromar)   

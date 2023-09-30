@@ -1,6 +1,6 @@
 from decouple import config
-from pathlib import Path
 import dj_database_url
+from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,25 +23,20 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'user_profile.apps.UserProfileConfig',
     'project.apps.ProjectConfig',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     # 3rd Party Libraries
     'social_django',  # Social Media Login
-    'crispy_forms',  # Crispy Form for django
-    'phonenumber_field',  # phone number field for whatsapp number
-    'rest_framework',  # django rest framework
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
     # Middleware used for deployment on Heroku (Put it at the top)
     'whitenoise.middleware.WhiteNoiseMiddleware',
-
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,7 +44,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     # Middleware to handle Login through Social Media Platform requests
     'social_django.middleware.SocialAuthExceptionMiddleware'
 ]
@@ -67,7 +61,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
                 # Context Preprocessors for Social media login
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect'
@@ -87,7 +80,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-import dj_database_url
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
@@ -149,7 +141,7 @@ SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY', default="")
 SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET', default="")
 SOCIAL_AUTH_GITHUB_SCOPE = [
     'user:email',  # For Reading user's email
-    'public_repo'  # For creating issues by Admins and Mentors
+    # 'read:org',  # For Reading Organizations authenticated user is part of
 ]
 
 LOGIN_URL = 'authorize'
@@ -167,13 +159,12 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default="")
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
-AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-21",
+AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-22",
                             cast=lambda v: [s.strip() for s in v.split(',')])
 LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")
 LABEL_RESTRICTED = config('LABEL_RESTRICTED', default="restricted")
-LABEL_BONUS = config('LABEL_BONUS', default="bonus")
 DEPENDABOT_LOGIN = config('DEPENDABOT_LOGIN', default="dependabot[bot]")
 
 MAX_SIMULTANEOUS_ISSUE = config('MAX_SIMULTANEOUS_ISSUE', default=2, cast=int)

@@ -1,7 +1,8 @@
-APIS={
-    'api_contrihub':"https://api.github.com/repos/ContriHUB/",
+api_endpoint = {
+    'contrihub_api_1': 'https://api.github.com/repos/ContriHUB/',
+    'contrihub_api_2': 'https://api.github.com/repos/contrihub/',
 }
 
-URIS={
-    'uri_html': "https://github.com/ContriHUB/",
+html_endpoint = {
+    'contrihub_html': 'https://github.com/ContriHUB/',
 }

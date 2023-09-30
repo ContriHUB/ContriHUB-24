@@ -1,64 +1,25 @@
 from django.contrib import admin
-from django.contrib.admin import display
-
-from .models import Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain, \
-    SubDomainProject
+from .models import Dislike, Like, Project, Issue, PullRequest, IssueAssignmentRequest, ActiveIssue, Domain, SubDomain
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'domain', 'html_url')
+    list_display = ('name', 'domain', 'html_url')
 
 
 class IssueAdmin(admin.ModelAdmin):
-    list_display = (
-        'title', 'id', 'number', 'project', 'mentor', 'level', 'points', 'state', 'get_up_votes_cnt',
-        'get_down_votes_cnt')
-
-    @display(ordering='issue__upvotes', description='Count of Upvotes')
-    def get_up_votes_cnt(self, obj):
-        return obj.upvotes.all().count()
-
-    @display(ordering='issue__downvotes', description='Count of Downvotes')
-    def get_down_votes_cnt(self, obj):
-        return obj.downvotes.all().count()
+    list_display = ('title', 'number', 'project', 'mentor', 'level', 'points', 'state')
 
 
 class PullRequestAdmin(admin.ModelAdmin):
-    list_display = (
-        'contributor', 'id', 'get_id', 'issue', 'get_project_name', 'pr_link', 'state', 'bonus', 'penalty',
-        'submitted_at')
-
-    @display(ordering='issue__id', description='Issue_ki_id')
-    def get_id(self, obj):
-        return obj.issue.id
-
-    @display(ordering='issue__project', description='Project_ka_naam')
-    def get_project_name(self, obj):
-        return obj.issue.project
+    list_display = ('contributor', 'pr_link', 'state', 'bonus', 'penalty', 'submitted_at')
 
 
 class IssueAssignmentRequestAdmin(admin.ModelAdmin):
-    list_display = ('requester', 'id', 'issue', 'state', 'get_id', 'get_project_name', 'created_on')
-
-    @display(ordering='issue__id', description='Issue_ki_id')
-    def get_id(self, obj):
-        return obj.issue.id
-
-    @display(ordering='issue__project', description='Project_ka_naam')
-    def get_project_name(self, obj):
-        return obj.issue.project
+    list_display = ('requester', 'issue', 'state')
 
 
 class ActiveIssueAdmin(admin.ModelAdmin):
-    list_display = ('contributor', 'id', 'issue', 'assigned_at', 'get_id', 'get_project_name')
-
-    @display(ordering='issue__id', description='Issue_ki_id')
-    def get_id(self, obj):
-        return obj.issue.id
-
-    @display(ordering='issue__project', description='Project_ka_naam')
-    def get_project_name(self, obj):
-        return obj.issue.project
+    list_display = ('contributor', 'issue', 'assigned_at')
 
 
 admin.site.register(Project, ProjectAdmin)
@@ -68,4 +29,5 @@ admin.site.register(IssueAssignmentRequest, IssueAssignmentRequestAdmin)
 admin.site.register(ActiveIssue, ActiveIssueAdmin)
 admin.site.register(Domain)
 admin.site.register(SubDomain)
-admin.site.register(SubDomainProject)
+admin.site.register(Like)
+admin.site.register(Dislike)

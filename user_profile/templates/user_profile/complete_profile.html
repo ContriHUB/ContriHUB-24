@@ -1,79 +1,61 @@
-{% extends 'base.html' %} {% comment %} context = { 'form': form } {% endcomment %} {% block title %} Complete Profile {% endblock %} {% block content %} {# TODO: ISSUE: Implement Front-end for this Form #} {% load static %}
-<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
+{% extends 'base.html' %}
+{% comment %}
+    context = {
+        'form': form
+    }
+{% endcomment %}
+{% block title %}
+    Complete Profile
+{% endblock %}
 
-    </div>
-    <div class="toast-body">
-        Invalid Registration Number
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-    </div>
-</div>
-    <div class="myToast" style="z-index: 10;">
-            <div class="toast bg-success fade hide" id="django_messages">
-                <div class="toast-body">
-                    ...
-                    <button onclick="removeToastForMessages()" style="float: right;" type="button" class="btn-close"
-                            data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-</div>
-<div class="text-center text-white">
-    <h1 class="display-6 text-white">Enter Following Information</h1>
-    <form method="post" action="{% url 'complete_profile' %}" onsubmit="return checkForm()">
-        {% csrf_token %}
-        <table class="d-inline-flex justify-content-center" border="2" cellspacing="5" cellpadding="10">
-            {{ form.as_table }}
-        </table>
-        <div class="row g-0 d-flex justify-content-center align-items-center">
-                <div class="col-6 mt-2">
-                    <div class="alert alert-warning" role="alert">
-                        Your Whatsapp Number will be kept confidential and will only be visible to Mentors and Admins.
-                    </div>
-                </div>
-        </div>
-        <br> {# TODO: Frontend Check on Registration Number ISSUE #}
-        <input id="id_self_declaration" type="checkbox" onchange="toggleSubmitButton();">
-        <label for="id_self_declaration" class="text-white">
-                I agree to provide my information and I verify that it is best to my knowledge.
+{% block content %}
+    {#  TODO: ISSUE: Implement Front-end for this Form #}
+    <div class="text-center text-white">
+        <h1 class="display-6 text-white">Enter Following Information</h1>
+        <form method="post" action="{% url 'complete_profile' %}">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <p {% if message.tags %} class="text-center font-italic"{% endif %} style="color: crimson;">{{ message }}</p>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% csrf_token %}
+            <table class="d-inline-flex justify-content-center" border="2" cellspacing="5" cellpadding="10">
+                {{ form.as_table }}
+            </table>
+            <br>
+            {# TODO: Frontend Check on Registration Number ISSUE #}
+            <input id="id_self_declaration" type="checkbox" onchange="toggleSubmitButton();">
+            <label for="id_self_declaration" class="text-white">
+                I verify that information provided by me is best to my knowledge.
                 If any discrepancy is found, I can be debarred from the event.
             </label>
-        <br> <br>
-        <button id="id_submit" type="submit" disabled="disabled">
+            <br> <br>
+            <button id="id_submit" type="submit" disabled="disabled">
                 <h3 id="id_submit_btn_content" class="text-white">Submit</h3>
             </button>
-    </form>
-</div>
+        </form>
+    </div>
+{% endblock %}
 
-{% endblock %} {% block javascript %}
-<script src="{% static 'js/check.js' %}"></script>
-<script>
-    $('.alert').alert()
-    function toggleSubmitButton() {
-        let checkBox = document.getElementById('id_self_declaration');
-        if (checkBox.checked === true) {
-            document.getElementById("id_submit").removeAttribute("disabled");
-            document.getElementById("id_submit_btn_content").setAttribute("class", "text-black");
-        } else {
-            document.getElementById("id_submit").setAttribute("disabled", "disabled");
-            document.getElementById("id_submit_btn_content").setAttribute("class", "text-white");
-        }
-    }
-</script>
-    <script type="text/javascript">
-        jQuery(document).ready(function () {
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if 'safe' in message.tags %}
-                            $('#django_messages').children('.toast-body').html("{{message|safe }}");
-                            $('#django_messages').toast("show");
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
+{% block javascript %}
+    <script>
+        function toggleSubmitButton() {
+            let checkBox = document.getElementById('id_self_declaration');
+            if(checkBox.checked === true){
+                document.getElementById("id_submit").removeAttribute("disabled");
+                document.getElementById("id_submit_btn_content").setAttribute("class", "text-black");
+            } else {
+                document.getElementById("id_submit").setAttribute("disabled", "disabled");
+                document.getElementById("id_submit_btn_content").setAttribute("class", "text-white");
             }
-        )
+        }
+
+        function editLinkedInID(e)
+            {
+                e.preventDefault();
+                $('.edit-linkedin-error').text('');
+            }
     </script>
 {% endblock %}

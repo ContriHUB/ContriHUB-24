@@ -1,124 +1,92 @@
-import os
-import re
-import json
-import requests
-import smtplib
-import threading
-import time
-from datetime import datetime
-from django.conf import settings
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
+from django.core.mail import send_mail, BadHeaderError
+
+from home.helpers import EmailThread
+from django.core import mail
+from project.models import Project, Issue, IssueAssignmentRequest, Like
+from project.models import ActiveIssue, PullRequest, Domain, SubDomain, Dislike
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.core import mail
-from django.core.mail import EmailMessage
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import JsonResponse
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
-from django.template.loader import render_to_string
+from helper import complete_profile_required, check_issue_time_limit
+from project.forms import PRSubmissionForm, PRJudgeForm
 from django.utils import timezone
 from django.contrib import messages
 
-from helper import complete_profile_required, check_issue_time_limit
-from home.helpers import send_email
-from project.forms import PRSubmissionForm
-from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain
+
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each Issue Assignment Request on a separate Page with all its information.
 # TODO:ISSUE: Make a Custom Http404 Page
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
+from user_profile.models import UserProfile
 from .forms import ContactForm
 
 
-def page_not_found_view(request, exception):
-    """ Custom 404 handler """
-    return render(request, '404.html', status=404)
-
-
-NO_ISSUES_FOUND = '1'
-
-
-def get_all_active_issues(issues_qs):
-    """
-    Helper function to return list of all Active Issues (Issues which is Assigned to someone)
-    It also sets a "contributor" field to active_issue.contributor
-    :param issues_qs: QuerySet of Issues
-    :return:
-    """
-    all_active_issues = []
-    active_qs_obj = ActiveIssue.objects.all()
-    for issue in issues_qs:
-
-        active_issue = active_qs_obj.filter(issue=issue)
-
-        if active_issue:
-            active_issue = active_issue[0]
-            issue.contributor = active_issue.contributor  # set contributor for that active issue
-            all_active_issues.append(issue)
-
-    return all_active_issues
+def home(request):
+    return render(request, 'home/index.html')
 
 
 @complete_profile_required
-def home(request):
+def dashboard(request):
+    global issues_qs, domain, subdomain
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
-
-    project_domain = Domain.objects.all()
-    project_sub_domain = SubDomain.objects.all()
-
-    # get all active issues and set field contributor as active_issue.contributor
-    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
-
-
-    # page = request.GET.get('page', 1)
-    # paginator = Paginator(issues_qs, 20)
-    # try:
-    #     issue_p = paginator.page(page)
-    # except PageNotAnInteger:
-    #     issue_p = paginator.page(1)
-    # except EmptyPage:
-    #     issue_p = paginator.page(paginator.num_pages)
-
-    if request.is_ajax():
-        domains = request.GET.getlist('domain[]')
-        sub_domains = request.GET.getlist('subdomain[]')
-
-        if len(domains) > 0:
-            for domain_id in domains:
-                issues_qs = issues_qs.filter(project__domain_id=domain_id).distinct()
-
-        if len(sub_domains) > 0:
-            for sub_domain_id in sub_domains:
-                issues_qs = issues_qs.filter(project__subdomainproject__sub_domain_id=sub_domain_id).distinct()
-
-        if len(issues_qs) == 0:
-            response = {'context': NO_ISSUES_FOUND}
-            return JsonResponse(response)
-
-        # get all active issues and set field contributor as active_issue.contributor
-        all_active_issues = get_all_active_issues(issues_qs=issues_qs)
-
-        data = {
-            'issues': issues_qs,
-            'all_active_issues': all_active_issues,
-        }
-        rendered_template = render_to_string('home/filtered_issue_list.html', data)
-        return JsonResponse({'context': rendered_template})
-
-    # If request is not AJAX, paginate the issue and render it into index.html template before returning
-
-    # CAUTION: Pagination is disabled temporarily
+    issues_qs = Issue.objects.all()
+    domains_qs = Domain.objects.all()
+    subdomains_qs = SubDomain.objects.all()
+    domain = 'All'
+    subdomain = 'All'
     context = {
-        'issues': issues_qs,  # issue_p,
-        'all_active_issues': all_active_issues,
         'projects': project_qs,
-        'project_domain': project_domain,
-        'project_sub_domain': project_sub_domain
+        'issues': issues_qs,
+        'domains': domains_qs,
+        'subdomains': subdomains_qs,
+        'curr_domain': domain,
+        'curr_subdomain': subdomain
     }
+    return render(request, 'dashboard/index.html', context=context)
 
-    return render(request, 'home/index.html', context=context)
+
+@complete_profile_required
+def filter_by_domain(request, domain_pk):
+    global issues_qs, domain, subdomain
+    subdomain = 'All'
+    domain = Domain.objects.get(pk=domain_pk)
+    project_qs = Project.objects.all()
+    issues_qs = Issue.objects.filter(project__domain=domain)
+    domains_qs = Domain.objects.all()
+    subdomains_qs = SubDomain.objects.all()
+    context = {
+        'projects': project_qs,
+        'issues': issues_qs,
+        'domains': domains_qs,
+        'subdomains': subdomains_qs,
+        'curr_domain': domain,
+        'curr_subdomain': subdomain
+    }
+    return render(request, 'dashboard/index.html', context=context)
+
+
+@complete_profile_required
+def filter_by_subdomain(request, subdomain_pk):
+    global issues_qs, domain, subdomain
+    subdomain = SubDomain.objects.get(pk=subdomain_pk)
+    project_qs = Project.objects.all()
+    if domain != 'All':
+        issues_qs = Issue.objects.filter(project__domain=domain)
+    issues_qs = issues_qs.filter(project__subdomain=subdomain)
+    domains_qs = Domain.objects.all()
+    subdomains_qs = SubDomain.objects.all()
+    context = {
+        'projects': project_qs,
+        'issues': issues_qs,
+        'domains': domains_qs,
+        'subdomains': subdomains_qs,
+        'curr_domain': domain,
+        'curr_subdomain': subdomain
+    }
+    return render(request, 'dashboard/index.html', context=context)
 
 
 def authorize(request):
@@ -127,7 +95,7 @@ def authorize(request):
     :param request:
     :return:
     """
-    return render(request, 'home/authorize.html', {})
+    return render(request, 'dashboard/authorize.html', {})
 
 
 @login_required
@@ -136,87 +104,44 @@ def logout_(request):
     return HttpResponseRedirect(reverse('home'))
 
 
-class EmailThread(threading.Thread):
-    def __init__(self, kwargs=None, email_context=None, template_path=None, email=None, *args):
-        self.used_for = kwargs['used_for']
-        self.email = email
-
-        if email is None:
-            self.email_context = email_context
-            self.template_path = template_path
-            self.username = kwargs['issue'].mentor.username
-            threading.Thread.__init__(self)
-        else:
-            self.email = email
-            self.username = kwargs['contributor'].username
-            threading.Thread.__init__(self)
-
-    def run(self):
-        start_time = time.time()
-        try:
-            if self.email is None:
-                send_email(template_path=self.template_path, email_context=self.email_context)
-            else:
-                self.email.content_subtype = "html"
-                self.email.send()
-            end_time = time.time()
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tSucceeded at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tTime Taken:\n\t\t{round(end_time - start_time, 2)} seconds\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:  # Use
-                # Context-Manager as it is best-practice
-                f.write(entry_string)
-        except mail.BadHeaderError as e:
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
-        except smtplib.SMTPSenderRefused as e:  # If valid EMAIL_HOST_USER and EMAIL_HOST_PASSWORD not set
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
-        except Exception as e:
-            entry_string = f"{self.used_for}:\n\tSending mail to:\n\t\t{self.username}\n\tFailed at:\n\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]}\n\tCause:\n\t\t{e}\n\n"
-            with open(os.path.join(settings.BASE_DIR / "logs/EMAIL_STATUS_LOGS.txt"), 'a') as f:
-                f.write(entry_string)
-
-
 @login_required
 @complete_profile_required
 @check_issue_time_limit
 def request_issue_assignment(request, issue_pk):
-
-    # Pausing ContriHUB for now. Uncomment this to resume ContriHUB
-    return HttpResponse("ContriHUB is paused, Issues won't be assigned now!")
-
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
-    check, msg = issue.is_assignable(requester=requester)
-    if check:
+    if issue.is_assignable(requester=requester):
+
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
-                  f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully."
+                  f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
 
-        template_path = "home/mail_template_request_issue_assignment.html"
+        template_path = "dashboard/mail_template_request_issue_assignment.html"
         email_context = {
             'mentor': issue.mentor,
             'user': requester,
             'url': issue.html_url,
-            'protocol': request.get_raw_uri().split('://')[0],
+            'protocol': request.build_absolute_uri().split('://')[0],
             'host': request.get_host(),
-            'subject': "Request for Issue Assignment under ContriHUB-21.",
+            'subject': "Request for Issue Assignment under ContriHUB-22.",
+            'issue': issue,
+            'action': '',
+            'receiver': issue.mentor,
         }
+        try:
+            EmailThread(template_path, email_context).start()
+            # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
+            return HttpResponse(f"Issue Requested Successfully. Email Request Sent to the Mentor(\
+                                {issue.mentor.username}). Keep your eye out on your profile.")
+        except mail.BadHeaderError:
+            linkedin_id = UserProfile.objects.get(user=issue.mentor).linkedin_id
+            return HttpResponse(f"Issue Requested Successfully, but there was some problem sending email to the\
+                                mentor("f"{issue.mentor.username}). For quick response from mentor try contacting\
+                                him/her on Linkedin({linkedin_id})")
 
-        context = {'used_for': "ISSUE ASSIGNMENT REQUEST",
-                   'issue': issue, }
-        email_thread = EmailThread(email_context=email_context, template_path=template_path, kwargs=context)
-        email_thread.start()
-
-        # TODO:ISSUE: Create Html Template for HttpResponses in home/views.py
-        messages.success(request, 'issue requested successfully',extra_tags='safe')
-        return redirect('user_profile',username=request.user)
-
-    message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href={issue.project.html_url}>" \
-              f"{issue.project.name}</a> Failed.<h5>Cause:</h5>{msg}"
-    messages.success(request,message,extra_tags='fail')
-    return redirect('home')
+    message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href=\
+              {issue.project.html_url}>" f"{issue.project.name}</a> cannot be made by you currently."
+    return HttpResponse(message)
 
 
 @login_required
@@ -232,17 +157,15 @@ def accept_issue_request(request, issue_req_pk):
         # TODO:ISSUE Send Email to Student that their request is accepted
         message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
                   f"{issue.project.name}</a> successfully assigned to {requester}"
-        messages.success(request,message,extra_tags='safe')
-        return redirect('user_profile',username=request.user)
+        return HttpResponse(message)
     else:
-        message = f"This Issue Cannot be accepted by you! Probably it's already Accepted/Rejected."
-        messages.success(request, message,extra_tags='safe')
-        return redirect('user_profile',username=request.user)
+        message = "This Issue Cannot be accepted by you! Probably it's already Accepted/Rejected."
+        return HttpResponse(message)
 
 
 def reject_issue_request(request, issue_req_pk):
     # TODO: ISSUE: [Ask Mentor for Clarification]: Implement Reject Issue Request with proper error handling
-    user = request.user
+    # user = request.user
     issue_request = IssueAssignmentRequest.objects.get(pk=issue_req_pk)
     issue = issue_request.issue
     requester = issue_request.requester
@@ -250,8 +173,7 @@ def reject_issue_request(request, issue_req_pk):
     issue_request.save()
     message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
               f"{issue.project.name}</a> is rejected for {requester}"
-    messages.success(request, message,extra_tags='safe')
-    return redirect('user_profile', username=request.user)
+    return HttpResponse(message)
 
 
 @login_required
@@ -273,15 +195,6 @@ def submit_pr_request(request, active_issue_pk):
 
             if active_issue.can_raise_pr(contributor=contributor) and form.is_valid():
                 pr = form.save(commit=False)
-
-                # checking if pr link is valid or not
-                pr_url = pr.pr_link
-                regex1 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+\#issue\-[0-9]+$"
-                regex2 = "^https:\/\/github\.com\/\S+\/\S+\/pull\/[0-9]+$"
-                if not (re.match(regex2, pr_url) or re.match(regex1, pr_url)):
-                    messages.success(request,'Invalid PR Link',extra_tags='safe')
-                    return redirect('user_profile',username=request.user)
-
                 pr.issue = issue
                 pr.contributor = request.user
                 pr.state = PullRequest.PENDING_VERIFICATION
@@ -290,158 +203,126 @@ def submit_pr_request(request, active_issue_pk):
 
                 # TODO:ISSUE Create Check on URL in backend so that it is a Valid Github PR URL.
 
-                template_path = "home/mail_template_submit_pr_request.html"
+                template_path = "dashboard/mail_template_submit_pr_request.html"
                 email_context = {
                     'mentor': issue.mentor,
                     'user': contributor,
                     'url': pr.pr_link,
-                    'protocol': request.get_raw_uri().split('://')[0],
+                    'protocol': request.build_absolute_uri().split('://')[0],
                     'host': request.get_host(),
-                    'subject': "Request for Approval of PR on an issue under ContriHUB-21.",
+                    'issue': issue,
+                    'action': '',
+                    'subject': "Request for Approval of PR on an issue under ContriHUB-22.",
+                    'receiver': issue.mentor,
                 }
-
-                start_time = time.time()
-                context = {'used_for': "PR Verification Request",
-                           'issue': issue, }
-                email_thread = EmailThread(email_context=email_context, template_path=template_path, kwargs=context)
-                email_thread.start()
-                message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
-                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>)"
-                messages.success(request, message,extra_tags='safe')
-                return redirect('user_profile',username=request.user)
+                try:
+                    EmailThread(template_path, email_context).start()
+                    message = f"Email Request Sent to the Mentor({issue.mentor.username}). PR Verification Request\
+                              Successfully Submitted for <a href={issue.html_url}>Issue #" f"{issue.number}\
+                              </a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                except mail.BadHeaderError:
+                    ms_teams_id = UserProfile.objects.get(user=issue.mentor).ms_teams_id
+                    message = f"PR Verification Request Successfully Submitted for <a href={issue.html_url}>Issue #" \
+                              f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}\
+                              </a>. But there was some problem sending email to the mentor({issue.mentor.username})\
+                              . For quick response from mentor try contacting him/her on MS-Teams({ms_teams_id})"
+                return HttpResponse(message)
             else:
-                message = f"This request cannot be full-filled. Probably you already submitted PR verification request " \
-                          f"for <a href={issue.html_url}>Issue #{issue.number}</a> of Project <a href=" \
+                message = f"This request cannot be full-filled. Probably you already submitted PR verification\
+                          request " f"for <a href={issue.html_url}>Issue #{issue.number}</a> of Project <a href=" \
                           f"{issue.project.html_url}>{issue.project.name}</a>"
-            messages.success(request, message,extra_tags='safe')
-            return redirect('user_profile',username=request.user)
+            return HttpResponse(message)
 
     message = "This request cannot be full-filled."
-    messages.success(request,message,extra_tags='safe')
-    return redirect('user_profile',username=request.user)
+    return HttpResponse(message)
 
 
-# TODO:ISSUE: Implement Functionality for mentor to assign bonus/peanlty points while accepting/rejecting the issue.A form will be needed.
+# TODO:ISSUE: Implement Functionality for mentor to assign bonus/peanlty points while accepting/rejecting the \
+# issue.A form will be needed.
 
 # TODO:ISSUE: Send an Email to Contributor Notifying that their PR is accepted/rejected.
 
-# TODO:ISSUE: Implement a feature such that mentor is able to leave remarks about PR before Accepting/Rejecting (Some fields in Model need to be added/updated).
-
-
-@login_required
-@complete_profile_required
-def accept_pr(request, pk):
-    mentor = request.user
-    pr_qs = PullRequest.objects.filter(pk=pk)
-    if pr_qs:
-        pr = pr_qs.first()
-        issue = pr.issue
-
-        if mentor.username == issue.mentor.username:
-            contributor = pr.contributor
-
-            pr = PullRequest.objects.get(issue=issue, contributor=contributor)
-            if pr.state == PullRequest.PENDING_VERIFICATION:
-                context = {}
-                # Getting remark form data
-                remark = request.GET.get('remark')
-                score_type = request.GET.get('type')
-                points = request.GET.get('points')
-
-                bonus = 0
-                penalty = 0
-                if score_type == PullRequest.BONUS:
-                    bonus = points
-                elif score_type == PullRequest.PENALTY:
-                    penalty = points
-
-                pr.accept(bonus, penalty, remark)
-                message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
-                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                context['issue'] = issue
-                context['pr'] = pr
-                context['contributor'] = contributor
-                context['mentor'] = mentor
-                context['action'] = 'Accepted'
-                subject = 'PR ACCEPTED'
-                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
-                email = EmailMessage(
-                    subject, e_message, to=[contributor.email]
-                )
-                context = {
-                    'contributor': contributor,
-                    'used_for': "PR ACCEPTED"
-                }
-                EmailThread(email=email, kwargs=context).start()
-            else:
-                message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                          f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-        else:
-            message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
-                      f"{issue.project.html_url}>{issue.project.name}</a>"
-    else:
-        message = f"This PR is probably already Accepted. Probably in the FrontEnd You still see the " \
-                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-    messages.success(request,message,extra_tags='safe')
-    return redirect('user_profile',username=request.user)
-
+# TODO:ISSUE: Implement a feature such that mentor is able to leave remarks about PR before Accepting/Rejecting\
+#  (Some fields in Model need to be added/updated).
 
 @login_required
 @complete_profile_required
-def reject_pr(request, pk):
-    mentor = request.user
-    pr_qs = PullRequest.objects.filter(pk=pk)
-    if pr_qs:
-        pr = pr_qs.first()
-        issue = pr.issue
+def judge_pr(request, pk):
+    if request.method == 'GET':
+        mentor = request.user
+        pr_qs = PullRequest.objects.filter(pk=pk)
+        if pr_qs:
+            pr = pr_qs.first()
+            issue = pr.issue
 
-        if mentor.username == issue.mentor.username:
-            contributor = pr.contributor
-            pr = PullRequest.objects.get(issue=issue, contributor=contributor)
-            if pr.state == PullRequest.PENDING_VERIFICATION:
-                context = {}
-                # Getting remark form data
-                remark = request.GET.get('remark')
-                score_type = request.GET.get('type')
-                points = request.GET.get('points')
+            if mentor.username == issue.mentor.username:
+                contributor = pr.contributor
 
-                bonus = 0
-                penalty = 0
-                if score_type == PullRequest.BONUS:
-                    bonus = points
-                elif score_type == PullRequest.PENALTY:
-                    penalty = points
-
-                pr.reject(bonus, penalty, remark)
-                message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
-                          f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
-                context['issue'] = issue
-                context['pr'] = pr
-                context['contributor'] = contributor
-                context['mentor'] = mentor
-                context['action'] = 'Rejected'
-                subject = 'PR REJECTED'
-                e_message = render_to_string('home/mail_template_pr_action.html', context=context)
-                email = EmailMessage(
-                    subject, e_message, to=[contributor.email]
-                )
-                email.content_subtype = "html"
-                context = {
-                    'contributor': contributor,
-                    'used_for': "PR REJECTED"
-                }
-                EmailThread(email=email, kwargs=context).start()
+                pr = PullRequest.objects.get(issue=issue, contributor=contributor)
+                form = PRJudgeForm(request.GET)
+                if pr.state == PullRequest.PENDING_VERIFICATION and form.is_valid() and "accept" in request.GET:
+                    bonus = form.cleaned_data['bonus']
+                    penalty = form.cleaned_data['penalty']
+                    remark = form.cleaned_data['remark']
+                    pr.accept(bonus=bonus, penalty=penalty, remark=remark)
+                    message = f"Successfully accepted <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
+                        f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                    template_path = "dashboard/mail_template_pr_action.html"
+                    email_context = {
+                        'mentor': issue.mentor,
+                        'user': contributor,
+                        'url': pr.pr_link,
+                        'protocol': request.build_absolute_uri().split('://')[0],
+                        'host': request.get_host(),
+                        'issue': issue,
+                        'action': 'accepted',
+                        'subject': "PR Accepted under ContriHUB-22.",
+                        'receiver': contributor,
+                    }
+                    try:
+                        EmailThread(template_path, email_context).start()
+                        return HttpResponse(f"PR Accepted Successfully. Email sent to the contributor(\
+                                            {contributor}).")
+                    except mail.BadHeaderError:
+                        return HttpResponse(f"PR Accepted Successfully, but there was some problem sending email \
+                                            to the contributor("f"{contributor}).")
+                elif pr.state == PullRequest.PENDING_VERIFICATION and form.is_valid() and "reject" in request.GET:
+                    bonus = form.cleaned_data['bonus']
+                    penalty = form.cleaned_data['penalty']
+                    remark = form.cleaned_data['remark']
+                    pr.reject(bonus=bonus, penalty=penalty, remark=remark)
+                    message = f"Successfully rejected <a href={pr.pr_link}>PR</a> of Issue <a href={issue.html_url}>" \
+                        f"{issue.number}</a> of Project <a href={issue.project.html_url}>{issue.project.name}</a>"
+                    template_path = "dashboard/mail_template_pr_action.html"
+                    email_context = {
+                        'mentor': issue.mentor,
+                        'user': contributor,
+                        'url': pr.pr_link,
+                        'protocol': request.build_absolute_uri().split('://')[0],
+                        'host': request.get_host(),
+                        'issue': issue,
+                        'action': 'rejected',
+                        'subject': "PR Rejected under ContriHUB-22.",
+                        'receiver': contributor,
+                    }
+                    try:
+                        EmailThread(template_path, email_context).start()
+                        return HttpResponse(f"PR rejected successfully. Email sent to the contributor(\
+                                            {contributor}).")
+                    except mail.BadHeaderError:
+                        return HttpResponse(f"PR rejected successfully, but there was some problem sending email \
+                                            to the contributor("f"{contributor}).")
+                else:
+                    message = "This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You\
+                                still see the " "Accept/Reject Button, because showing ACCEPTED/REJECTED status in\
+                                frontend is an ISSUE."
             else:
-                message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                          f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
+                message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project \
+                     <a href="f"{issue.project.html_url}>{issue.project.name}</a>"
         else:
-            message = f"You are not mentor of Issue <a href={issue.html_url}>{issue.number}</a> of Project <a href=" \
-                      f"{issue.project.html_url}>{issue.project.name}</a>"
-    else:
-        message = f"This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see the " \
-                  f"Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
-    messages.success(request,message,extra_tags='safe')
-    return redirect('user_profile',username=request.user)
+            message = "This PR is probably already Accepted. Probably in the FrontEnd You still see the " \
+                    "Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
+        return HttpResponse(message)
 
 
 @login_required
@@ -452,149 +333,73 @@ def contact_form(request):
         email = form['email'].value()
         body = form['body'].value()
         subject = form['subject'].value()
-        message = render_to_string('home/contact_body.html', {
-            'user': user,
-            'email': email,
-            'body': body,
-        })
-        email = EmailMessage(
-            subject, message, to=['contrihub.avishkar@gmail.com']
-        )
-        email.content_subtype = "html"
-        email.send()
+        message = 'Name: {}\nEmail: {}\n\n{}'.format(user, email, body)
+        try:
+            send_mail(subject, message, '', ['contrihub.avishkar@gmail.com'])
+        except BadHeaderError:
+            return HttpResponse('Mail could not be sent. Try again later!!')
+        messages.success(request, "Message sent successfully")
         return redirect('home')
     elif request.method == 'GET':
         form = ContactForm()
-        return render(request, 'home/contact_form.html', context={'form': form})
+        return render(request, 'dashboard/contact_form.html', context={'form': form})
 
 
 @login_required
-def handle_vote(request):
-    issue_id = request.POST.get('id')
-    request_type = request.POST.get('type')
-    issue_id = int(issue_id)
-    request_type = int(request_type)
-    issue = Issue.objects.get(pk=issue_id)
-    is_upvoted = request.user in issue.upvotes.all()
-    is_downvoted = request.user in issue.downvotes.all()
-    message = ""
-    if request_type == 0:
-        message = "Upvoted Successfully"
-        issue.upvotes.add(request.user)
-        if is_downvoted:
-            issue.downvotes.remove(request.user)
-    elif request_type == 1:
-        message = "Downvoted Successfully"
-        issue.downvotes.add(request.user)
-        if is_upvoted:
-            issue.upvotes.remove(request.user) 
-    elif request_type == 2:
-        message = "Vote Revoked Successfully"
-        if is_downvoted:
-            issue.downvotes.remove(request.user)
-        if is_upvoted:
-            issue.upvotes.remove(request.user)
-    context = {
-        'issue': issue,
-    }
-    html = render_to_string('home/vote.html', context, request=request)
-    return JsonResponse({'html': html, 'message': message})
-
-
-#fetch issue conversation in comments
-def issue_conversation(url,headers):
-    url += '/comments'
-    res = requests.get(url,headers=headers)
-    r = res.json()
-    if res.status_code == 200:
-        all_comments=[]
-        for o_res in r:
-            body = o_res['body']
-            user = o_res['user']
-            created_at = o_res['created_at']
-            dd = created_at[8:10]
-            mm = created_at[5:7]
-            yyyy = created_at[0:4]
-            hh = created_at[11:13]
-            min = created_at[14:16]
-            date = dd+'-'+mm+'-'+yyyy
-            time = hh+':'+min
-            comment = {'body':body,'date':date,'time':time}
-            comment.update(user)
-            all_comments.append(comment)
-        return all_comments
-
-
-
-#fetch issue details only
-def issue_details(request,issue_pk):
+def likes(request, issue_pk):
+    user = request.user.userprofile
     issue = Issue.objects.get(pk=issue_pk)
-    issue_no = issue.number
-    issue_project_api = issue.project.api_url
-    # url to fetch details from github
-    url = issue_project_api + '/issues/' + str(issue_no)
-    #social auth key
-    social = request.user.social_auth.get(provider='github')
-    issues_qs = Issue.objects.filter(state=Issue.OPEN).order_by('-id')
-    all_active_issues = get_all_active_issues(issues_qs=issues_qs)
-    contributor=''
-    if issue in all_active_issues:
-        active_issue_qs = ActiveIssue.objects.get(issue_id=issue.id)
-        contributor = active_issue_qs.contributor
-    headers = {
-        "Accept": "application/vnd.github.v3+json",
-        "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
-    }
-    if request.is_ajax():
-        social = request.user.social_auth.get(provider='github')
-        headers = {
-            "Accept": "application/vnd.github.v3+json",
-            "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
-        }
-        comments_res = issue_conversation(url, headers)
-        data = {
-            'comments':comments_res,
-        }
-        rendered_template = render_to_string('home/issue_conversation_page.html', data)
-        return JsonResponse({'context': rendered_template})
+    current_likes = Issue.objects.get(pk=issue_pk).likes
+    current_dislikes = Issue.objects.get(pk=issue_pk).dislikes
+    liked = Like.objects.filter(user=user, issue=issue)
+    disliked = Dislike.objects.filter(user=user, issue=issue)
+    if not liked and not disliked:
 
+        liked = Like.objects.create(user=user, issue=issue)
+        current_likes = current_likes + 1
 
-    r = requests.get(url, headers=headers)
-    comments_res = issue_conversation(url,headers)
-    response_data = r.json()
-    if r.status_code == 200:
-        print('Issue details arrived')
-        desc = response_data['body']
-        created_at=response_data['created_at']
-        lb = response_data['labels']
-        labels=[]
-        for l in lb:
-            labels.append(l['name'])
-        state = response_data['state']
-        title = response_data['title']
-        user = response_data['user']
-        avatar_url = user['avatar_url']
-        context = {
-            'title':title,
-            'desc':desc,
-            'labels':labels,
-            'state':state,
-            'created_at':created_at,
-            'avatar_url':avatar_url,
-            'username':issue.mentor,
-            'issue':issue,
-            'all_active_issues':all_active_issues,
-            'contributor':contributor,
-            'comments':comments_res,
-        }
+    elif not liked and disliked:
 
-        return render(request,'home/issue_details_page.html',context=context)
+        liked = Like.objects.create(user=user, issue=issue)
+        disliked = Dislike.objects.filter(user=user, issue=issue).delete()
+        current_likes = current_likes + 1
+        current_dislikes = current_dislikes - 1
+
     else:
-        print('Could not fetch Issue details')
-        print('Response:', r.content)
-        return HttpResponse("Something Went Wrong")
+
+        liked = Like.objects.filter(user=user, issue=issue).delete()
+        current_likes = current_likes - 1
+
+    Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
+    Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
+    return redirect('/')
 
 
+@login_required
+def dislikes(request, issue_pk):
+    user = request.user.userprofile
+    issue = Issue.objects.get(pk=issue_pk)
+    current_likes = Issue.objects.get(pk=issue_pk).likes
+    current_dislikes = Issue.objects.get(pk=issue_pk).dislikes
+    liked = Like.objects.filter(user=user, issue=issue)
+    disliked = Dislike.objects.filter(user=user, issue=issue)
+    if not disliked and not liked:
 
+        disliked = Dislike.objects.create(user=user, issue=issue)
+        current_dislikes = current_dislikes + 1
 
+    elif not disliked and liked:
 
+        disliked = Dislike.objects.create(user=user, issue=issue)
+        liked = Like.objects.filter(user=user, issue=issue).delete()
+        current_likes = current_likes - 1
+        current_dislikes = current_dislikes + 1
+
+    else:
+
+        disliked = Dislike.objects.filter(user=user, issue=issue).delete()
+        current_dislikes = current_dislikes - 1
+
+    Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
+    Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
+    return redirect('/')

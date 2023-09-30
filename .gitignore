@@ -3,7 +3,9 @@ helper_images/
 
 node_modules
 .idea/
-.DS_Store
+
+#static file
+/static
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -113,6 +115,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+prod.env
 .env
 .venv
 env/

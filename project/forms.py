@@ -1,14 +1,16 @@
 from django import forms
-from .models import PullRequest, Issue
+from .models import PullRequest
 
 
 class PRSubmissionForm(forms.ModelForm):
+
     class Meta:
         model = PullRequest
         fields = ('pr_link',)
 
 
-class CreateIssueForm(forms.ModelForm):
+class PRJudgeForm(forms.ModelForm):
+
     class Meta:
-        model = Issue
-        fields = ('title', 'description', 'mentor', 'project', 'level', 'points', 'is_restricted')
+        model = PullRequest
+        fields = ('bonus', 'penalty', 'remark',)
