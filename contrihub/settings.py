@@ -136,7 +136,12 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'assets'),
 )
 
-STATIC_URL = '/static/'
+BASE_URL = config('BASE_URL', default=None)
+if BASE_URL:
+    STATIC_URL = '/' + str(BASE_URL) + 'static/'
+else:
+    STATIC_URL = '/static/'
+
 STATIC_ROOT = 'static'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
