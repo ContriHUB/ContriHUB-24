@@ -372,7 +372,7 @@ def likes(request, issue_pk):
 
     Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
     Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
-    return redirect('/')
+    return redirect('../dashboard')
 
 
 @login_required
@@ -402,4 +402,4 @@ def dislikes(request, issue_pk):
 
     Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
     Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
-    return redirect('/')
+    return redirect('../dashboard')

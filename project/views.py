@@ -79,7 +79,7 @@ def populate_issues(request):
                     print("This issue is a actually a PR")
                     continue
                 title, number, state = issue['title'], issue['number'], issue['state']
-                mentor_name, level, points, bonus_pt, is_restricted = parse_labels(labels=issue['labels'])
+                mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
                 # print("Fsf ",mentor_name)
                 api_url, html_url = issue['url'], issue['html_url']
                 issue_qs = Issue.objects.filter(number=number, project=project)
@@ -106,7 +106,7 @@ def populate_issues(request):
                         level=level,
                         points=points,
                         is_restricted=is_restricted,
-                        bonus_pt=bonus_pt
+                        bonus_pt=0
                     )
 
                 print(db_issue)
