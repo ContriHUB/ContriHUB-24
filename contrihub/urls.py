@@ -13,11 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from decouple import config
 from django.contrib import admin
 # from django.conf.urls import
 from django.urls import path, include, re_path
 
-urlpatterns = [
+BASE_URL = config('BASE_URL', default=None)
+
+basepatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
     path('profile/', include('user_profile.urls')),
@@ -26,3 +29,10 @@ urlpatterns = [
     # this url is handled by social_django app under social-auth-app-django python library
     re_path(r'^oauth/', include('social_django.urls', namespace='social')),
 ]
+
+if BASE_URL:
+    urlpatterns = [
+        path(str(BASE_URL), include(basepatterns))
+    ]
+else:
+    urlpatterns = basepatterns
