@@ -90,7 +90,7 @@ def populate_issues(request):
                     db_issue.level = level
                     db_issue.points = points
                     db_issue.is_restricted = is_restricted
-                    db_issue.bonus_pt = bonus_pt
+                    db_issue.bonus_pt = 0
                     if state == "closed":
                         db_issue.state = db_issue.CLOSED
                     else:
