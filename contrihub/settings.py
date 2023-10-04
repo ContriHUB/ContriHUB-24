@@ -75,8 +75,8 @@ WSGI_APPLICATION = 'contrihub.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DB_NAME = config('DB_NAME', default='contrihub')
-DB_USER = config('DB_USER')
-DB_PASSWORD = config('DB_PASSWORD')
+DB_USER = config('DB_USER', default='dbuser')
+DB_PASSWORD = config('DB_PASSWORD', default='1234')
 DB_HOST = config('DB_HOST', default='localhost')
 DB_PORT = config('DB_PORT', default='3306')
 
