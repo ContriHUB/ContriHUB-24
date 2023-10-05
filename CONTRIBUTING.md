@@ -66,5 +66,6 @@ ContriHUB is an event where we are expecting to get more and more people involve
 # Maintainers
 
 - [Priyav K Kaneria](https://github.com/PriyavKaneria)
+- [Shashank Verma](https://github.com/shank03)
   
 ### CAUTION: Website is currently under development.
