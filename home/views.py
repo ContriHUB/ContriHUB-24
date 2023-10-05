@@ -125,7 +125,7 @@ def request_issue_assignment(request, issue_pk):
             'url': issue.html_url,
             'protocol': request.build_absolute_uri().split('://')[0],
             'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
-            'subject': "Request for Issue Assignment under ContriHUB-22.",
+            'subject': "Request for Issue Assignment under ContriHUB-23.",
             'issue': issue,
             'action': '',
             'receiver': issue.mentor,
@@ -214,7 +214,7 @@ def submit_pr_request(request, active_issue_pk):
                     'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
                     'issue': issue,
                     'action': '',
-                    'subject': "Request for Approval of PR on an issue under ContriHUB-22.",
+                    'subject': "Request for Approval of PR on an issue under ContriHUB-23.",
                     'receiver': issue.mentor,
                 }
                 try:
@@ -278,7 +278,7 @@ def judge_pr(request, pk):
                         'host': request.get_host(),
                         'issue': issue,
                         'action': 'accepted',
-                        'subject': "PR Accepted under ContriHUB-22.",
+                        'subject': "PR Accepted under ContriHUB-23.",
                         'receiver': contributor,
                     }
                     try:
@@ -304,7 +304,7 @@ def judge_pr(request, pk):
                         'host': request.get_host(),
                         'issue': issue,
                         'action': 'rejected',
-                        'subject': "PR Rejected under ContriHUB-22.",
+                        'subject': "PR Rejected under ContriHUB-23.",
                         'receiver': contributor,
                     }
                     try:
