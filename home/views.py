@@ -339,7 +339,7 @@ def contact_form(request):
         except BadHeaderError:
             return HttpResponse('Mail could not be sent. Try again later!!')
         messages.success(request, "Message sent successfully")
-        return redirect('home')
+        return redirect('../dashboard')
     elif request.method == 'GET':
         form = ContactForm()
         return render(request, 'dashboard/contact_form.html', context={'form': form})
