@@ -1,13 +1,13 @@
-# ContriHUB - 22
+# ContriHUB - 23
 
-ContriHUB is an event where we are expecting to get more and more people involved in Open Source activities.
+[ContriHUB](https://github.com/ContriHUB/ContriHUB-23/blob/main/README.md) is an open-source event organized in october, parallel to Hacktoberfest, where we are expecting to get more and more MNNITians involved in Open Source activities.
 
 
 ## How to run locally?
 * [Install Python](https://www.wikihow.com/Install-Python)
 * Clone this repository
     ```
-    git clone https://github.com/ContriHUB/ContriHUB-22.git
+    git clone https://github.com/ContriHUB/ContriHUB-23.git
     ```
 * Create Virtual Environment
     ```
@@ -20,9 +20,9 @@ ContriHUB is an event where we are expecting to get more and more people involve
     ```
     pip install -r requirements.txt
     ```
-* Change directory to *ContriHUB-22*
+* Change directory to *ContriHUB-23*
     ```
-    cd ContriHUB-22
+    cd ContriHUB-23
     ```
 * Create a **.env** file
     * In Windows, Right Click, Open Git Bash here, and run: `touch .env`
@@ -66,6 +66,7 @@ ContriHUB is an event where we are expecting to get more and more people involve
 # Maintainers
 
 - [Priyav K Kaneria](https://github.com/PriyavKaneria)
+- [Sanskar Omar](https://github.com/sanskaromar)
 - [Shashank Verma](https://github.com/shank03)
   
-### CAUTION: Website is currently under development.
+### ⚠️CAUTION: Website is currently under development.

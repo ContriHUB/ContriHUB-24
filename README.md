@@ -21,7 +21,7 @@ So, if you want to contribute to a particular project by either fixing an issue 
 -   Create a new branch
 -   Add a fix to the issue
 -   Create a Pull Request
--   Submit the link to your Pull Request [here](https://contrihub21.herokuapp.com/)
+-   Submit the link to your Pull Request [here](https://sac.mnnit.ac.in/contrihub)
 -   Wait for it to accept and grab your points :smiley:
 
 Also, please make sure to follow the proper formatting such as
@@ -40,7 +40,7 @@ We will not be accepting more PR's until the formatting of the current files is 
 
 Here is a quick and painless way to contribute to this project:
 
--   Add your name to the `CONTRIBUTORS.md` file.
+-   Add your name to the `Getting_Started_CONTRIBUTORS.md` file.
 
 Choose one or both, make a pull request for your work and wait for it to be merged!
 
@@ -76,7 +76,7 @@ git push origin branch-name
 
 ### 1. Add your name
 
-Add your name to the `CONTRIBUTORS.md` file using the below convention:
+Add your name to the `Getting_Started_CONTRIBUTORS.md` file using the below convention:
 
 ```markdown
 #### Name: [YOUR NAME](Your Profile Link)
@@ -103,16 +103,11 @@ Github-Flavored Markdown [https://guides.github.com/features/mastering-markdown/
 
 ## Contacts
 
-For any query head on to dedicated Gitter Channel - [ContriHUB](https://gitter.im/ContriHUB/Lobby#)
-
 If you still have more doubts then feel free to ping any of the student co-ordinator.
 
 Team-2023 -
 
 -   [Priyav K Kaneria](https://github.com/PriyavKaneria)
-
 -   [Shashank Verma](https://github.com/shank03)
-
 -   [Amit Kumar](https://github.com/hackeramitkumar)
-
 -   [Sanskar Omar](https://github.com/sanskaromar)   
