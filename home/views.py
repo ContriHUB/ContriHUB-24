@@ -1,3 +1,5 @@
+import decouple
+
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.core.mail import send_mail, BadHeaderError
 
@@ -122,7 +124,7 @@ def request_issue_assignment(request, issue_pk):
             'user': requester,
             'url': issue.html_url,
             'protocol': request.build_absolute_uri().split('://')[0],
-            'host': request.get_host(),
+            'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
             'subject': "Request for Issue Assignment under ContriHUB-22.",
             'issue': issue,
             'action': '',
@@ -209,7 +211,7 @@ def submit_pr_request(request, active_issue_pk):
                     'user': contributor,
                     'url': pr.pr_link,
                     'protocol': request.build_absolute_uri().split('://')[0],
-                    'host': request.get_host(),
+                    'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
                     'issue': issue,
                     'action': '',
                     'subject': "Request for Approval of PR on an issue under ContriHUB-22.",

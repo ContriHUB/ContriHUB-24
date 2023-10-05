@@ -4,7 +4,7 @@
         'user': email_context.user.username,
         'url': email_context.url,
         'protocol': ,
-        'host': request.get_host()
+        'host': email_context.host
     }
 {% endcomment %}
 {% autoescape off %}
@@ -12,8 +12,8 @@
 Hi there! <b>{{ mentor }}</b>,<br><br>
 
 PFB the details of the issue requested for assignment.<br><br>
-<b>Your Profile:</b> {{ protocol }}://{{ host }}/profile/user/{{ mentor }} <br> <br>
-<b>Requester's Profile:</b> {{ protocol }}://{{ host }}/profile/user/{{ user }} <br> <br>
+<b>Your Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ mentor }} <br> <br>
+<b>Requester's Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ user }} <br> <br>
 <b>See Issue on Github:</b> {{ url }} <br><br>
 
 If clicking on any of the link above doesn't work, please copy and paste the URL in a new browser

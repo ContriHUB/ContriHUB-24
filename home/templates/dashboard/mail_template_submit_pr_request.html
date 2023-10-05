@@ -4,7 +4,7 @@
         'user': email_context.user.username,
         'url': url,
         'protocol': ,
-        'host': request.get_host()
+        'host': email_context.host
     }
 {% endcomment %}
 {% autoescape off %}
@@ -12,8 +12,8 @@
 Hi there! <b>{{ mentor }}</b>,<br><br>
 
 {{ user }} has requested for approval of the PR on a issue that you are mentoring.<br><br>
-<b>Your Profile:</b> {{ protocol }}://{{ host }}/profile/user/{{ mentor }} <br> <br>
-<b>Contributor's Profile:</b> {{ protocol }}://{{ host }}/profile/user/{{ user }} <br> <br>
+<b>Your Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ mentor }} <br> <br>
+<b>Contributor's Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ user }} <br> <br>
 <b>See PR on Github:</b> {{ url }} <br><br>
 
 If clicking on any of the link above doesn't work, please copy and paste the URL in a new browser
