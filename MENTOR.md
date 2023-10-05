@@ -11,6 +11,7 @@
 
 - Make sure that you have these labels in your repository:
     - Format: `name` - description
+    - `very-easy` - level
     - `easy` - level
     - `medium` - level
     - `hard` - level
