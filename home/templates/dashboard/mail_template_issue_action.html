@@ -4,7 +4,7 @@
         'user': email_context.user.username,
         'url': url,
         'protocol': ,
-        'repository': email_context.repository,
+        'issue': email_context.issue,
         'action': email_context.action,
         'host': email_context.host
     }
@@ -13,7 +13,7 @@
 <br>
 Hi there! <b>{{ user }}</b>,<br><br>
 
-{{ mentor }} has {{ action }} your requested issue assignment of {{ repository }}.<br><br>
+{{ mentor }} has {{ action }} your requested issue assignment of {{ issue.project.name }}.<br><br>
 <b>Your Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ user }} <br> <br>
 <b>See your issue on Github:</b> {{ url }} <br><br>
 
