@@ -156,10 +156,31 @@ def accept_issue_request(request, issue_req_pk):
         ActiveIssue.objects.create(issue=issue, contributor=requester)
         issue_request.state = IssueAssignmentRequest.ACCEPTED
         issue_request.save()
-        # TODO:ISSUE Send Email to Student that their request is accepted
-        message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
-                  f"{issue.project.name}</a> successfully assigned to {requester}"
-        return HttpResponse(message)
+
+        template_path = "dashboard/mail_template_issue_action.html"
+        email_context = {
+            'mentor': issue.mentor,
+            'user': requester,
+            'url': issue.html_url,
+            'protocol': request.build_absolute_uri().split('://')[0],
+            'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
+            'subject': "Issue Accepted under ContriHUB-23",
+            'issue': issue,
+            'action': 'accepted',
+            'receiver': requester,
+            'repository': issue.project.name,
+        }
+
+        try:
+            EmailThread(template_path, email_context).start()
+            message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
+                    f"{issue.project.name}</a> successfully assigned to {requester}"
+            return HttpResponse(message)
+        except mail.BadHeaderError:
+            message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
+                    f"{issue.project.name}</a> successfully assigned to {requester}, but there was some problem sending" \
+                    f"email to the {requester}"
+            return HttpResponse(message)
     else:
         message = "This Issue Cannot be accepted by you! Probably it's already Accepted/Rejected."
         return HttpResponse(message)
