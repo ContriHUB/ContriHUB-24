@@ -173,12 +173,15 @@ def accept_issue_request(request, issue_req_pk):
 
         try:
             EmailThread(template_path, email_context).start()
-            message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
+            message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project "\
+                    f"<a href={issue.project.html_url}>" \
                     f"{issue.project.name}</a> successfully assigned to {requester}"
             return HttpResponse(message)
         except mail.BadHeaderError:
-            message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project <a href={issue.project.html_url}>" \
-                    f"{issue.project.name}</a> successfully assigned to {requester}, but there was some problem sending" \
+            message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project "\
+                    f"<a href={issue.project.html_url}>" \
+                    f"{issue.project.name}</a> successfully assigned to {requester}, "\
+                    f"but there was some problem sending" \
                     f"email to the {requester}"
             return HttpResponse(message)
     else:
