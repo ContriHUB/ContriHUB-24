@@ -41,8 +41,13 @@ class Issue(models.Model):
     FREE, EASY, MEDIUM, HARD, VERY_EASY = 0, 1, 2, 3, 4
     FREE_READ, VERY_EASY_READ, EASY_READ, MEDIUM_READ, HARD_READ = "Free", "Very-Easy", "Easy", "Medium", "Hard" \
         # Human Readable Names
-    FREE_COLOR, VERY_EASY_COLOR, EASY_COLOR, MEDIUM_COLOR, HARD_COLOR = "#f2f2f2", "#39c0ed", "#00b74a", "#ffa900", "#f93154" \
-        # Colors assigned to different labels
+    FREE_COLOR = "#f2f2f2"
+    VERY_EASY_COLOR = "#39c0ed"
+    EASY_COLOR = "#00b74a"
+    MEDIUM_COLOR = "#ffa900"
+    HARD_COLOR = "#f93154"
+
+    # Colors assigned to different labels
     LEVELS = (
         (FREE, FREE_READ),  # (Value, Human Readable Name)
         (VERY_EASY, VERY_EASY_READ),
