@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'contrihub.wsgi.application'
 
 DB_NAME = config('DB_NAME', default='contrihub23_db')
 DB_USER = config('DB_USER', default='root')
-DB_PASSWORD = config('DB_PASSWORD', default='test')
+DB_PASSWORD = config('DB_PASSWORD', default='root')
 DB_HOST = config('DB_HOST', default='localhost')
 DB_PORT = config('DB_PORT', default='3306')
 
