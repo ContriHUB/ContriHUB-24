@@ -79,8 +79,8 @@ class Issue(models.Model):
 
     # 1-Easy, 2-Medium, 3-Hard, 4-Very-Easy
     level = models.PositiveSmallIntegerField(verbose_name='Level', choices=LEVELS, default=1)
-    
-    level_color = models.PositiveSmallIntegerField(verbose_name='Level Color', choices=LEVEL_COLORS, default=1)
+   
+    levelcolor = models.PositiveSmallIntegerField(verbose_name='Level Color', choices=LEVEL_COLORS, default=1)
 
     points = models.IntegerField(verbose_name="Points", default=0)
 

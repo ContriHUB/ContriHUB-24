@@ -113,7 +113,7 @@
 
                             <p class="card-text">
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">@{{ issue.mentor }}</a>
-                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Level" style="background-color: {{ issue.get_level_color_display }};">{{ issue.get_level_display }}</a>
+                                <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Level" style="background-color: {{ issue.get_levelcolor_display }} !important;">{{ issue.get_level_display }}</a>
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
                                 {% if issue.bonus_pt != 0 %}
                                     <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Bonus" style="background-color:#FF1493 !important;">{{ issue.bonus_pt }}</a>

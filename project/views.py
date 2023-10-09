@@ -88,6 +88,7 @@ def populate_issues(request):
                     db_issue = issue_qs.first()
                     db_issue.title = title
                     db_issue.level = level
+                    db_issue.levelcolor = level
                     db_issue.points = points
                     db_issue.is_restricted = is_restricted
                     db_issue.bonus_pt = 0
@@ -104,6 +105,7 @@ def populate_issues(request):
                         html_url=html_url,
                         project=project,
                         level=level,
+                        levelcolor=level,
                         points=points,
                         is_restricted=is_restricted,
                         bonus_pt=0
