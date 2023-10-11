@@ -301,7 +301,7 @@ Profile @{{ native_profile.user.username }}
                                             </form>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
-                                            <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="Verify PR" id="frmbtn" onclick="showfrm()" type="button">
+                                            <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" id="frmbtn" onclick="showfrm()" type="button">
                                                 Verify <i class="fas fa-caret-down"></i>
                                             </button>
                                             <form method="get" action="{% url 'judge_pr' pr.pk %}" id="frm">
