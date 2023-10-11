@@ -427,9 +427,6 @@ Profile @{{ native_profile.user.username }}
 {% block javascript %}
     <script>
         function showfrm() {
-            const btn = document.getElementById('frmbtn');
-
-            btn.addEventListener('click', () => {
             const form = document.getElementById('frm');
 
             if (form.style.display === 'none') {
@@ -437,7 +434,6 @@ Profile @{{ native_profile.user.username }}
             } else {
                 form.style.display = 'none';
             }
-            });
         }
     </script>
     {% if user.username == native_profile.user.username and user.userprofile.role == user.userprofile.STUDENT %}
