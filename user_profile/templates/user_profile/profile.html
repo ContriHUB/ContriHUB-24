@@ -301,10 +301,10 @@ Profile @{{ native_profile.user.username }}
                                             </form>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
-                                            <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" id="frmbtn" onclick="showfrm()" type="button">
+                                            <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" id="frmbtn" onclick="showfrm('{{ pr.pk }}')" type="button">
                                                 Verify <i class="fas fa-caret-down"></i>
                                             </button>
-                                            <form method="get" action="{% url 'judge_pr' pr.pk %}" id="frm">
+                                            <form method="get" action="{% url 'judge_pr' pr.pk %}" id="frm_{{ pr.pk }}" style="display: none;">
                                                 <a class="btn btn-primary btn-success" data-mdb-toggle="tooltip" title="Bonus Points">{{ judge_form.bonus }}</a>
                                                 <a class="btn btn-primary btn-danger" data-mdb-toggle="tooltip" title="Penalty Points">{{ judge_form.penalty }}</a>
                                                 <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Remark">{{ judge_form.remark }}</a>
@@ -426,8 +426,8 @@ Profile @{{ native_profile.user.username }}
 
 {% block javascript %}
     <script>
-        function showfrm() {
-            const form = document.getElementById('frm');
+        function showfrm(pk) {
+            const form = document.getElementById('frm_'+pk);
 
             if (form.style.display === 'none') {
                 form.style.display = 'block';
