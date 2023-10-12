@@ -41,6 +41,7 @@ def profile(request, username):
             active_issues = ActiveIssue.objects.filter(contributor=user)
 
             mentored_issues = Issue.objects.filter(mentor=user)
+            active_mentored_issues = ActiveIssue.objects.filter(issue__mentor=user)
 
             assignment_requests_for_mentor = IssueAssignmentRequest.objects.filter(issue__mentor=user)
             accepted_assignment_requests_for_mentor = assignment_requests_for_mentor.filter(state=1)
@@ -68,6 +69,7 @@ def profile(request, username):
                 "pr_requests_by_student": pr_requests_by_student,
                 "pr_requests_for_mentor": pr_requests_for_mentor,
                 "active_issues": active_issues,
+                "active_mentored_issues": active_mentored_issues,
                 "assignment_requests_by_student": assignment_requests_by_student,
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
