@@ -89,7 +89,7 @@ Profile @{{ native_profile.user.username }}
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
                                                 @{{ active_issue.issue.mentor }}
                                             </a>
-                                            <a class="btn btn-rounded btn-info">{{ active_issue.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" style="background-color: {{ active_issue.issue.get_levelcolor_display }} !important;">{{ active_issue.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ active_issue.issue.points }}</a>
                                             {% if active_issue.issue.is_restricted %}
                                                 <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
@@ -136,7 +136,7 @@ Profile @{{ native_profile.user.username }}
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
                                                 @{{ request.issue.mentor }}
                                             </a>
-                                            <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" style="background-color: {{ request.issue.get_levelcolor_display }} !important;">{{ request.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ request.issue.points }}</a>
                                             {% if request.issue.is_restricted %}
                                                 <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
@@ -344,7 +344,7 @@ Profile @{{ native_profile.user.username }}
 
                                         <p class="card-text">
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Requester">@{{ request.requester }}</a>
-                                            <a class="btn btn-rounded btn-info">{{ request.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" style="background-color: {{ request.issue.get_levelcolor_display }} !important;">{{ request.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ request.issue.points }}</a>
                                             {% if request.issue.is_restricted %}
                                                 <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
@@ -396,7 +396,7 @@ Profile @{{ native_profile.user.username }}
                                         </h6>
 
                                         <p class="card-text">
-                                            <a class="btn btn-rounded btn-info">{{ issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" style="background-color: {{ issue.get_levelcolor_display }} !important;">{{ issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
                                             {% if issue.is_restricted %}
                                                 <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
@@ -439,7 +439,7 @@ Profile @{{ native_profile.user.username }}
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">
                                                 @{{ active_issue.contributor }}
                                             </a>
-                                            <a class="btn btn-rounded btn-info">{{ active_issue.issue.get_level_display }}</a>
+                                            <a class="btn btn-rounded btn-info" style="background-color: {{ active_issue.issue.get_levelcolor_display }} !important;">{{ active_issue.issue.get_level_display }}</a>
                                             <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ active_issue.issue.points }}</a>
                                             {% if active_issue.issue.is_restricted %}
                                                 <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
