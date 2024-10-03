@@ -1,25 +1,19 @@
-{% comment %}
-    context = {
-        'mentor': email_context.mentor.username,
-        'user': email_context.user.username,
-        'url': url,
-        'protocol': ,
-        'issue': email_context.issue,
-        'action': email_context.action,
-        'host': email_context.host
-    }
-{% endcomment %}
-{% autoescape off %}
-<br>
-Hi there! <b>{{ user }}</b>,<br><br>
+{% comment %} context = { 'mentor': email_context.mentor.username, 'user':
+email_context.user.username, 'url': url, 'protocol': , 'issue':
+email_context.issue, 'action': email_context.action, 'host': email_context.host
+} {% endcomment %} {% autoescape off %}
+<br />
+Hi there! <b>{{ user }}</b>,<br /><br />
 
-{{ mentor }} has {{ action }} your requested issue assignment of {{ issue.project.name }}.<br><br>
-<b>Your Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ user }} <br> <br>
-<b>See your issue on Github:</b> {{ url }} <br><br>
+{{ mentor }} has {{ action }} your requested issue assignment of {{
+issue.project.name }}.<br /><br />
+<b>Your Profile:</b> {{ protocol }}://{{ host }}profile/user/{{ user }} <br />
+<br />
+<b>See your issue on Github:</b> {{ url }} <br /><br />
 
-If clicking on any of the link above doesn't work, please copy and paste the URL in a new browser
-window instead.<br><br>
+If clicking on any of the link above doesn't work, please copy and paste the URL
+in a new browser window instead.<br /><br />
 
-Sincerely,<br>
-ContriHUB-23 Team<br>
+Sincerely,<br />
+ContriHUB-24 Team<br />
 {% endautoescape %}

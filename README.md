@@ -17,12 +17,12 @@ Choose any project and start fixing the issues. Every issue you fix will fetch y
 
 So, if you want to contribute to a particular project by either fixing an issue or adding a feature, all you have to do is
 
--   Fork the project
--   Create a new branch
--   Add a fix to the issue
--   Create a Pull Request
--   Submit the link to your Pull Request [here](https://sac.mnnit.ac.in/contrihub)
--   Wait for it to accept and grab your points :smiley:
+- Fork the project
+- Create a new branch
+- Add a fix to the issue
+- Create a Pull Request
+- Submit the link to your Pull Request [here](https://sac.mnnit.ac.in/contrihub)
+- Wait for it to accept and grab your points :smiley:
 
 Also, please make sure to follow the proper formatting such as
 
@@ -40,27 +40,27 @@ We will not be accepting more PR's until the formatting of the current files is 
 
 Here is a quick and painless way to contribute to this project:
 
--   Add your name to the `Getting_Started_CONTRIBUTORS.md` file.
+- Add your name to the `Getting_Started_CONTRIBUTORS.md` file.
 
 Choose one or both, make a pull request for your work and wait for it to be merged!
 
 ## Getting Started
 
--   Fork this repository (click the Fork button in the top right of this page, click your Profile Image)
--   Clone your fork down to your local machine
+- Fork this repository (click the Fork button in the top right of this page, click your Profile Image)
+- Clone your fork down to your local machine
 
 ```markdown
 git clone https://github.com/your-username/XXXXX.git
 ```
 
--   Create a branch
+- Create a branch
 
 ```markdown
 git checkout -b branch-name
 ```
 
--   Make your changes (choose from any task below)
--   Commit and push
+- Make your changes (choose from any task below)
+- Commit and push
 
 ```markdown
 git add .
@@ -68,9 +68,9 @@ git commit -m 'Commit message'
 git push origin branch-name
 ```
 
--   Create a new pull request from your forked repository (click the `New Pull Request` button located at the top of your repo)
--   Wait for your PR review and merge approval!
--   **Star this repository** :star: if you had fun!
+- Create a new pull request from your forked repository (click the `New Pull Request` button located at the top of your repo)
+- Wait for your PR review and merge approval!
+- **Star this repository** :star: if you had fun!
 
 ## Choose from these tasks
 
@@ -81,9 +81,9 @@ Add your name to the `Getting_Started_CONTRIBUTORS.md` file using the below conv
 ```markdown
 #### Name: [YOUR NAME](Your Profile Link)
 
--   Place: City, State, Country
--   Bio: Who are you?
--   GitHub: [Github account link](GitHub link)
+- Place: City, State, Country
+- Bio: Who are you?
+- GitHub: [Github account link](GitHub link)
 ```
 
 ## Reference links
@@ -105,9 +105,10 @@ Github-Flavored Markdown [https://guides.github.com/features/mastering-markdown/
 
 If you still have more doubts then feel free to ping any of the student co-ordinator.
 
-Team-2023 -
+Team-2024 -
 
--   [Priyav K Kaneria](https://github.com/PriyavKaneria)
--   [Shashank Verma](https://github.com/shank03)
--   [Amit Kumar](https://github.com/hackeramitkumar)
--   [Sanskar Omar](https://github.com/sanskaromar)   
+- [Abhishek Patel](https://github.com/meisabhishekpatel)
+- [Pranav Sanand Puligandla](https://github.com/Pra-San)
+- [Sai Dheeraj Peketi](https://github.com/SaiDheerajPeketi)
+- [Nandika Agarwal](https://github.com/Nandika-A)
+- [Eleena Sarah Mathew](https://github.com/eleensmathew)
