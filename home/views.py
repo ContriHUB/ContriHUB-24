@@ -125,7 +125,7 @@ def request_issue_assignment(request, issue_pk):
             'url': issue.html_url,
             'protocol': request.build_absolute_uri().split('://')[0],
             'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
-            'subject': "Request for Issue Assignment under ContriHUB-23.",
+            'subject': "Request for Issue Assignment under ContriHUB-24.",
             'issue': issue,
             'action': '',
             'receiver': issue.mentor,
@@ -164,7 +164,7 @@ def accept_issue_request(request, issue_req_pk):
             'url': issue.html_url,
             'protocol': request.build_absolute_uri().split('://')[0],
             'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
-            'subject': "Issue Accepted under ContriHUB-23",
+            'subject': "Issue Accepted under ContriHUB-24",
             'issue': issue,
             'action': 'accepted',
             'receiver': requester,
@@ -237,7 +237,7 @@ def submit_pr_request(request, active_issue_pk):
                     'host': request.get_host() + '/' + decouple.config('BASE_URL', default=''),
                     'issue': issue,
                     'action': '',
-                    'subject': "Request for Approval of PR on an issue under ContriHUB-23.",
+                    'subject': "Request for Approval of PR on an issue under ContriHUB-24.",
                     'receiver': issue.mentor,
                 }
                 try:
@@ -301,7 +301,7 @@ def judge_pr(request, pk):
                         'host': request.get_host(),
                         'issue': issue,
                         'action': 'accepted',
-                        'subject': "PR Accepted under ContriHUB-23.",
+                        'subject': "PR Accepted under ContriHUB-24.",
                         'receiver': contributor,
                     }
                     try:
@@ -327,7 +327,7 @@ def judge_pr(request, pk):
                         'host': request.get_host(),
                         'issue': issue,
                         'action': 'rejected',
-                        'subject': "PR Rejected under ContriHUB-23.",
+                        'subject': "PR Rejected under ContriHUB-24.",
                         'receiver': contributor,
                     }
                     try:
