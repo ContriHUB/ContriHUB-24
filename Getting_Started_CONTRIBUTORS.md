@@ -1,9 +1,11 @@
-### Getting-Started Contributors
+### Getting Started Contributors
 
-```markdown
-#### Name: [YOUR NAME](Your Profile Link)
+---
 
--   Place: City, State, Country
--   Bio: Who are you?
--   GitHub: [Github account link](GitHub link)
-```
+#### Mohammed Haseebuddin
+
+- **Location**: Hyderabad, Telangana, India  
+- **Bio**: Prefinal Year, Computer Science student, Class of 2026  
+- **GitHub**: [haseeb-555](https://github.com/haseeb-555)
+
+---
