@@ -1,9 +1,9 @@
 ### Getting-Started Contributors
 
 ```markdown
-#### Name: [YOUR NAME](Your Profile Link)
+#### Name: https://www.linkedin.com/in/shreyansh-gangwar-70345a2ab/
 
--   Place: City, State, Country
--   Bio: Who are you?
--   GitHub: [Github account link](GitHub link)
+-   Place: Bareilly,Uttar Pradesh ,india
+-   Bio:My name is Shreyansh Gangwar, I am a student at MNNIT, and I am pursuing a B.Tech in Computer Science and Engineering (CSE).
+-   GitHub: https://github.com/shreyanshgangwar1509
 ```
