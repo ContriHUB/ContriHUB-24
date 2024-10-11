@@ -184,7 +184,6 @@
                         <th scope="col"></th>
                         </tr>
                     </thead>
-                    
                     {% for issue in issues %}
                         <tbody class="bg-light">
                         <tr class="align-middle text-center">
@@ -194,7 +193,20 @@
                             <td>{{ issue.project.domain }}</td>
                             <td>@{{ issue.mentor }}</td>
                             <td>{{ issue.points }}</td>
-                            <td><a class="btn btn-rounded btn-info mt-0" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a></td>
+                            <td>
+                                <a class="btn btn-rounded 
+                                    {% if issue.get_level_display == 'Hard' %}
+                                        btn-danger
+                                    {% elif issue.get_level_display == 'Medium' %}
+                                        btn-warning
+                                    {% elif issue.get_level_display == 'Easy' %}
+                                        btn-success
+                                    {% else %}
+                                        btn-info
+                                    {% endif %}
+                                    mt-0" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}
+                                </a>
+                            </td>
                             <td>
                                 {% if issue.is_restricted %}
                                 <button data-mdb-toggle="tooltip"
