@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAC MNNIT</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            
+        }
+
+        
+        #team23-24-header:hover,
+        #team22-23-header:hover {
+            text-decoration: underline;
+            
+        }
+
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            
+            transform: translateY(0);
+            
+        }
+
+        
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #f30e0e;
+          
+        }
+
+ 
+        main {
+            padding: 20px;
+        }
+
+        .team-members {
+            display: flex;
+ 
+            flex-wrap: wrap;
+ 
+            justify-content: center;
+ 
+            margin: 20px 0;
+        }
+
+        .member {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .member img {
+            width: 100%;
+            border-radius: 50%;
+        }
+
+        .member h3 {
+            margin: 10px 0 5px 0;
+        }
+
+        .member p {
+            color: #666;
+        }
+
+        .social-links {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .social-links li {
+            margin: 0 5px;
+        }
+
+        .social-links img {
+            width: 25px;
+            height: 25px;
+            transition: transform 0.3s;
+        }
+
+        .social-links img:hover {
+            transform: scale(1.1);
+        }
+
+        footer {
+            background-color: rgb(0, 0, 0);
+             color: white;
+             text-align: center;
+             padding: 20px 0;
+         }
+
+        .footer-content {
+            display: flex;
+             justify-content: space-around;
+             align-items: flex-start;
+             flex-wrap: wrap;
+             padding: 20px 10%;
+         }
+
+        .footer-section {
+            margin: 0 15px;
+ 
+            text-align: left;
+ 
+        }
+
+        .footer-section h3 {
+            margin-bottom: 10px;
+ 
+        }
+
+        .footer-section ul {
+            list-style-type: none;
+ 
+            padding: 0;
+ 
+            margin: 0;
+ 
+        }
+
+        .footer-section ul li {
+            margin-bottom: 5px;
+ 
+        }
+
+        .footer-section ul li a {
+            color: white;
+ 
+            text-decoration: none;
+         }
+
+        .footer-section ul li a:hover {
+            text-decoration: underline;
+         }
+
+        footer ul li:hover {
+            background-color: #333;
+            color: #f0a500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        footer ul li a:hover {
+            color: #f0a500;
+            transition: color 0.3s ease;
+        }
+
+
+ 
+        @media (max-width: 768px) {
+            .member {
+                width: 100%;
+             }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="https://sac.mnnit.ac.in/">SAC MNNIT</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="https://sac.mnnit.ac.in/">Home</a></li>
+                    <li><a href="https://sac.mnnit.ac.in/clubs">Clubs</a></li>
+                    <li><a href="https://sac.mnnit.ac.in/events">Events</a></li>
+                    <li><a href="https://sac.mnnit.ac.in/achievements">Achievements</a></li>
+                    <li><a href="https://sac.mnnit.ac.in/team">Team</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="team">
+            <div class="container">
+                <h2>Our Current Team (24-25)</h2>
+                <div class="team-members">
+                     <div class="member">
+                        <img src="abhishek.png" alt="Abhishek Patel">
+                        <h3>Abhishek Patel</h3>
+                        <p>CSE, CC - Representative</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/meisabhishekpatel"><img src="github.png" alt=""
+                                        width="35"></a></li>
+                            <li><a href="https://www.linkedin.com/in/shank03"><img src="linkedin.png" alt=""
+                                        width="30"></a></li>
+                        </ul>
+                    </div>
+                    <div class="member">
+                        <img src="pranav.png" alt="Pranav Sanand Puligandla">
+                        <h3>Pranav Sanand Puligandla</h3>
+                        <p>CSE, CC - Representative</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/Pra-San"><img src="github.png" alt="" width="35"></a></li>
+                            <li><a href="https://www.linkedin.com/in/pranav-sanand-puligandla/"><img src="linkedin.png"
+                                        alt="" width="30"></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="member">
+                        <img src="sai Dheeraj.png" alt="Sai Dheeraj Peketi">
+                        <h3>Sai Dheeraj Peketi</h3>
+                        <p>CSE, CC - Representative</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/SaiDheerajPeketi"><img src="github.png" alt=""
+                                        width="35"></a></li>
+                            <li><a href="https://www.linkedin.com/in/peketisaidheeraj/"><img src="linkedin.png" alt=""
+                                        width="30"></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="member">
+                        <img src="nandika.png" alt="Nandika Agarwal">
+                        <h3>Nandika Agarwal</h3>
+                        <p>CSE, CC - Representative</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/Nandika-A"><img src="github.png" alt="" width="35"></a></li>
+                            <li><a href="https://www.linkedin.com/in/nandika-agrawal-a10847219/"><img src="linkedin.png"
+                                        alt="" width="30"></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+                <h1>OUR PAST ORGANISERS</h1>
+
+                <!-- Team 23-24 -->
+                <h2 id="team23-24-header">Team 23-24</h2>
+                <div class="team-members fade-in" id="team23-24-members" style="display: none;">
+                    <div class="member">
+                        <img src="shashank.png" alt="Shashank Verma">
+                        <h3>Shashank Verma</h3>
+                        <p>CSE, CC - Dev Chapter Lead</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/shank03"><img src="github.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com/in/shank03"><img src="linkedin.png" alt=""></a></li>
+                            <li><a href="https://twitter.com/shank_03"><img src="twitter.png" alt=""></a></li>
+                        </ul>
+                    </div>
+                    <div class="member">
+                        <img src="sanskar.png" alt="Sanskar Omar">
+                        <h3>Sanskar Omar</h3>
+                        <p>CSE, CC - Dev Chapter Lead</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/sanskaromar"><img src="github.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com/in/sanskaromar-/"><img src="linkedin.png" alt=""></a>
+                            </li>
+                            <li><a href="https://twitter.com/SanskarOmar_"><img src="twitter.png" alt=""></a></li>
+                        </ul>
+                    </div>
+                    <div class="member">
+                        <img src="priyav.png" alt="Priyav Kaneria">
+                        <h3>Priyav Kaneria</h3>
+                        <p>CSE, CC - Dev Chapter Lead</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/PriyavKaneria"><img src="github.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com/in/priyavkaneria/"><img src="linkedin.png" alt=""></a>
+                            </li>
+                            <li><a href="https://twitter.com/priyav_kaneria"><img src="twitter.png" alt=""></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="member">
+                        <img src="amit.png" alt="Amit Kumar">
+                        <h3>Amit Kumar</h3>
+                        <p>CSE, CC - Representative</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/hackeramitkumar"><img src="github.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com/in/amit3210"><img src="linkedin.png" alt=""></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Team 22-23 -->
+                <h2 id="team22-23-header">Team 22-23</h2>
+                <div class="team-members fade-in" id="team22-23-members" style="display: none;">
+                    <div class="member">
+                        <img src="divyansh.png" alt="Divyansh Upadhyay">
+                        <h3>Divyansh Upadhyay</h3>
+                        <p>IT, CC - Representative</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/DivyanshUpadhyay"><img src="github.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com/in/divyansh-upadhyay-1a1a23229/"><img
+                                        src="linkedin.png" alt=""></a></li>
+                        </ul>
+                    </div>
+                    <div class="member">
+                        <img src="siddhesh.png" alt="Siddhesh Patil" width="470">
+                        <h3>Siddhesh Patil</h3>
+                        <p>CSE, CC - Core</p>
+                        <ul class="social-links">
+                            <li><a href="https://github.com/siddheshpatil777"><img src="github.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com/in/siddheshpatil777"></a><img src="linkedin.png"
+                                    alt=""></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('team23-24-header').addEventListener('click', function () {
+            const members = document.getElementById('team23-24-members');
+            if (members.style.display === "none") {
+                members.style.display = "flex";
+                setTimeout(() => {
+                    members.classList.add('visible');
+                }, 10);
+            } else {
+                members.classList.remove('visible');
+                setTimeout(() => {
+                    members.style.display = "none";
+                }, 500);
+            }
+        });
+
+        document.getElementById('team22-23-header').addEventListener('click', function () {
+            const members = document.getElementById('team22-23-members');
+            if (members.style.display === "none") {
+                members.style.display = "flex";
+                setTimeout(() => {
+                    members.classList.add('visible');
+                }, 10);
+            } else {
+                members.classList.remove('visible');
+                setTimeout(() => {
+                    members.style.display = "none";
+                }, 500);
+            }
+        });
+    </script>
+
+    <footer>
+        <div class="logo">
+
+            <a href="https://sac.mnnit.ac.in/"><img src="mnnit_logo-removebg-preview.png" alt="" width="200"></a>
+            <a href="https://sac.mnnit.ac.in/">SAC MNNIT</a>
+
+
+            <h2>QUICK LINKS</h2>
+            <UL>
+                <li><a href="http://www.mnnit.ac.in/">MNNIT Website</a></li>
+                <li><a href="https://alumni.mnnit.ac.in/">Alumni Web-Portal</a></li>
+                <li><a href="http://www.mnnit.ac.in/swo/">Student Welfare</a></li>
+                <li><a href="http://www.mnnit.ac.in/index.php/anti-ragging">Anti-Ragging</a></li>
+            </UL>
+            <h2>EVENTS</h2>
+            <UL>
+                <li><a href="https://avishkar.mnnit.ac.in/">Avishkar</a></li>
+                <li><a href="https://culrav.mnnit.ac.in/">Culrav</a></li>
+                <li><a href="https://sac.mnnit.ac.in/">Annual Athletic Meet</a></li>
+
+            </UL>
+            <h2>CONTACT US</h2>
+            <UL>
+                <li><a href="https://sac.mnnit.ac.in/">S.A.C. Office and Boys’ SAC</a></li>
+                <li><a href="https://sac.mnnit.ac.in/">Gymkhana and Girls’ SAC</a></li>
+
+            </UL>
+            <h2>SOCIAL MEDIA</h2>
+            <UL>
+                <li><a href="https://www.facebook.com/MNNITALLD/"><img src="facebook.png" alt="facebook" width="40"></a>
+                </li>
+                <li><a href="https://twitter.com/MNNITALLD"><img src="twitter.png" alt="twitter" width="40"></a>
+                </li>
+                <li><a href="https://www.instagram.com/mnnitalld"><img src="instagram.png" alt="instagram"
+                            width="38"></a>
+                </li>
+
+            </UL>
+
+        </div>
+        <hr>
+        © 2024 CC MNNIT. All rights reserved.
+
+    </footer>
+</body>
+
+</html>
