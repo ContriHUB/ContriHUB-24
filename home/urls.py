@@ -14,6 +14,7 @@ urlpatterns = [
     path('judge_pr/<int:pk>/', views.judge_pr, name='judge_pr'),
     path('filter_by_domain/<int:domain_pk>/', views.filter_by_domain, name='filter_by_domain'),
     path('filter_by_subdomain/<int:subdomain_pk>/', views.filter_by_subdomain, name='filter_by_subdomain'),
+    path('filter/difficulty/<str:difficulty_level>/', views.filter_by_difficulty, name='filter_by_difficulty'),
     path('contact/', views.contact_form, name='contact_form'),
     path('like/<int:issue_pk>', views.likes, name='like_issue'),
     path('dislike/<int:issue_pk>', views.dislikes, name='dislike_issue'),
