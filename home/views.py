@@ -90,6 +90,51 @@ def filter_by_subdomain(request, subdomain_pk):
     }
     return render(request, 'dashboard/index.html', context=context)
 
+# ISSUE: for Filter the issues based on their Difficulty ...........By Aryan14021974
+@complete_profile_required
+def filter_by_difficulty(request, difficulty_level=None):
+
+    issues_qs = Issue.objects.all()
+    project_qs = Project.objects.all()
+
+
+    if difficulty_level and difficulty_level != 'All':
+        difficulty_mapping = {
+            'Free': Issue.FREE,
+            'Very-Easy': Issue.VERY_EASY,
+            'Easy': Issue.EASY,
+            'Medium': Issue.MEDIUM,
+            'Hard': Issue.HARD
+        }
+        if difficulty_level in difficulty_mapping:
+            issues_qs = issues_qs.filter(level=difficulty_mapping[difficulty_level])
+
+
+    domains_qs = Domain.objects.all()
+    subdomains_qs = SubDomain.objects.all()
+
+
+    curr_domain = request.GET.get('domain', 'All')
+    curr_subdomain = request.GET.get('subdomain', 'All') 
+
+    if curr_domain != 'All':
+        issues_qs = issues_qs.filter(project__domain__name=curr_domain)
+
+    if curr_subdomain != 'All':
+        issues_qs = issues_qs.filter(project__subdomain__name=curr_subdomain)
+
+    context = {
+        'projects': project_qs,
+        'issues': issues_qs,
+        'domains': domains_qs,
+        'subdomains': subdomains_qs,
+        'curr_domain': curr_domain,
+        'curr_subdomain': curr_subdomain,
+        'curr_difficulty': difficulty_level if difficulty_level else 'All',
+    }
+    
+    return render(request, 'dashboard/index.html', context=context)
+
 
 def authorize(request):
     """
