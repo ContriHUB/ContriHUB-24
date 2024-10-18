@@ -66,7 +66,60 @@
         background: #1C2331 !important;
       }
     }
+   
   </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+  const pastOrganisersSection = document.getElementById("pastorganizers");
+  if (pastOrganisersSection) {
+    const yearLinks = pastOrganisersSection.querySelectorAll(".year");
+    const organisersSections = pastOrganisersSection.querySelectorAll(".row");
+    organisersSections.forEach((section) => {
+      section.style.display = "none";
+    });
+    function applyStyles(link) {
+        link.style.color = '#1D4ED8'; 
+        link.style.fontWeight = 'bold'; 
+        link.style.textDecoration = 'none'; 
+        link.style.transition = 'color 0.3s'; 
+    }
+
+    yearLinks.forEach((yearLink) => {
+      applyStyles(yearLink);
+        yearLink.addEventListener('mouseover', function() {
+            link.style.color = '#1E3A8A'; 
+        });
+
+        yearLink.addEventListener('mouseout', function() {
+            link.style.color = '#1D4ED8'; 
+        });
+        yearLink.addEventListener('click', function(event) {
+            event.preventDefault(); 
+            yearLinks.forEach(btn => {
+                btn.style.color = '#1D4ED8';
+                btn.style.fontWeight = ''; 
+            });
+            yearLink.style.color = 'red'; 
+            yearLink.style.fontWeight = 'bold'; 
+        });
+      yearLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        const selectedYear = this.getAttribute("data-year");
+
+        organisersSections.forEach((section) => {
+          if (section.getAttribute("data-year") === selectedYear) {
+            section.style.display = "block";
+            section.style.display="flex"; 
+          } else {
+            section.style.display = "none";  
+          }
+        });
+      });
+    });
+  }
+});
+
+  </script>
 </head>
 
 <body>
@@ -411,8 +464,30 @@
       <!-- <hr class="my-5"> -->
       <section id="pastorganizers" class="pt-5 pb-5 shadow-sm">
         <h2 class="h2 mb-5 text-center display-5 font-weight-bold">Past organizers</h2>
+        <ul id="year-list" class="flex space-x-4 justify-center py-4 bg-gray-100 rounded-md shadow-md">
+          <li>
+            <a href="#" class="year text-blue-600 hover:text-blue-800 font-semibold text-decoration:none" data-year="2024">
+              2024
+            </a>
+          </li>
+          <li>
+            <a href="#" class="year text-blue-600 hover:text-blue-800 font-semibold text-decoration:none" data-year="2023">
+              2023
+            </a>
+          </li>
+          <li>
+            <a href="#" class="year text-blue-600 hover:text-blue-800 font-semibold text-decoration:none" data-year="2022">
+              2022
+            </a>
+          </li>
+          <li>
+            <a href="#" class="year text-blue-600 hover:text-blue-800 font-semibold text-decoration:none" data-year="2021-below">
+              2021-below
+            </a>
+          </li>
+        </ul>  
         <div class="container">
-          <div class="row">
+          <div class="row" data-year="2024">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/shank.jpg' %}" class="card-img-top w-100" alt="Card Image"
@@ -470,9 +545,9 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>     
         <div class="container">
-          <div class="row">
+          <div class="row" data-year="2023">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/ss.jpg' %}" class="card-img-top w-100" alt="Card Image"
@@ -546,7 +621,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row" data-year="2022">
 
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
@@ -611,7 +686,7 @@
           </div>
         </div>
         <div class="container">
-          <div class="row">
+          <div class="row" data-year="2021-below">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/abhey.png' %}" class="card-img-top" alt="Card Image"
