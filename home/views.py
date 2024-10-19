@@ -1,21 +1,16 @@
 import decouple
-
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
 from django.core.mail import send_mail, BadHeaderError
-
 from home.helpers import EmailThread
 from django.core import mail
 from project.models import Project, Issue, IssueAssignmentRequest, Like
 from project.models import ActiveIssue, PullRequest, Domain, SubDomain, Dislike
-
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm, PRJudgeForm
 from django.utils import timezone
 from django.contrib import messages
-
-
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
 # TODO:ISSUE: Create a URL to view each Issue on a separate Page with all its information.
 # TODO:ISSUE: Create a URL to view each PR on a separate Page with all its information.
@@ -91,6 +86,48 @@ def filter_by_subdomain(request, subdomain_pk):
     return render(request, 'dashboard/index.html', context=context)
 
 
+@complete_profile_required
+def filter_by_difficulty(request, difficulty_level=None):
+
+    issues_qs = Issue.objects.all()
+    project_qs = Project.objects.all()
+
+    if difficulty_level and difficulty_level != 'All':
+        difficulty_mapping = {
+            'Free': Issue.FREE,
+            'Very-Easy': Issue.VERY_EASY,
+            'Easy': Issue.EASY,
+            'Medium': Issue.MEDIUM,
+            'Hard': Issue.HARD
+        }
+        if difficulty_level in difficulty_mapping:
+            issues_qs = issues_qs.filter(level=difficulty_mapping[difficulty_level])
+
+    domains_qs = Domain.objects.all()
+    subdomains_qs = SubDomain.objects.all()
+
+    curr_domain = request.GET.get('domain', 'All')
+    curr_subdomain = request.GET.get('subdomain', 'All')
+
+    if curr_domain != 'All':
+        issues_qs = issues_qs.filter(project__domain__name=curr_domain)
+
+    if curr_subdomain != 'All':
+        issues_qs = issues_qs.filter(project__subdomain__name=curr_subdomain)
+
+    context = {
+        'projects': project_qs,
+        'issues': issues_qs,
+        'domains': domains_qs,
+        'subdomains': subdomains_qs,
+        'curr_domain': curr_domain,
+        'curr_subdomain': curr_subdomain,
+        'curr_difficulty': difficulty_level if difficulty_level else 'All',
+    }
+
+    return render(request, 'dashboard/index.html', context=context)
+
+
 def authorize(request):
     """
     Used for rendering authorize.html which is responsible for both LogIn and SignUp
@@ -113,11 +150,9 @@ def request_issue_assignment(request, issue_pk):
     issue = Issue.objects.get(pk=issue_pk)
     requester = request.user
     if issue.is_assignable(requester=requester):
-
         IssueAssignmentRequest.objects.create(issue=issue, requester=requester)
         message = f"Assignment Request for Issue <a href={issue.html_url}>#{issue.number}</a> of " \
                   f"<a href={issue.project.html_url}>{issue.project.name}</a> submitted successfully. "
-
         template_path = "dashboard/mail_template_request_issue_assignment.html"
         email_context = {
             'mentor': issue.mentor,
@@ -140,7 +175,6 @@ def request_issue_assignment(request, issue_pk):
             return HttpResponse(f"Issue Requested Successfully, but there was some problem sending email to the\
                                 mentor("f"{issue.mentor.username}). For quick response from mentor try contacting\
                                 him/her on Linkedin({linkedin_id})")
-
     message = f"Assignment Request for <a href={issue.html_url}>Issue #{issue.number}</a> of <a href=\
               {issue.project.html_url}>" f"{issue.project.name}</a> cannot be made by you currently."
     return HttpResponse(message)
@@ -156,7 +190,6 @@ def accept_issue_request(request, issue_req_pk):
         ActiveIssue.objects.create(issue=issue, contributor=requester)
         issue_request.state = IssueAssignmentRequest.ACCEPTED
         issue_request.save()
-
         template_path = "dashboard/mail_template_issue_action.html"
         email_context = {
             'mentor': issue.mentor,
@@ -169,7 +202,6 @@ def accept_issue_request(request, issue_req_pk):
             'action': 'accepted',
             'receiver': requester,
         }
-
         try:
             EmailThread(template_path, email_context).start()
             message = f"Issue <a href={issue.html_url}>#{issue.number}</a> of Project "\
@@ -217,7 +249,6 @@ def submit_pr_request(request, active_issue_pk):
                 form = PRSubmissionForm(request.GET, instance=pr_qs.first())
             else:
                 form = PRSubmissionForm(request.GET)
-
             if active_issue.can_raise_pr(contributor=contributor) and form.is_valid():
                 pr = form.save(commit=False)
                 pr.issue = issue
@@ -225,9 +256,7 @@ def submit_pr_request(request, active_issue_pk):
                 pr.state = PullRequest.PENDING_VERIFICATION
                 pr.submitted_at = timezone.now()
                 pr.save()
-
                 # TODO:ISSUE Create Check on URL in backend so that it is a Valid Github PR URL.
-
                 template_path = "dashboard/mail_template_submit_pr_request.html"
                 email_context = {
                     'mentor': issue.mentor,
@@ -257,18 +286,14 @@ def submit_pr_request(request, active_issue_pk):
                           request " f"for <a href={issue.html_url}>Issue #{issue.number}</a> of Project <a href=" \
                           f"{issue.project.html_url}>{issue.project.name}</a>"
             return HttpResponse(message)
-
     message = "This request cannot be full-filled."
     return HttpResponse(message)
-
-
 # TODO:ISSUE: Implement Functionality for mentor to assign bonus/peanlty points while accepting/rejecting the \
 # issue.A form will be needed.
-
 # TODO:ISSUE: Send an Email to Contributor Notifying that their PR is accepted/rejected.
-
 # TODO:ISSUE: Implement a feature such that mentor is able to leave remarks about PR before Accepting/Rejecting\
 #  (Some fields in Model need to be added/updated).
+
 
 @login_required
 @complete_profile_required
@@ -279,10 +304,8 @@ def judge_pr(request, pk):
         if pr_qs:
             pr = pr_qs.first()
             issue = pr.issue
-
             if mentor.username == issue.mentor.username:
                 contributor = pr.contributor
-
                 pr = PullRequest.objects.get(issue=issue, contributor=contributor)
                 form = PRJudgeForm(request.GET)
                 if pr.state == PullRequest.PENDING_VERIFICATION and form.is_valid() and "accept" in request.GET:
@@ -379,22 +402,16 @@ def likes(request, issue_pk):
     liked = Like.objects.filter(user=user, issue=issue)
     disliked = Dislike.objects.filter(user=user, issue=issue)
     if not liked and not disliked:
-
         liked = Like.objects.create(user=user, issue=issue)
         current_likes = current_likes + 1
-
     elif not liked and disliked:
-
         liked = Like.objects.create(user=user, issue=issue)
         disliked = Dislike.objects.filter(user=user, issue=issue).delete()
         current_likes = current_likes + 1
         current_dislikes = current_dislikes - 1
-
     else:
-
         liked = Like.objects.filter(user=user, issue=issue).delete()
         current_likes = current_likes - 1
-
     Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
     Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
     return redirect('../dashboard')
@@ -409,22 +426,16 @@ def dislikes(request, issue_pk):
     liked = Like.objects.filter(user=user, issue=issue)
     disliked = Dislike.objects.filter(user=user, issue=issue)
     if not disliked and not liked:
-
         disliked = Dislike.objects.create(user=user, issue=issue)
         current_dislikes = current_dislikes + 1
-
     elif not disliked and liked:
-
         disliked = Dislike.objects.create(user=user, issue=issue)
         liked = Like.objects.filter(user=user, issue=issue).delete()
         current_likes = current_likes - 1
         current_dislikes = current_dislikes + 1
-
     else:
-
         disliked = Dislike.objects.filter(user=user, issue=issue).delete()
         current_dislikes = current_dislikes - 1
-
     Issue.objects.filter(pk=issue_pk).update(likes=current_likes)
     Issue.objects.filter(pk=issue_pk).update(dislikes=current_dislikes)
     return redirect('../dashboard')
