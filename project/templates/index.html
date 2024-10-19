@@ -1,13 +1,239 @@
-{% if projects %}
-    <ul>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <meta property="og:title" content="ContriHUB" />
+  <meta property="og:url" content="https://sac.mnnit.ac.in/contrihub" />
+  <meta property="og:image" content="" />
+  <meta property="og:description" content="ContriHUB is an Open Source event at @MNNIT" />
+  <meta property="og:type" content="website" />
+
+
+  <title>ContriHUB</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <!-- removed older version of font awsome with newer version 
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}" />
+  <link href='https://fonts.googleapis.com/css?family=Cormorant Infant' rel='stylesheet'>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css"
+    rel='stylesheet'>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+
+  <style type="text/css">
+    html,
+    body,
+    header,
+    .view {
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    @media (max-width: 740px) {
+
+      html,
+      body,
+      header,
+      .view {
+        height: 1000px;
+      }
+    }
+
+    @media (min-width: 800px) and (max-width: 850px) {
+
+      html,
+      body,
+      header,
+      .view {
+        height: 650px;
+      }
+    }
+
+    @media (min-width: 800px) and (max-width: 850px) {
+      .navbar:not(.top-nav-collapse) {
+        background: #1C2331 !important;
+      }
+    }
+  </style>
+</head>
+
+<body style="background-image: url('{% static 'img/background.jpg' %}'); background-repeat: repeat; background-size: cover;">
+
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      <!-- Brand -->
+      <a class="navbar-brand" href="../">
+        <strong>ContriHUB</strong>
+      </a>
+
+      <!-- Collapse -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <!-- Left -->
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="../">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../#about">About ContriHUB</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../#ourgoal">Our Goal</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../#ourteam">Our Team</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../project">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../#pastorganizers">Past Organizers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../dashboard">Participate Now!</a>
+          </li>
+        </ul>
+
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons">
+<!--           <li class="nav-item">
+            <a href="https://www.facebook.com/groups/ContriHUB/" class="nav-link">
+              <i class="fab fa-facebook"></i>
+            </a>
+          </li> -->
+          <li class="nav-item">
+            <a href="https://github.com/ContriHUB" class="nav-link border border-light rounded" target="_blank">
+              <i class="fab fa-github mr-2"></i>ContriHUB GitHub
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  <!-- Navbar -->
+
+  <!-- Mask & flexbox options-->
+
+  <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+    <div class="container">
+
+      <div class="row justify-content-center" style="margin-top: 100px">
+        <h1 class="display-5 text-white font-weight-bold" style="font-family: Cormorant Infant">Projects in 2024</h1>
+      </div>
+
+      {% if projects %}
+    <div class="row">
         {% for project in projects %}
-            <li>
-                <h2>{{ project.name }}</h2>
-                <p><strong>Maintainer:</strong> {{ project.maintainer }}</p>
-                <p><strong>About:</strong> {{ project.about }}</p>
-            </li>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center" style="margin-bottom: 75px">
+            <div class="card" style="width: 300px">
+                <div class="card-body">
+                    <!-- Project name as a clickable link -->
+                    <h5 class="card-title">
+                        <a href="{{ project.url }}" target="_blank">{{ project.name }}</a>
+                    </h5>
+                    <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6" style="max-width: 250px; max-height: 200px; overflow-y: auto">{{ project.about }}</p>
+                    <div style="color: grey;">Maintainer:</div>
+                    <!-- Maintainer name as a clickable link if available -->
+                    <ul>
+                        <li><a href="{{ project.maintainer_url }}" target="_blank">{{ project.maintainer }}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 {% else %}
     <p>No matching projects found.</p>
 {% endif %}
+
+        
+
+
+        <!-- Add your info above this -->
+
+      </div>
+    </div>
+  </div>
+
+  <!--Footer-->
+  <footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+    <hr class="my-4">
+
+    <!-- Social icons -->
+    <div class="pb-4">
+      <a href="https://www.facebook.com/groups/ContriHUB/" target="_blank">
+        <i class="fab fa-facebook mr-3"></i>
+      </a>
+
+      <a href="https://github.com/ContriHUB" target="_blank">
+        <i class="fab fa-github mr-3"></i>
+      </a>
+
+      </a>
+    </div>
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3">
+      © 2024 Copyright:
+      <a href="https://sac.mnnit.ac.in/contrihub" target="_blank"> sac.mnnit.ac.in/contrihub </a>
+    </div>
+    <!--/.Copyright-->
+
+  </footer>
+  <!--/.Footer-->
+
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'js/jquery-mCustomScrollbar-concat.min.js' %}"></script>
+
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+  <!-- Initializations -->
+  <script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+  </script>
+
+  <!-- Custom Scrollbar -->
+  <script type="text/javascript">
+    $(function () {
+      /* Dark Thin */
+      $("member-intro").mCustomScrollbar({
+        theme: "dark-thin"
+      });
+    });
+  </script>
+
+</body>
+
+</html>

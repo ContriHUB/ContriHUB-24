@@ -40,6 +40,7 @@ def filter_matching_projects(repositories, available_projects):
                 "name": repo["name"],
                 "maintainer": repo["owner"]["login"],
                 "about": repo["description"],
+                "url": repo["html_url"],  # Add the repository URL
             }
             matching_projects.append(project_data)
     
