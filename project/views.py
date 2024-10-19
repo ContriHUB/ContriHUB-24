@@ -7,12 +7,58 @@ from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import safe_hit_url, SUCCESS, complete_profile_required
 from config import api_endpoint, html_endpoint
+import requests
 
 User = get_user_model()
 
 
+def fetch_github_repositories():
+    """
+    Fetches public repositories from the GitHub organization 'ContriHUB' using the GitHub API.
+    """
+    github_api_url = "https://api.github.com/orgs/ContriHUB/repos"
+    headers = {
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    response = requests.get(github_api_url, headers=headers)
+    if response.status_code == 200:
+        return response.json()  # Returns the list of repositories
+    else:
+        return []
+
+
+def filter_matching_projects(repositories, available_projects):
+    """
+    Filters GitHub repositories to match with the projects defined in AVAILABLE_PROJECTS.
+    """
+    matching_projects = []
+    
+    for repo in repositories:
+        if repo['name'] in available_projects:
+            project_data = {
+                "name": repo["name"],
+                "maintainer": repo["owner"]["login"],
+                "about": repo["description"],
+            }
+            matching_projects.append(project_data)
+    
+    return matching_projects
+
+
 def home(request):
-    return render(request, 'index.html')
+    """
+    Home view that fetches GitHub repositories and filters them to match the AVAILABLE_PROJECTS.
+    The filtered data is then passed to the template.
+    """
+    repositories = fetch_github_repositories()  # Fetch all repos from GitHub
+    matching_projects = filter_matching_projects(repositories, AVAILABLE_PROJECTS)  # Filter projects
+    
+    context = {
+        "projects": matching_projects
+    }
+    
+    return render(request, 'index.html', context)
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
@@ -21,12 +67,10 @@ def populate_projects(request):
     """
     Used to Populate Projects in Local Database. Creates entries based on project names present in AVAILABLE_PROJECTS
     config variable in settings.py
-    :param request:
-    :return:
     """
     api_uri = api_endpoint['contrihub_api_1']
     html_uri = html_endpoint['contrihub_html']
-    # print(AVAILABLE_PROJECTS)
+
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
         if not project_qs:
@@ -46,8 +90,6 @@ def populate_projects(request):
 def populate_issues(request):
     """
     Used to Populate Issues in Local Database. It fetches Issues from Github using Github API.
-    :param request:
-    :return:
     """
     project_qs = Project.objects.all()
 
@@ -65,8 +107,6 @@ def populate_issues(request):
         if response['status'] == SUCCESS:
             issues = response['data']
             for issue in issues:
-                # print(issue)
-                # TODO: Can be given as ISSUE
                 try:
                     if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
                         continue
@@ -75,12 +115,11 @@ def populate_issues(request):
                 finally:
                     print('error')
                 if issue.get('pull_request') is not None:  # this issue is actually a PR.
-                    # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
-                    print("This issue is a actually a PR")
+                    print("This issue is actually a PR")
                     continue
                 title, number, state = issue['title'], issue['number'], issue['state']
                 mentor_name, level, points, is_restricted = parse_labels(labels=issue['labels'])
-                # print("Fsf ",mentor_name)
+
                 api_url, html_url = issue['url'], issue['html_url']
                 issue_qs = Issue.objects.filter(number=number, project=project)
 
@@ -111,7 +150,6 @@ def populate_issues(request):
                         bonus_pt=0
                     )
 
-                print(db_issue)
                 try:
                     mentor = User.objects.get(username=mentor_name)
                     db_issue.mentor = mentor
@@ -128,11 +166,10 @@ def parse_labels(labels):
     for label in labels:
 
         if str(label["description"]).lower() == LABEL_MENTOR:  # Parsing Mentor
-            # print("dfs ",label["name"])
             mentor = parse_mentor(label["name"])
 
         if str(label["description"]).lower() == LABEL_LEVEL:  # Parsing Level
-            level, points = parse_level(label["name"])  # Fetching Level and it's default point
+            level, points = parse_level(label["name"])  # Fetching Level and its default point
 
         if str(label["description"]).lower() == LABEL_POINTS:  # Parsing Points
             points = parse_points(label["name"])  # Consider Custom points if provided
