@@ -58,10 +58,13 @@ def profile(request, username):
             pending_pr_requests_for_mentor = pr_requests_for_mentor.filter(state=3).order_by("submitted_at")
             pr_requests_for_mentor = chain(pending_pr_requests_for_mentor,
                                            accepted_pr_requests_for_mentor, rejected_pr_requests_for_mentor)
-
+            easyProblems = PullRequest.objects.filter(contributor=user, issue__level=1, state=1).count()
+            mediumProblems = PullRequest.objects.filter(contributor=user,  issue__level=2, state=1).count()
+            hardProblems = PullRequest.objects.filter(contributor=user, issue__level=3, state=1).count()
+            veasyProblems = PullRequest.objects.filter(contributor=user, issue__level=4, state=1).count()
+            totalProblemsSolved = PullRequest.objects.filter(contributor=user, state=1).count()
             pr_form = PRSubmissionForm()
             judge_form = PRJudgeForm()
-
             context = {
                 "student_years": UserProfile.YEARS,
                 "student_courses": UserProfile.COURSES,
@@ -74,7 +77,12 @@ def profile(request, username):
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
                 "judge_form": judge_form,
-                "native_profile": native_profile
+                "native_profile": native_profile,
+                "easyProblems": easyProblems,
+                "mediumProblems": mediumProblems,
+                "hardProblems": hardProblems,
+                "veasyProblems": veasyProblems,
+                "totalProblemsSolved": totalProblemsSolved,
             }
             return render(request, 'user_profile/profile.html', context=context)
         else:
