@@ -62,6 +62,7 @@ def profile(request, username):
             easyProblems = PullRequest.objects.filter(contributor=user, issue__level=1, state=1).count()
             mediumProblems = PullRequest.objects.filter(contributor=user, issue__level=2, state=1).count()
             hardProblems = PullRequest.objects.filter(contributor=user, issue__level=3, state=1).count()
+            veasyProblems = PullRequest.objects.filter(contributor=user, issue__level=4, state=1).count()
             totalProblemsSolved = PullRequest.objects.filter(contributor=user, state=1).count()
 
             pr_form = PRSubmissionForm()
@@ -83,6 +84,7 @@ def profile(request, username):
                 "easyProblems": easyProblems,
                 "mediumProblems": mediumProblems,
                 "hardProblems": hardProblems,
+                "veasyProblems": veasyProblems,
                 "totalProblemsSolved": totalProblemsSolved,
             }
             return render(request, 'user_profile/profile.html', context=context)
