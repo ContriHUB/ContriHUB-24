@@ -68,9 +68,14 @@ def populate_projects(request):
     """
     Used to Populate Projects in Local Database. Creates entries based on project names present in AVAILABLE_PROJECTS
     config variable in settings.py
+    :param request:
+    :return:
+
     """
     api_uri = api_endpoint['contrihub_api_1']
     html_uri = html_endpoint['contrihub_html']
+
+    # print(AVAILABLE_PROJECT)
 
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
@@ -91,6 +96,8 @@ def populate_projects(request):
 def populate_issues(request):
     """
     Used to Populate Issues in Local Database. It fetches Issues from Github using Github API.
+    :param request:
+    :return
     """
     project_qs = Project.objects.all()
 
@@ -108,6 +115,8 @@ def populate_issues(request):
         if response['status'] == SUCCESS:
             issues = response['data']
             for issue in issues:
+                #print(issue)
+                #TODO :Can be given as ISSUE
                 try:
                     if issue['user']['login'] == DEPENDABOT_LOGIN:  # Ignoring issues created by Dependabot
                         continue
@@ -116,6 +125,7 @@ def populate_issues(request):
                 finally:
                     print('error')
                 if issue.get('pull_request') is not None:  # this issue is actually a PR.
+                    # Source: https://docs.github.com/en/rest/reference/issues#list-repository-issues
                     print("This issue is actually a PR")
                     continue
                 title, number, state = issue['title'], issue['number'], issue['state']

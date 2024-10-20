@@ -185,7 +185,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
 AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-24",
-                            cast=lambda v: [s.strip() for s in v.split(';')])
+                            cast=lambda v: [s.strip() for s in v.split(',')])
 LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")
