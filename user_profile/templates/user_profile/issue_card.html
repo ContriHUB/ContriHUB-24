@@ -1,0 +1,30 @@
+
+
+
+<div class='d-flex justify-content-center gap-3 mb-4 flex-wrap'>
+    <div class='px-5 py-3 fs-1 bg-white align-content-center' style='width: 200px; border-radius: 7px;'>  <!-- Left column for total problems -->
+        <h5>Total Issues Solved:</h5>
+        <p>
+            
+            <div>{{ totalProblemsSolved }}</div>
+        </p>
+    </div>
+
+    <div class='d-flex flex-column p-3 bg-white' style='border-radius: 7px; height: 100%;'>
+        <div class="d-flex flex-column flex-grow-1 gap-1 ">
+            <div class="w-100 badge badge-pill flex-grow-1 align-content-center" style="background-color: #33b5e5; padding: .75rem 3rem;">
+                <div class="box fs-6">Very-easy Issue.: {{ veasyProblems }}</div>
+            </div>
+            <div class="w-100 badge badge-pill flex-grow-1 align-content-center" style="background-color: #00b74a; padding: .75rem 3rem;">
+                <div class="box fs-6">Easy Issue: {{ easyProblems }}</div>
+            </div>
+            <div class="w-100 badge badge-pill flex-grow-1 align-content-center" style="background-color: #ffa900; padding: .75rem 3rem;">
+                <div class="box fs-6">Medium Issue: {{ mediumProblems }}</div>
+            </div>
+            <div class="w-100 badge badge-pill flex-grow-1 align-content-center" style="background-color: #ff3547; padding: .75rem 3rem;">
+                <div class="box fs-6">Hard Issue: {{ hardProblems }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+

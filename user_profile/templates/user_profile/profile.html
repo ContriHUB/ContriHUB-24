@@ -24,6 +24,8 @@ Profile @{{ native_profile.user.username }}
 
     {% if user.is_authenticated %}
         {% include "user_profile/profile-card.html" %}
+        {% include "user_profile/issue_card.html" %}
+
 
         {% comment %}
             In Django templates you can use the "get_FOO_display()" method, that will return the readable alias

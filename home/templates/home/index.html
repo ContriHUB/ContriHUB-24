@@ -66,36 +66,7 @@
         background: #1C2331 !important;
       }
     }
-   
   </style>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-  const pastOrganisersSection = document.getElementById("pastorganizers");
-  if (pastOrganisersSection) {
-    const yearLinks = pastOrganisersSection.querySelectorAll('[id="year"]');
-    const organisersSections = pastOrganisersSection.querySelectorAll(".row");
-    organisersSections.forEach((section) => {
-      section.style.display = "none";
-    });
-
-    yearLinks.forEach((yearLink) => {
-      yearLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        const selectedYear = this.getAttribute("data-year");
-        organisersSections.forEach((section) => {
-          if (section.getAttribute("data-year") === selectedYear) {
-            section.style.display = "block";
-            section.style.display="flex"; 
-          } else {
-            section.style.display = "none";  
-          }
-        });
-      });
-    });
-  }
-});
-
-  </script>
 </head>
 
 <body>
@@ -441,13 +412,8 @@
       <section id="pastorganizers" class="pt-5 pb-5 shadow-sm">
         <h2 class="h2 mb-5 text-center display-5 font-weight-bold">Past organizers</h2>
         <div class="container">
-          <button id="year" type="button" class="btn btn-outline-dark w-100" data-year="2024">
-            <div class="mx-auto px-6 md:px-12 w-100">
-              <h2 class="text-3xl text-center text-gray-800 md:text-4xl font-bold">Team 2024</h2>
-            </div>
-          </button>          
-          <div class="row mx-1" data-year="2024">
-            <div class="col-xs-12  col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/shank.jpg' %}" class="card-img-top w-100" alt="Card Image"
                   style="max-height: 250px; object-fit: cover;">
@@ -504,14 +470,9 @@
               </div>
             </div>
           </div>
-        </div>     
+        </div>
         <div class="container">
-          <button id="year" type="button" class="btn btn-outline-dark w-100" data-year="2023">
-            <div class="mx-auto px-6 md:px-12 w-100">
-              <h2 class="text-3xl text-center text-gray-800 md:text-4xl font-bold">Team 2023</h2>
-            </div>
-          </button>
-          <div class="row mx-1" data-year="2023">
+          <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/ss.jpg' %}" class="card-img-top w-100" alt="Card Image"
@@ -555,7 +516,7 @@
               </div>
             </div>
           </div>
-          <div class="row justify-content-center" data-year="2023">
+          <div class="row justify-content-center">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/sy.jpeg' %}" class="card-img-top w-100" alt="Card Image"
@@ -585,12 +546,7 @@
               </div>
             </div>
           </div>
-          <button id="year" type="button" class="btn btn-outline-dark w-100" data-year="2022">
-            <div class="mx-auto px-6 md:px-12 w-100">
-              <h2 class="text-3xl text-center text-gray-800 md:text-4xl font-bold">Team 2022</h2>
-            </div>
-          </button>
-          <div class="row mx-1" data-year="2022">
+          <div class="row">
 
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
@@ -655,12 +611,7 @@
           </div>
         </div>
         <div class="container">
-          <button id="year" type="button" class="btn btn-outline-dark w-100" data-year="2021">
-            <div class="mx-auto px-6 md:px-12 w-100">
-              <h2 class="text-3xl text-center text-gray-800 md:text-4xl font-bold ">Team 2021-Below</h2>
-            </div>
-          </button>
-          <div class="row mx-1" data-year="2021">
+          <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center">
               <div class="card justify-content-center align-items-center">
                 <img src="{% static 'img/profile/abhey.png' %}" class="card-img-top" alt="Card Image"
