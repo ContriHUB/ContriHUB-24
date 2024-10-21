@@ -197,8 +197,10 @@ def edit_profile(request):
 @login_required
 def rankings(request):
     contributors = UserProfile.objects.filter(role=UserProfile.STUDENT).order_by('-total_points')
-    issues_resolved = [ PullRequest.objects.filter(contributor=contributor.user, state=1).count() for contributor in contributors ]
-    contributors=zip(contributors,issues_resolved)
+    issues_resolved = [
+        PullRequest.objects.filter(contributor=contributor.user, state=1).count() for contributor in contributors 
+    ]
+    contributors = zip(contributors, issues_resolved)
     context = {
         'contributors': list(contributors),
     }
