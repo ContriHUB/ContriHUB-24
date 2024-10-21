@@ -197,8 +197,10 @@ def edit_profile(request):
 @login_required
 def rankings(request):
     contributors = UserProfile.objects.filter(role=UserProfile.STUDENT).order_by('-total_points')
+    issues_resolved = [ PullRequest.objects.filter(contributor=contributor.user, state=1).count() for contributor in contributors ]
+    contributors=zip(contributors,issues_resolved)
     context = {
-        'contributors': contributors,
+        'contributors': list(contributors),
     }
     # TODO:ISSUE: Display number of Issues solved as well in the Rankings
     return render(request, 'user_profile/rankings.html', context=context)

@@ -19,15 +19,18 @@
         <tr>
             <th>Rank</th>
             <th>Username</th>
+            <th>Issues Resolved</th>
             <th>Total Points</th>
             <th>Bonus Points</th>
             <th>Deducted Points</th>
         </tr>
-        {% for contributor in contributors %}
+        {% for contributor,issues_resolved in contributors %}
             {% if contributor.total_points > 0 %}
             <tr>
                 <td><b>{{ forloop.counter }}</b></td>
                 <td><b>@{{ contributor.user.username }}</b></td>
+                <td><b class='badge bg-light text-dark'>{{ issues_resolved }}</b></td>
+
                 <td>
                     <span class="badge badge-pill badge-primary">
                         {{ contributor.total_points }}
