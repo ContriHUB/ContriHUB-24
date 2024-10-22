@@ -1,18 +1,57 @@
 from django.shortcuts import HttpResponseRedirect, reverse, render
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
-    DEFAULT_HARD_POINTS
+    DEFAULT_HARD_POINTS, CONTRIHUB_MENTOR, CONTRIHUB_MENTOR_URL
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import safe_hit_url, SUCCESS, complete_profile_required
 from config import api_endpoint, html_endpoint
+import requests
 
 User = get_user_model()
 
 
 def home(request):
-    return render(request, 'index.html')
+    """
+    Render the project page with the Project Context
+    :param request:
+    :return:
+    """
+
+    all_projects = Project.objects.all()
+    context = {
+        "projects": all_projects
+    }
+    return render(request, 'index.html', context)
+
+
+def fetch_github_repo_details(project_name, is_contrihub=False):
+    """
+    Fetches the details of a repository from the GitHub organization 'ContriHUB' using the GitHub API.
+    If the repo is Contrihub then don't fetch the mentor name and url
+    :param: name of repository, is the repository 'ContriHUB-24'
+    :return: dictionary containing repository data
+    """
+
+    project_data = {}
+    headers = {
+        "Accept": "application/vnd.github.v3+json"
+    }
+    response = requests.get(f"{api_endpoint['contrihub_api_1']}{project_name}", headers=headers)
+    if response.status_code == 200:
+        project_json = response.json()
+        project_data = {
+            "name": project_json["name"],
+            "description": project_json["description"],
+            "api_url": project_json["url"],
+            "html_url": project_json["html_url"]
+        }
+        if not is_contrihub:
+            project_data["mentor"] = project_json["parent"]["owner"]["login"]
+            project_data["mentor_url"] = project_json["parent"]["owner"]["html_url"]
+
+    return project_data
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
@@ -24,19 +63,31 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = api_endpoint['contrihub_api_1']
-    html_uri = html_endpoint['contrihub_html']
+
     # print(AVAILABLE_PROJECTS)
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
         if not project_qs:
-            api_url = f"{api_uri}{project_name}"
-            html_url = f"{html_uri}{project_name}"
-            Project.objects.create(
-                name=project_name,
-                api_url=api_url,
-                html_url=html_url
-            )
+            if project_name != 'ContriHUB-24':
+                project = fetch_github_repo_details(project_name=project_name)
+                Project.objects.create(
+                    name=project["name"],
+                    description=project["description"],
+                    mentor=project["mentor"],
+                    mentor_url=project["mentor_url"],
+                    api_url=project["api_url"],
+                    html_url=project["html_url"],
+                )
+            else:
+                project = fetch_github_repo_details(project_name=project_name, is_contrihub=True)
+                Project.objects.create(
+                    name=project["name"],
+                    description=project["description"],
+                    mentor=CONTRIHUB_MENTOR,
+                    mentor_url=CONTRIHUB_MENTOR_URL,
+                    api_url=project["api_url"],
+                    html_url=project["html_url"]
+                )
 
     return HttpResponseRedirect(reverse('home'))
 

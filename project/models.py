@@ -26,6 +26,9 @@ class SubDomain(models.Model):
 
 class Project(models.Model):
     name = models.CharField(verbose_name="Name", max_length=200)
+    description = models.TextField(verbose_name="Project Description", default="", null=True)
+    mentor = models.CharField(verbose_name="Mentor", max_length=200, default=None)
+    mentor_url = models.URLField(verbose_name="MENTOR URL", default=None)
 
     api_url = models.URLField(verbose_name="API URL")
 
