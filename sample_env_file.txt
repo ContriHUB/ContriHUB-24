@@ -20,6 +20,8 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 AVAILABLE_PROJECTS = 'ContriHUB-21;piratetube;Connect-Four-Game'
+CONTRIHUB_MENTOR = '<current_contrihub_mentor>'
+CONTRIHUB_MENTOR_URL = '<url_of_current_mentor>'
 LABEL_MENTOR = 'mentor'
 LABEL_LEVEL = 'level'
 LABEL_POINTS = 'points'
