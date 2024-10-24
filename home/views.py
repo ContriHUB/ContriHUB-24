@@ -127,6 +127,47 @@ def filter_by_difficulty(request, difficulty_level=None):
 
     return render(request, 'dashboard/index.html', context=context)
 
+@complete_profile_required
+def filter_by_status(request, status=None):
+    """
+    Filter the issues on basis of their open or close status.
+    params: selected filter option
+    return: 
+    """
+    issues_qs = Issue.objects.all()
+    project_qs = Project.objects.all()
+
+    if status and status != 'All':
+        status_mapping = {
+            'Open': Issue.OPEN,
+            'Closed': Issue.CLOSED
+        }
+        if status in status_mapping:
+            issues_qs = issues_qs.filter(state=status_mapping[status])
+
+    domains_qs = Domain.objects.all()
+    subdomains_qs = SubDomain.objects.all()
+
+    curr_domain = request.GET.get('domain', 'All')
+    curr_subdomain = request.GET.get('subdomain', 'All')
+
+    if curr_domain != 'All':
+        issues_qs = issues_qs.filter(project__domain__name=curr_domain)
+
+    if curr_subdomain != 'All':
+        issues_qs = issues_qs.filter(project__subdomain__name=curr_subdomain)
+
+    context = {
+        'projects': project_qs,
+        'issues': issues_qs,
+        'domains': domains_qs,
+        'subdomains': subdomains_qs,
+        'curr_domain': curr_domain,
+        'curr_subdomain': curr_subdomain,
+        'curr_status': status if status else 'All'
+    }
+
+    return render(request, 'dashboard/index.html', context=context)
 
 def authorize(request):
     """
