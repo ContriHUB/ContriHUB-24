@@ -24,4 +24,6 @@ urlpatterns = [
     path('contact/', views.contact_form, name='contact_form'),
     path('like/<int:issue_pk>/', views.likes, name='like_issue'),
     path('dislike/<int:issue_pk>/', views.dislikes, name='dislike_issue'),
+    path('filter_by_status/<str:status>/',
+         views.filter_by_status, name='filter_by_status'),
 ]

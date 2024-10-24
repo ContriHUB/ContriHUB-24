@@ -9,6 +9,7 @@
     display: none;
     position: absolute;
     left: 100%;
+    top: 0;
     margin-top: 5;
   }
 
@@ -89,7 +90,13 @@
             <li>
               <a class="dropdown-item" href="#">
                 Difficulty &raquo;
-                <button type="button" disabled class="btn btn-danger btn-sm">{{ curr_difficulty }}</button>
+                <button type="button" disabled class="btn btn-danger btn-sm">
+                  {%if curr_difficulty%}
+                  {{ curr_difficulty }}
+                  {%else%}
+                  ALL
+                  {%endif%}
+                </button>
               </a>
               <ul class="dropdown-menu dropdown-submenu">
                 <li><a class="dropdown-item" href="{% url 'filter_by_difficulty' 'All' %}">All</a></li>
@@ -136,6 +143,23 @@
                   </a>
                 </li>
                 {% endfor %}
+              </ul>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                Status &raquo;
+                <button type="button" disabled class="btn btn-danger btn-sm">
+                  {%if curr_status%}
+                  {{ curr_status }}
+                  {%else%}
+                  ALL
+                  {%endif%}
+                </button>
+              </a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a class="dropdown-item" href="{% url 'filter_by_status' 'All' %}">All</a></li>
+                <li><a class="dropdown-item" href="{% url 'filter_by_status' 'Open' %}">Open</a></li>
+                <li><a class="dropdown-item" href="{% url 'filter_by_status' 'Closed' %}">Closed</a></li>
               </ul>
             </li>
           </ul>
