@@ -71,7 +71,7 @@ def populate_projects(request):
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
         if not project_qs:
-            if project_name not in ['ContriHUB-24','CodeSangam']:
+            if project_name not in ['ContriHUB-24', 'CodeSangam']:
                 project = fetch_github_repo_details(project_name=project_name)
                 Project.objects.create(
                     name=project["name"],
@@ -92,7 +92,7 @@ def populate_projects(request):
                     html_url=project["html_url"]
                 )
         else:
-            if project_name not in ['ContriHUB-24','CodeSangam']:
+            if project_name not in ['ContriHUB-24', 'CodeSangam']:
                 project = fetch_github_repo_details(project_name=project_name)
                 project_qs.update(
                     name=project["name"],
