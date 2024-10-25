@@ -1,7 +1,7 @@
 from django.shortcuts import HttpResponseRedirect, reverse, render
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
-    DEFAULT_HARD_POINTS, CONTRIHUB_MENTOR, CONTRIHUB_MENTOR_URL
+    DEFAULT_HARD_POINTS, CONTRIHUB_MENTOR, CONTRIHUB_MENTOR_URL, API_TOKEN
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
@@ -26,7 +26,7 @@ def home(request):
     return render(request, 'index.html', context)
 
 
-def fetch_github_repo_details(project_name, is_contrihub=False):
+def fetch_github_repo_details(project_name, no_parent=False):
     """
     Fetches the details of a repository from the GitHub organization 'ContriHUB' using the GitHub API.
     If the repo is Contrihub then don't fetch the mentor name and url
@@ -36,6 +36,7 @@ def fetch_github_repo_details(project_name, is_contrihub=False):
 
     project_data = {}
     headers = {
+        'Authorization': f'token {API_TOKEN}',
         "Accept": "application/vnd.github.v3+json"
     }
     response = requests.get(f"{api_endpoint['contrihub_api_1']}{project_name}", headers=headers)
@@ -47,7 +48,7 @@ def fetch_github_repo_details(project_name, is_contrihub=False):
             "api_url": project_json["url"],
             "html_url": project_json["html_url"]
         }
-        if not is_contrihub:
+        if not no_parent:
             project_data["mentor"] = project_json["parent"]["owner"]["login"]
             project_data["mentor_url"] = project_json["parent"]["owner"]["html_url"]
 
@@ -65,10 +66,12 @@ def populate_projects(request):
     """
 
     # print(AVAILABLE_PROJECTS)
+    Project.objects.exclude(name__in=AVAILABLE_PROJECTS).delete()
+
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
         if not project_qs:
-            if project_name != 'ContriHUB-24':
+            if project_name not in ['ContriHUB-24','CodeSangam']:
                 project = fetch_github_repo_details(project_name=project_name)
                 Project.objects.create(
                     name=project["name"],
@@ -79,7 +82,7 @@ def populate_projects(request):
                     html_url=project["html_url"],
                 )
             else:
-                project = fetch_github_repo_details(project_name=project_name, is_contrihub=True)
+                project = fetch_github_repo_details(project_name=project_name, no_parent=True)
                 Project.objects.create(
                     name=project["name"],
                     description=project["description"],
@@ -88,7 +91,27 @@ def populate_projects(request):
                     api_url=project["api_url"],
                     html_url=project["html_url"]
                 )
-
+        else:
+            if project_name not in ['ContriHUB-24','CodeSangam']:
+                project = fetch_github_repo_details(project_name=project_name)
+                project_qs.update(
+                    name=project["name"],
+                    description=project["description"],
+                    mentor=project["mentor"],
+                    mentor_url=project["mentor_url"],
+                    api_url=project["api_url"],
+                    html_url=project["html_url"]
+                )
+            else:
+                project = fetch_github_repo_details(project_name=project_name, no_parent=True)
+                project_qs.update(
+                    name=project["name"],
+                    description=project["description"],
+                    mentor=CONTRIHUB_MENTOR,
+                    mentor_url=CONTRIHUB_MENTOR_URL,
+                    api_url=project["api_url"],
+                    html_url=project["html_url"]
+                )
     return HttpResponseRedirect(reverse('home'))
 
 

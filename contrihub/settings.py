@@ -184,6 +184,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default="")
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
+API_TOKEN = config('API_TOKEN', default="")
 AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-24",
                             cast=lambda v: [s.strip() for s in v.split(',')])
 CONTRIHUB_MENTOR = config('CONTRIHUB_MENTOR', default="")
