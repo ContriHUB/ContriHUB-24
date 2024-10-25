@@ -127,12 +127,13 @@ def filter_by_difficulty(request, difficulty_level=None):
 
     return render(request, 'dashboard/index.html', context=context)
 
+
 @complete_profile_required
 def filter_by_status(request, status=None):
     """
     Filter the issues on basis of their open or close status.
     params: selected filter option
-    return: 
+    return:
     """
     issues_qs = Issue.objects.all()
     project_qs = Project.objects.all()
@@ -168,6 +169,7 @@ def filter_by_status(request, status=None):
     }
 
     return render(request, 'dashboard/index.html', context=context)
+
 
 def authorize(request):
     """
