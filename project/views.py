@@ -26,18 +26,15 @@ def home(request):
     return render(request, 'index.html', context)
 
 
-def fetch_github_repo_details(project_name, no_parent=False):
+def fetch_github_repo_details(project_name, headers):
     """
     Fetches the details of a repository from the GitHub organization 'ContriHUB' using the GitHub API.
-    If the repo is Contrihub then don't fetch the mentor name and url
-    :param: name of repository, is the repository 'ContriHUB-24'
+    If the repo don't have a parent then don't fetch the mentor name and url
+    :param: name of repository, request headers
     :return: dictionary containing repository data
     """
 
     project_data = {}
-    headers = {
-        "Accept": "application/vnd.github.v3+json"
-    }
     response = requests.get(f"{api_endpoint['contrihub_api_1']}{project_name}", headers=headers)
     if response.status_code == 200:
         project_json = response.json()
@@ -47,10 +44,13 @@ def fetch_github_repo_details(project_name, no_parent=False):
             "api_url": project_json["url"],
             "html_url": project_json["html_url"]
         }
-        if not no_parent:
+        try:
             project_data["mentor"] = project_json["parent"]["owner"]["login"]
             project_data["mentor_url"] = project_json["parent"]["owner"]["html_url"]
-
+        except KeyError:
+            project_data["mentor"] = CONTRIHUB_MENTOR
+            project_data["mentor_url"] = CONTRIHUB_MENTOR_URL
+      
     return project_data
 
 
@@ -65,52 +65,40 @@ def populate_projects(request):
     """
 
     # print(AVAILABLE_PROJECTS)
+    # remove projects from db those are not in AVAILABLE_PROJECTS
     Project.objects.exclude(name__in=AVAILABLE_PROJECTS).delete()
+
+    social = request.user.social_auth.get(provider='github')
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"token {social.extra_data['access_token']}",  # Authentication
+    }
 
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
-        if not project_qs:
-            if project_name not in ['ContriHUB-24', 'CodeSangam']:
-                project = fetch_github_repo_details(project_name=project_name)
-                Project.objects.create(
-                    name=project["name"],
-                    description=project["description"],
-                    mentor=project["mentor"],
-                    mentor_url=project["mentor_url"],
-                    api_url=project["api_url"],
-                    html_url=project["html_url"],
-                )
-            else:
-                project = fetch_github_repo_details(project_name=project_name, no_parent=True)
-                Project.objects.create(
-                    name=project["name"],
-                    description=project["description"],
-                    mentor=CONTRIHUB_MENTOR,
-                    mentor_url=CONTRIHUB_MENTOR_URL,
-                    api_url=project["api_url"],
-                    html_url=project["html_url"]
-                )
-        else:
-            if project_name not in ['ContriHUB-24', 'CodeSangam']:
-                project = fetch_github_repo_details(project_name=project_name)
-                project_qs.update(
-                    name=project["name"],
-                    description=project["description"],
-                    mentor=project["mentor"],
-                    mentor_url=project["mentor_url"],
-                    api_url=project["api_url"],
-                    html_url=project["html_url"]
-                )
-            else:
-                project = fetch_github_repo_details(project_name=project_name, no_parent=True)
-                project_qs.update(
-                    name=project["name"],
-                    description=project["description"],
-                    mentor=CONTRIHUB_MENTOR,
-                    mentor_url=CONTRIHUB_MENTOR_URL,
-                    api_url=project["api_url"],
-                    html_url=project["html_url"]
-                )
+        
+        if not project_qs:  # if project in present then add it in database
+            project = fetch_github_repo_details(project_name=project_name, headers=headers)
+            Project.objects.create(
+                name=project["name"],
+                description=project["description"],
+                mentor=project["mentor"],
+                mentor_url=project["mentor_url"],
+                api_url=project["api_url"],
+                html_url=project["html_url"]
+            )
+
+        else:  # if project is present in database then update them
+            project = fetch_github_repo_details(project_name=project_name, headers=headers)
+            project_qs.update(
+                name=project["name"],
+                description=project["description"],
+                mentor=project["mentor"],
+                mentor_url=project["mentor_url"],
+                api_url=project["api_url"],
+                html_url=project["html_url"]
+            )
+                
     return HttpResponseRedirect(reverse('home'))
 
 
