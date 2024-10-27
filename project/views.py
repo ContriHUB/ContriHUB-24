@@ -1,7 +1,7 @@
 from django.shortcuts import HttpResponseRedirect, reverse, render
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
-    DEFAULT_HARD_POINTS, CONTRIHUB_MENTOR, CONTRIHUB_MENTOR_URL, API_TOKEN
+    DEFAULT_HARD_POINTS, CONTRIHUB_MENTOR, CONTRIHUB_MENTOR_URL
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
@@ -36,7 +36,6 @@ def fetch_github_repo_details(project_name, no_parent=False):
 
     project_data = {}
     headers = {
-        'Authorization': f'token {API_TOKEN}',
         "Accept": "application/vnd.github.v3+json"
     }
     response = requests.get(f"{api_endpoint['contrihub_api_1']}{project_name}", headers=headers)
