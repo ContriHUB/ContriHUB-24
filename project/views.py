@@ -50,7 +50,7 @@ def fetch_github_repo_details(project_name, headers):
         except KeyError:
             project_data["mentor"] = CONTRIHUB_MENTOR
             project_data["mentor_url"] = CONTRIHUB_MENTOR_URL
-      
+
     return project_data
 
 
@@ -76,7 +76,7 @@ def populate_projects(request):
 
     for project_name in AVAILABLE_PROJECTS:
         project_qs = Project.objects.filter(name=project_name)
-        
+
         if not project_qs:  # if project in present then add it in database
             project = fetch_github_repo_details(project_name=project_name, headers=headers)
             Project.objects.create(
@@ -98,7 +98,7 @@ def populate_projects(request):
                 api_url=project["api_url"],
                 html_url=project["html_url"]
             )
-                
+       
     return HttpResponseRedirect(reverse('home'))
 
 
