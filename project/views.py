@@ -98,7 +98,7 @@ def populate_projects(request):
                 api_url=project["api_url"],
                 html_url=project["html_url"]
             )
-       
+
     return HttpResponseRedirect(reverse('home'))
 
 
