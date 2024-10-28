@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, \
-    DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
+    DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY, CONTRIHUB_MENTOR, CONTRIHUB_MENTOR_URL
 from django.utils import timezone
 from user_profile.models import UserProfile
 
@@ -27,8 +27,8 @@ class SubDomain(models.Model):
 class Project(models.Model):
     name = models.CharField(verbose_name="Name", max_length=200)
     description = models.TextField(verbose_name="Project Description", default="", null=True)
-    mentor = models.CharField(verbose_name="Mentor", max_length=200, default=None)
-    mentor_url = models.URLField(verbose_name="MENTOR URL", default=None)
+    mentor = models.CharField(verbose_name="Mentor", max_length=200, default="")
+    mentor_url = models.URLField(verbose_name="MENTOR URL", default="")
 
     api_url = models.URLField(verbose_name="API URL")
 
