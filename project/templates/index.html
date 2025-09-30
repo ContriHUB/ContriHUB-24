@@ -142,11 +142,41 @@
     <div class="container">
 
       <div class="row justify-content-center" style="margin-top: 100px">
-        <h1 class="display-5 text-white font-weight-bold" style="font-family: Cormorant Infant">Projects in 2024</h1>
+        <h1 class="display-5 text-white font-weight-bold" style="font-family: Cormorant Infant">Projects in {{ current_year }}</h1>
       </div>
 
       <div class="row justify-content-center" style="margin-top: 20px">
-        <!-- Add your project data in this div -->
+        <!-- Dynamic project data from database -->
+        {% for project in projects %}
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
+          style="margin-bottom: 75px">
+          <div class="card" style="width: 300px">
+            <a href="{{ project.html_url }}" target="_blank"/>
+            <div class="card-body">
+              <h5 class="card-title">{{ project.name }}</h5>
+              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
+                style="max-width: 250px; max-height: 200px; overflow-y: auto">
+                Contribute to this amazing project and make an impact!
+              </p>
+              {% if project.domain %}
+              <div style="color: grey;">Domain: {{ project.domain.name }}</div>
+              {% endif %}
+              {% if project.subdomain %}
+              <div style="color: grey;">Subdomain: {{ project.subdomain.name }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <!-- Fallback content when no projects are available -->
+        <div class="col-12 text-center">
+          <h3 class="text-white">No projects available at the moment.</h3>
+          <p class="text-white">Please check back later or contact the administrators to populate projects.</p>
+        </div>
+        {% endfor %}
+
+        <!-- FALLBACK: Show some hardcoded projects if database is empty -->
+        {% if not projects %}
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
           style="margin-bottom: 75px">
           <div class="card" style="width: 300px">
@@ -258,6 +288,7 @@
             </div>
           </div>
         </div>
+        
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
           style="margin-bottom: 75px">
           <div class="card" style="width: 300px">
@@ -297,7 +328,7 @@
             <div class="card-body">
               <h5 class="card-title">CREDLOCKS-</h5>
               <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">CredLock is a thriving haven for college students, fostering a supportive community that nurtures personal growth and academic excellence.</p>
+                style="max-width: 250px; max-height: 200px; overflow-y: auto">CredLock is a thriving haven for college students, fostering a supportive community that nurtures personal growth and</p>
               <div style="color: grey;">Mentors:</div>
               <ul>
                 <li><a href="https://github.com/Codipk" target="_blank">Dipti Kumari</a></li>
@@ -440,8 +471,7 @@
             </div>
           </div>
         </div>
-        
-
+        {% endif %}
 
         <!-- Add your info above this -->
 
@@ -469,7 +499,7 @@
 
     <!--Copyright-->
     <div class="footer-copyright py-3">
-      © 2024 Copyright:
+      © {{ current_year }} Copyright:
       <a href="https://sac.mnnit.ac.in/contrihub" target="_blank"> sac.mnnit.ac.in/contrihub </a>
     </div>
     <!--/.Copyright-->
