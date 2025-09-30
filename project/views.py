@@ -1,4 +1,5 @@
 from django.shortcuts import HttpResponseRedirect, reverse, render
+from datetime import datetime
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
     DEFAULT_HARD_POINTS
@@ -12,7 +13,15 @@ User = get_user_model()
 
 
 def home(request):
-    return render(request, 'index.html')
+    # Get all projects from database (latest projects)
+    projects = Project.objects.all().order_by('-id')  # Order by latest first
+    current_year = datetime.now().year
+    
+    context = {
+        'projects': projects,
+        'current_year': current_year
+    }
+    return render(request, 'index.html', context)
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
