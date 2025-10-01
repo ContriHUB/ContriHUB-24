@@ -80,19 +80,18 @@ DB_PASSWORD = config('DB_PASSWORD', default='root')
 DB_HOST = config('DB_HOST', default='localhost')
 DB_PORT = config('DB_PORT', default='3306')
 
+# Database configuration - Force SQLite for development
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
+# Apply any DATABASE_URL override for production
 db_from_env = dj_database_url.config()
-DATABASES['default'].update(db_from_env)
+if db_from_env and not DEBUG:
+    DATABASES['default'].update(db_from_env)
 DATABASES['default']['CONN_MAX_AGE'] = 500
 
 # Password validation
@@ -186,6 +185,15 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
 AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-24",
                             cast=lambda v: [s.strip() for s in v.split(',')])
+
+# Project Names for GitHub API fetching
+PROJECT_NAMES = config('PROJECT_NAMES', default="ContriHUB-24,CodeSangam,MovieScreen",
+                      cast=lambda v: [s.strip() for s in v.split(',')])
+
+# GitHub API Configuration
+GITHUB_ORG_NAME = config('GITHUB_ORG_NAME', default="ContriHUB")
+GITHUB_API_TOKEN = config('GITHUB_API_TOKEN', default="")
+
 LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
 LABEL_POINTS = config('LABEL_POINTS', default="points")

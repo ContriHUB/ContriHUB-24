@@ -1,18 +1,59 @@
 from django.shortcuts import HttpResponseRedirect, reverse, render
 from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
-    DEFAULT_HARD_POINTS
+    DEFAULT_HARD_POINTS, PROJECT_NAMES
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import get_user_model
 from .models import Project, Issue
+from .github_service import get_github_service
 from helper import safe_hit_url, SUCCESS, complete_profile_required
 from config import api_endpoint, html_endpoint
+import logging
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def home(request):
-    return render(request, 'index.html')
+    """
+    Display the projects page with dynamically fetched GitHub data.
+    """
+    try:
+        # Get GitHub service instance
+        github_service = get_github_service()
+        
+        # Fetch project data from GitHub API
+        projects_data = github_service.get_projects_data(PROJECT_NAMES)
+        
+        logger.info(f"Successfully fetched data for {len(projects_data)} projects")
+        
+        context = {
+            'projects': projects_data,
+            'github_org': github_service.org_name
+        }
+        
+        return render(request, 'projects_dynamic.html', context)
+        
+    except Exception as e:
+        logger.error(f"Error in project home view: {str(e)}")
+        
+        # Fallback to basic data if GitHub API fails
+        fallback_projects = []
+        for project_name in PROJECT_NAMES:
+            fallback_projects.append({
+                'name': project_name,
+                'description': 'Description not available',
+                'html_url': f"https://github.com/ContriHUB/{project_name}",
+                'mentors': [{'login': 'ContriHUB Team', 'html_url': 'https://github.com/ContriHUB'}]
+            })
+        
+        context = {
+            'projects': fallback_projects,
+            'github_org': 'ContriHUB',
+            'error_message': 'Unable to fetch latest project data from GitHub. Showing basic information.'
+        }
+        
+        return render(request, 'projects_dynamic.html', context)
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)

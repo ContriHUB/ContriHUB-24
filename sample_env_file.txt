@@ -20,6 +20,14 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 AVAILABLE_PROJECTS = 'ContriHUB-21;piratetube;Connect-Four-Game'
+
+# Project names for dynamic GitHub API fetching
+PROJECT_NAMES = 'ContriHUB-24,CodeSangam,MovieScreen,EyeProtection'
+
+# GitHub API Configuration for dynamic project fetching
+GITHUB_ORG_NAME = 'ContriHUB'
+GITHUB_API_TOKEN = '<enter_github_api_token_optional>'
+
 LABEL_MENTOR = 'mentor'
 LABEL_LEVEL = 'level'
 LABEL_POINTS = 'points'
@@ -40,8 +48,12 @@ DEFAULT_MEDIUM_POINTS = '20'
 DEFAULT_HARD_POINTS = '30'
 
 # Database settings
-DB_NAME=<your-db-name>
-DB_USER=<your-db-user>
-DB_PASSWORD=<your-db-password>
-DB_HOST=<your-db-host>
-DB_PORT=<your-db-port>
+# Option 1: MySQL Database (for production-like setup)
+DB_NAME=contrihub24_db
+DB_USER=contrihub_user
+DB_PASSWORD=contrihub_password
+DB_HOST=localhost
+DB_PORT=3306
+
+# Option 2: SQLite Database (for simple development - uncomment the line below and comment out MySQL settings above)
+# DATABASE_URL=sqlite:///db.sqlite3
