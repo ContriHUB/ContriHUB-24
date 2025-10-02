@@ -1,5 +1,9 @@
+from datetime import datetime, timedelta
+
 from django.shortcuts import HttpResponseRedirect, reverse, render
-from contrihub.settings import AVAILABLE_PROJECTS, LABEL_MENTOR, LABEL_LEVEL, LABEL_POINTS, DEPENDABOT_LOGIN, \
+from contrihub.settings import CONTRIHUB_ORG_REPOS_ENDPOINT, AVAILABLE_PROJECTS, \
+    LABEL_MENTOR, LABEL_LEVEL, \
+    LABEL_POINTS, DEPENDABOT_LOGIN, \
     LABEL_RESTRICTED, DEFAULT_FREE_POINTS, DEFAULT_VERY_EASY_POINTS, DEFAULT_EASY_POINTS, DEFAULT_MEDIUM_POINTS, \
     DEFAULT_HARD_POINTS
 from django.contrib.auth.decorators import user_passes_test
@@ -7,12 +11,14 @@ from django.contrib.auth import get_user_model
 from .models import Project, Issue
 from helper import safe_hit_url, SUCCESS, complete_profile_required
 from config import api_endpoint, html_endpoint
+from django.utils import timezone
 
 User = get_user_model()
 
 
 def home(request):
-    return render(request, 'index.html')
+    projects = Project.objects.filter(is_current=True).order_by('-pushed_at', 'name')
+    return render(request, 'index.html', {'projects': projects})
 
 
 @user_passes_test(lambda u: u.userprofile.role == u.userprofile.ADMIN)
@@ -24,18 +30,78 @@ def populate_projects(request):
     :param request:
     :return:
     """
-    api_uri = api_endpoint['contrihub_api_1']
-    html_uri = html_endpoint['contrihub_html']
-    # print(AVAILABLE_PROJECTS)
-    for project_name in AVAILABLE_PROJECTS:
-        project_qs = Project.objects.filter(name=project_name)
-        if not project_qs:
-            api_url = f"{api_uri}{project_name}"
-            html_url = f"{html_uri}{project_name}"
-            Project.objects.create(
+    response = safe_hit_url(CONTRIHUB_ORG_REPOS_ENDPOINT)
+    if response['status'] != SUCCESS:
+        return HttpResponseRedirect(reverse('home'))
+
+    repos = response['data']
+    active_names = set()
+    now = timezone.now()
+    year_tokens = {
+        str(now.year),
+        str(now.year - 1),
+        str(now.year)[-2:],
+        str(now.year - 1)[-2:],
+    }
+
+    has_current = False
+
+    for repo in repos:
+        if repo.get('archived') or repo.get('fork'):
+            continue
+
+        name = repo['name']
+        pushed_at_raw = repo.get('pushed_at')
+        pushed_at = None
+        is_current = False
+
+        if pushed_at_raw:
+            try:
+                pushed_at = datetime.fromisoformat(pushed_at_raw.replace('Z', '+00:00'))
+            except ValueError:
+                pushed_at = None
+
+        if pushed_at and pushed_at >= now - timedelta(days=365):
+            is_current = True
+
+        if not is_current and any(token in name for token in year_tokens):
+            is_current = True
+
+        api_url = repo['url']
+        html_url = repo['html_url']
+        description = repo.get('description') or ''
+        homepage = repo.get('homepage') or ''
+        topics = repo.get('topics') or []
+
+        project, _ = Project.objects.update_or_create(
+            name=name,
+            defaults={
+                'api_url': api_url,
+                'html_url': html_url,
+                'description': description,
+                'homepage': homepage,
+                'topics_raw': ', '.join(topics),
+                'pushed_at': pushed_at,
+                'archived': repo.get('archived', False),
+                'is_current': is_current,
+            },
+        )
+        active_names.add(project.name)
+        if is_current:
+            has_current = True
+
+    # fallback to AVAILABLE_PROJECTS when GitHub returns nothing
+    if not active_names or not has_current:
+        api_uri = api_endpoint['contrihub_api_1']
+        html_uri = html_endpoint['contrihub_html']
+        for project_name in AVAILABLE_PROJECTS:
+            Project.objects.update_or_create(
                 name=project_name,
-                api_url=api_url,
-                html_url=html_url
+                defaults={
+                    'api_url': f"{api_uri}{project_name}",
+                    'html_url': f"{html_uri}{project_name}",
+                    'is_current': True,
+                },
             )
 
     return HttpResponseRedirect(reverse('home'))

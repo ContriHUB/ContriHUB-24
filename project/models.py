@@ -30,6 +30,12 @@ class Project(models.Model):
     api_url = models.URLField(verbose_name="API URL")
 
     html_url = models.URLField(verbose_name="HTML URL")
+    description = models.URLField(verbose_name="Description", blank=True)
+    homepage = models.URLField(verbose_name="Homepage", blank=True)
+    topics_raw = models.TextField(verbose_name="Topics", blank=True)
+    pushed_at = models.DateTimeField(verbose_name="Last Pushed At", null=True, blank=True)
+    archived = models.BooleanField(default=False)
+    is_current = models.BooleanField(default=False)
     domain = models.ForeignKey(Domain, on_delete=models.DO_NOTHING, null=True, default=None)
     subdomain = models.ForeignKey(SubDomain, on_delete=models.DO_NOTHING, blank=True, default=None, null=True)
 
