@@ -142,309 +142,41 @@
     <div class="container">
 
       <div class="row justify-content-center" style="margin-top: 100px">
-        <h1 class="display-5 text-white font-weight-bold" style="font-family: Cormorant Infant">Projects in 2024</h1>
+        <h1 class="display-5 text-white font-weight-bold" style="font-family: Cormorant Infant">Projects</h1>
       </div>
 
       <div class="row justify-content-center" style="margin-top: 20px">
-        <!-- Add your project data in this div -->
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/ContriHUB-24" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">ContriHUB-24 Website</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">A Django app</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/meisabhishekpatel" target="_blank">Abhishek Patel</a></li>
-              </ul>
+        {% if projects %}
+          {% for project in projects %}
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center" style="margin-bottom: 75px">
+              <div class="card" style="width: 300px">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">
+                    <a href="{{ project.html_url }}" target="_blank" rel="noopener">{{ project.name }}</a>
+                  </h5>
+                  <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6" style="max-width: 250px; max-height: 200px; overflow-y: auto">
+                    {{ project.description|default:"No description provided." }}
+                  </p>
+                  {% if project.homepage %}
+                    <div class="mb-2">
+                      <a href="{{ project.homepage }}" target="_blank" rel="noopener">Visit project homepage</a>
+                    </div>
+                  {% endif %}
+                  {% if project.topics_raw %}
+                    <div class="text-muted small">Topics: {{ project.topics_raw }}</div>
+                  {% endif %}
+                  {% if project.pushed_at %}
+                    <div class="text-muted small mt-auto">Last updated: {{ project.pushed_at|date:"M d, Y" }}</div>
+                  {% endif %}
+                </div>
+              </div>
             </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-12 text-center text-white">
+            <p>No projects available right now. Please check back soon.</p>
           </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/CodeSangam" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">CodeSangam</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">An website for holding CodeSangam, TechStack - React, Go Lang </p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/meisabhishekpatel" target="_blank">Abhishek Patel</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/MovieScreen" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">MovieScreen</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">A basic Django website for first-time learners.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/eleensmathew" target="_blank">Eleena Sarah Mathew</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/EyeProtection" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">EyeProtection</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">Browser extension for 20 20 20 rule.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Nandika-A" target="_blank">Nandika Agrawal</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Congestion-Control-Simulator" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Congestion-Control-Simulator</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">Simulates TCP congestion control algorithms.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Nandika-A" target="_blank">Nandika Agrawal</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Just-Share" target="_blank" />
-            <div class="card-body">
-              <h5 class="card-title">Just-Share</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">Android app that enables quick transfer of photos, videos, documents, and audio files using WiFiDirect and Bluetooth.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/SaiDheerajPeketi" target="_blank">Peketi Sai Dheeraj</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Robotics_Club_Website" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Robotics_Club_Website</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">Official Website of Robotics Club</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Avtech04" target="_blank">Ayush Varshney</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/SecurePix" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">SecurePix</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">SecurePix is a cutting-edge blockchain-powered web application</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/TechTonicShift" target="_blank">Utkarsh Sharma</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/EAT_EASY" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">EAT_EASY</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">EatEasy- A mess management website , Managing Complaints Mastering Satisfaction</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Codipk" target="_blank">Dipti Kumari</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/CREDLOCKS" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">CREDLOCKS-</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">CredLock is a thriving haven for college students, fostering a supportive community that nurtures personal growth and academic excellence.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Codipk" target="_blank">Dipti Kumari</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Password-Generator" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Password-Generator</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto"> Tech Stack used to make this project include HTML,CSS,JAVASCRIPT.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Codipk" target="_blank">Dipti Kumari</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/NoteSphere" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">NoteSphere</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                A portal for students to give feedback on student related activities in college.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/shubhankertiwari8" target="_blank">Shubhanker Tiwari</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Enactus" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Enactus</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                Website built for Enactus Club.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/TechTonicShift" target="_blank">Utkarsh Sharma</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Easy2Do" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Easy2Do</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                An android app using Java and XML for boosting productivity.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/mukul-dev" target="_blank">Mukul Prajapati</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Music-Player" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Music-Player</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                A small project for playing music.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/Pra-San" target="_blank">Pranav Sanand</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/GobHobs" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">GobHobs</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                Data extraction application for data preprocessing.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/cluelessmonk" target="_blank">Umang</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Chamber_of_Secrets" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Chamber_of_Secrets</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                Web application designed to interact with your friends without social anxiety via real time communication.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/harshshukla1609" target="_blank">Harshvardhan Shukla</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 mb-3 d-flex align-items-stretch justify-content-center"
-          style="margin-bottom: 75px">
-          <div class="card" style="width: 300px">
-            <a href="https://github.com/ContriHUB/Neuda-App" target="_blank"/>
-            <div class="card-body">
-              <h5 class="card-title">Neuda-App</h5>
-              <p id="member-intro" class="custom-scrollbar-js card-text mb-4 sm-6"
-                style="max-width: 250px; max-height: 200px; overflow-y: auto">
-                A Spring Boot-based banking system.</p>
-              <div style="color: grey;">Mentors:</div>
-              <ul>
-                <li><a href="https://github.com/TechTonicShift" target="_blank">Utkarsh Sharma</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-
-
-        <!-- Add your info above this -->
-
+        {% endif %}
       </div>
     </div>
   </div>
