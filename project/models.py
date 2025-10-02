@@ -30,7 +30,7 @@ class Project(models.Model):
     api_url = models.URLField(verbose_name="API URL")
 
     html_url = models.URLField(verbose_name="HTML URL")
-    description = models.URLField(verbose_name="Description",blank=True)
+    description = models.URLField(verbose_name="Description", blank=True)
     homepage = models.URLField(verbose_name="Homepage", blank=True)
     topics_raw = models.TextField(verbose_name="Topics", blank=True)
     pushed_at = models.DateTimeField(verbose_name="Last Pushed At", null=True, blank=True)

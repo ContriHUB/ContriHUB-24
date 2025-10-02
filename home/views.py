@@ -20,6 +20,11 @@ from django.contrib import messages
 from user_profile.models import UserProfile
 from .forms import ContactForm
 
+# Legacy dashboard filters: initialise globals before any view runs
+issues_qs = Issue.objects.none()
+domain = 'All'
+subdomain = 'All'
+
 
 def home(request):
     return render(request, 'home/index.html')
@@ -67,7 +72,7 @@ def filter_by_domain(request, domain_pk):
 
 @complete_profile_required
 def filter_by_subdomain(request, subdomain_pk):
-    global issues_qs, domain, subdomain
+    global issues_qs, subdomain
     subdomain = SubDomain.objects.get(pk=subdomain_pk)
     project_qs = Project.objects.all()
     if domain != 'All':

@@ -185,10 +185,13 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default="")
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
-AVAILABLE_PROJECTS = config('AVAILABLE_PROJECTS', default="ContriHUB-24",
-                            cast=lambda v: [s.strip() for s in v.split(',')])
-CONTRIHUB_ORG_REPOS_ENDPOINT = config('CONTRIHUB_ORG_REPOS_ENDPOINT',
-                            default=api_endpoint['contrihub_org_repos'])
+AVAILABLE_PROJECTS = config(
+                            'AVAILABLE_PROJECTS',
+                            default='ContriHUB-24',
+                            cast=lambda v: [s.strip() for s in v.split(',')],
+)
+
+CONTRIHUB_ORG_REPOS_ENDPOINT = config('CONTRIHUB_ORG_REPOS_ENDPOINT', default=api_endpoint['contrihub_org_repos'])
 
 LABEL_MENTOR = config('LABEL_MENTOR', default="mentor")
 LABEL_LEVEL = config('LABEL_LEVEL', default="level")
